@@ -516,6 +516,7 @@ const CreateExercise = ({ translate }) => {
                         <div className="remove-btn-container">
                           <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
                             <Button
+                              aria-label="Remove field"
                               variant="outline-danger"
                               className="btn-remove"
                               onClick={() => handleRemoveFields(index)}
@@ -563,6 +564,7 @@ const CreateExercise = ({ translate }) => {
               { enableButtons() &&
                 <Form.Group>
                   <Button
+                    aria-label="Add more field"
                     variant="link"
                     onClick={handleAddFields}
                     className="p-0 mr-1"

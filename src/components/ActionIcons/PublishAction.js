@@ -8,7 +8,7 @@ export const PublishAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.publish" /></Tooltip>}
   >
-    <Button variant="link" className={`text-success p-0 ${className}`} {...rest}>
+    <Button aria-label="Publish" variant="link" className={`text-success p-0 ${className}`} {...rest}>
       <FaFileUpload size={20} />
     </Button>
   </OverlayTrigger>

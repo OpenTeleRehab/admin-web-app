@@ -8,7 +8,7 @@ export const DisabledAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.enabled" /></Tooltip>}
   >
-    <Button variant="link" className={`text-success p-0 ${className}`} {...rest}>
+    <Button aria-label="Enabled" variant="link" className={`text-success p-0 ${className}`} {...rest}>
       <FaToggleOff size={20} />
     </Button>
   </OverlayTrigger>
@@ -23,7 +23,7 @@ export const EnabledAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.disabled" /></Tooltip>}
   >
-    <Button variant="link" className={`text-success p-0 ${className}`} {...rest}>
+    <Button aria-label="Disabled" variant="link" className={`text-success p-0 ${className}`} {...rest}>
       <FaToggleOn size={20} />
     </Button>
   </OverlayTrigger>

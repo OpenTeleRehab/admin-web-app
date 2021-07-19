@@ -235,7 +235,7 @@ const Exercise = ({ translate }) => {
                   ))
                 }
               </Accordion>
-              <Button block onClick={() => handleDownload()} disabled={downloading}>
+              <Button aria-label="Dowload Exercise" block onClick={() => handleDownload()} disabled={downloading}>
                 {translate('exercise.download')}
               </Button>
             </Card.Body>

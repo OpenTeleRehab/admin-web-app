@@ -11,6 +11,7 @@ const SearchInput = ({ name, value, placeholder, onChange, onClear }) => {
         variant="light"
         className="clear-btn"
         onClick={onClear}
+        aria-label="Clear"
       >
         <BsX size={18} />
       </Button>

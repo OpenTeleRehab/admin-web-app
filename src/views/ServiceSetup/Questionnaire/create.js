@@ -308,6 +308,7 @@ const CreateQuestionnaire = ({ translate }) => {
               <div className="sticky-btn d-flex justify-content-between">
                 <div className="py-1 px-1">
                   <Button
+                    aria-label="Add question"
                     variant="link btn-lg"
                     onClick={handleAddQuestion}
                     className="py-1"
@@ -317,12 +318,14 @@ const CreateQuestionnaire = ({ translate }) => {
                 </div>
                 <div className="py-2 questionnaire-save-cancel-wrapper px-3">
                   <Button
+                    aria-label="Save"
                     onClick={handleSave}
                     disabled={isLoading}
                   >
                     {translate('common.save')}
                   </Button>
                   <Button
+                    aria-label="Cancel"
                     className="ml-2"
                     variant="outline-dark"
                     as={Link}
@@ -338,12 +341,14 @@ const CreateQuestionnaire = ({ translate }) => {
               <div className="sticky-btn d-flex justify-content-end">
                 <div className="py-2 questionnaire-save-cancel-wrapper px-3">
                   <Button
+                    aria-label="Save"
                     onClick={handleSave}
                     disabled={isLoading}
                   >
                     {translate('common.save')}
                   </Button>
                   <Button
+                    aria-label="Cancel"
                     className="ml-2"
                     variant="outline-dark"
                     as={Link}
