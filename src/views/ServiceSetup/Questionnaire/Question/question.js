@@ -149,6 +149,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   {...provided.dragHandleProps}
                                 >
                                   <Button
+                                    aria-label="Move question"
                                     variant="link"
                                     size="sm"
                                     className="text-dark p-0 mr-5 mb-3 drag-button"
@@ -158,6 +159,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                 </div>
                                 <div>
                                   <Button
+                                    aria-label="Clone question"
                                     variant="link"
                                     size="sm"
                                     className="text-primary p-0 mr-1"
@@ -166,6 +168,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     <FaCopy size={20} />
                                   </Button>
                                   <Button
+                                    aria-label="remove question"
                                     variant="link"
                                     size="sm"
                                     className="text-danger p-0"
@@ -199,6 +202,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   {enableButtons() &&
                                     <div className="ml-3">
                                       <Button
+                                        aria-label="remove file"
                                         variant="outline-danger"
                                         className="remove-btn"
                                         onClick={() => handleFileRemove(index)}
@@ -256,6 +260,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     {enableButtons() &&
                                     <Col sm={4} xl={3} className="mt-1">
                                       <Button
+                                        aria-label="remove answer"
                                         variant="outline-danger"
                                         className="remove-btn"
                                         onClick={() => handleAnswerRemove(index, answerIndex)}

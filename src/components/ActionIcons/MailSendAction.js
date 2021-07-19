@@ -8,7 +8,7 @@ export const MailSendAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.resend_mail" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Resend email" variant="link" className={`p-0 ${className}`} {...rest}>
       <BiMailSend size={25} />
     </Button>
   </OverlayTrigger>

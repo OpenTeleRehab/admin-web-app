@@ -48,6 +48,7 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
       <Card.Header className="pl-4 d-flex justify-content-between align-items-start">
         <h5 className="m-0 text-truncate">{activeCategory.title}</h5>
         <Button
+          aria-label="Create category"
           variant="outline-primary"
           className="btn-circle"
           onClick={() => handleCreate(activeCategory.id, false)}

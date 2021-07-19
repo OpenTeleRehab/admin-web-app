@@ -83,6 +83,7 @@ const CategoryList = ({ type, translate }) => {
           <Card.Header className="pl-2 d-flex justify-content-between align-items-start">
             <h5 className="m-0 text-truncate">{translate('category')}</h5>
             <Button
+              aria-label="New Category"
               variant="outline-primary"
               className="btn-circle float-right"
               onClick={() => handleCreate(activeSub1 ? activeSub1.parent : '')}
