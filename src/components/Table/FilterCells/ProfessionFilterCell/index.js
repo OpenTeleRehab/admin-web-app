@@ -44,6 +44,7 @@ const ProfessionFilterCell = ({ filter, onFilter }) => {
         onChange={(e) => handleFilter(e.id)}
         menuPortalTarget={document.body}
         styles={customSelectStyles}
+        aria-label="Profession"
       />
     </th>
   );

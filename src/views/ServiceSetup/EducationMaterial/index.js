@@ -183,6 +183,7 @@ const EducationMaterial = ({ translate }) => {
                   options={languages}
                   onChange={(e) => setLanguage(e.id)}
                   styles={customSelectStyles}
+                  aria-label="Language"
                 />
               </Form.Group>
               <Accordion>

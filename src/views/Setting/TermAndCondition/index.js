@@ -154,6 +154,7 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
             options={languages}
             onChange={(e) => setLanguage(e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
         <div dangerouslySetInnerHTML={{ __html: termAndCondition.content }} />

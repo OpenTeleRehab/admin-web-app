@@ -45,6 +45,7 @@ const ClinicFilterCell = ({ filter, onFilter }) => {
         onChange={(e) => handleFilter(e.id)}
         menuPortalTarget={document.body}
         styles={customSelectStyles}
+        aria-label="Clinic"
       />
     </th>
   );

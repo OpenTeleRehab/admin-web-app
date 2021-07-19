@@ -219,6 +219,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 placeholder={translate('questionnaire.title.placeholder')}
                 isInvalid={titleError}
                 maxLength={255}
+                aria-label="Title"
               />
               <Form.Control.Feedback type="invalid">
                 {translate('questionnaire.title.required')}
@@ -236,6 +237,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 options={languages}
                 onChange={(e) => setLanguage(e.id)}
                 styles={customSelectStyles}
+                aria-label="Language"
               />
             </Form.Group>
           </Col>

@@ -172,6 +172,7 @@ const EdiInformation = ({ editId }) => {
             getOptionLabel={option => option.text}
             options={[{ value: '', text: translate('placeholder.gender') }, ...settings.genders.options]}
             onChange={(e) => handleSingleSelectChange('gender', e.value)}
+            aria-label="Gender"
           />
         </Form.Group>
       </Form.Row>
@@ -189,6 +190,7 @@ const EdiInformation = ({ editId }) => {
             options={[{ id: '', name: translate('placeholder.language') }, ...languages]}
             onChange={(e) => handleSingleSelectChange('language_id', e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
       </Form.Row>
