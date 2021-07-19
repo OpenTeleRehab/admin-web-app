@@ -157,6 +157,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
             options={languages}
             onChange={(e) => handleLanguageChange(e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
         <Form.Group>
@@ -189,6 +190,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
               value={formFields.category}
               onChange={handleChange}
               maxLength={settings.textMaxLength}
+              aria-label="Category name"
             />
           }
           <Form.Control.Feedback type="invalid">
@@ -206,6 +208,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
               isInvalid={errorCategoryValue}
               value={formFields.category_value}
               onChange={handleChange}
+              aria-label="Category value"
             />
             <Form.Text className="text-muted">
               {translate('category.category_value_hint')}

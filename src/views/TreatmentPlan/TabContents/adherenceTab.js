@@ -125,6 +125,7 @@ const AdherenceTab = () => {
                 type="text"
                 className="form-control"
                 placeholder={translate('common.timerange.placeholder')}
+                aria-label="Time range"
               />
             </DateRangePicker>
           </div>

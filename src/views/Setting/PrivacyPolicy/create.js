@@ -148,6 +148,7 @@ const CreatePrivacyPolicy = ({ show, editId, handleClose }) => {
             options={languages}
             onChange={(e) => setLanguage(e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
         <Form.Group controlId="version">

@@ -245,6 +245,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             options={languages}
             onChange={(e) => handleLanguageChange(e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
         <Form.Group controlId="formPrivate">
@@ -268,6 +269,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             options={platformOptions}
             onChange={(e) => handleSingleSelectChange('platform', e.value)}
             styles={customSelectStyles}
+            aria-label="Platform"
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.static_page.platform')}
@@ -316,7 +318,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             )}
             <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
               <BsUpload size={15}/> Upload Image
-              <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} />
+              <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
             </div>
           </div>
         </Form.Group>

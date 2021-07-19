@@ -57,6 +57,7 @@ const StatusFilterCell = ({ filter, onFilter }) => {
         options={treatmentStatusData}
         onChange={(e) => handleFilter(e.value)}
         styles={customSelectStyles}
+        aria-label="Treatment status"
       />
     </th>
   );

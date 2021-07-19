@@ -84,6 +84,7 @@ const Translation = ({ translate }) => {
               options={settings.platforms.options}
               onChange={(e) => setFilterPlatform(e.value)}
               styles={customSelectStyles}
+              aria-label="Platform"
             />
           </Form.Group>
         </Form.Row>

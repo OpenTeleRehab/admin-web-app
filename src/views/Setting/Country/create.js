@@ -161,6 +161,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
               options={definedCountries}
               onChange={(e) => handleCountryChange(e.iso_code)}
               styles={customSelectStyles}
+              aria-label="Country"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.country.name')}
@@ -198,6 +199,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
               options={languages}
               onChange={(e) => handleSingleSelectChange('language', e.id)}
               styles={customSelectStyles}
+              aria-label="Language"
             />
           </Form.Group>
         </Form.Row>
