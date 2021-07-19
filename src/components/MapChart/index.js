@@ -70,10 +70,10 @@ const MapChart = ({ setTooltipContent, countries }) => {
       </ComposableMap>
 
       <div className="d-flex flex-column map-chart-controls">
-        <Button size="sm" variant="link" onClick={() => handleZoomIn()} disabled={position.zoom === 4}>
+        <Button size="sm" variant="link" onClick={() => handleZoomIn()} disabled={position.zoom === 4} aria-label="zoom in">
           <BsPlus />
         </Button>
-        <Button size="sm" variant="link" onClick={() => handleZoomOut()} disabled={position.zoom === 1}>
+        <Button size="sm" variant="link" onClick={() => handleZoomOut()} disabled={position.zoom === 1} aria-label="zoom out">
           <BsDash />
         </Button>
       </div>
