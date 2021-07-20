@@ -38,7 +38,7 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
   if (!activeCategory) {
     return (
       <Card>
-        <Card.Header as="h5" />
+        <Card.Header />
       </Card>
     );
   }
