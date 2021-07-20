@@ -48,6 +48,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
                       question.answers.map((answer, index) => (
                         <div key={index}>
                           <Form.Check
+                            aria-label={answer.description}
                             inline label={answer.description}
                             type='checkbox'
                             disabled
@@ -61,6 +62,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
                       question.answers.map((answer, index) => (
                         <div key={index}>
                           <Form.Check
+                            aria-label={answer.description}
                             inline label={answer.description}
                             type='radio'
                             disabled
