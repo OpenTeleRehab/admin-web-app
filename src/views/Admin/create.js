@@ -196,50 +196,53 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
       disabled={isLoading}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
-        <Form.Group as={Row}>
-          { keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN) && (
-            <Col xs={5} md={4}>
-              <Form.Check
-                name="type"
-                onChange={handleChange}
-                value={USER_GROUPS.GLOBAL_ADMIN}
-                defaultChecked={formFields.type === USER_GROUPS.GLOBAL_ADMIN}
-                type="radio"
-                label={translate('global_admin')}
-                id="formGlobalAdmin"
-                disabled={!!editId}
-              />
-            </Col>
-          )}
-          { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN) && (
-            <Col xs={7} md={8}>
-              <Form.Check
-                name="type"
-                onChange={handleChange}
-                value={USER_GROUPS.COUNTRY_ADMIN}
-                defaultChecked={formFields.type === USER_GROUPS.COUNTRY_ADMIN}
-                type="radio"
-                label={translate('country_admin')}
-                id="formCountryAdmin"
-                disabled={!!editId}
-              />
-            </Col>
-          )}
-          { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN) && (
-            <Col xs={7} md={8}>
-              <Form.Check
-                name="type"
-                onChange={handleChange}
-                value={USER_GROUPS.CLINIC_ADMIN}
-                defaultChecked={formFields.type === USER_GROUPS.CLINIC_ADMIN}
-                type="radio"
-                label={translate('clinic_admin')}
-                id="formClinicAdmin"
-                disabled={!!editId}
-              />
-            </Col>
-          )}
-        </Form.Group>
+        <fieldset>
+          <legend className="d-none">Admin type</legend>
+          <Form.Group as={Row}>
+            { keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN) && (
+              <Col xs={5} md={4}>
+                <Form.Check
+                  name="type"
+                  onChange={handleChange}
+                  value={USER_GROUPS.GLOBAL_ADMIN}
+                  defaultChecked={formFields.type === USER_GROUPS.GLOBAL_ADMIN}
+                  type="radio"
+                  label={translate('global_admin')}
+                  id="formGlobalAdmin"
+                  disabled={!!editId}
+                />
+              </Col>
+            )}
+            { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN) && (
+              <Col xs={7} md={8} >
+                <Form.Check
+                  name="type"
+                  onChange={handleChange}
+                  value={USER_GROUPS.COUNTRY_ADMIN}
+                  defaultChecked={formFields.type === USER_GROUPS.COUNTRY_ADMIN}
+                  type="radio"
+                  label={translate('country_admin')}
+                  id="formCountryAdmin"
+                  disabled={!!editId}
+                />
+              </Col>
+            )}
+            { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN) && (
+              <Col xs={7} md={8}>
+                <Form.Check
+                  name="type"
+                  onChange={handleChange}
+                  value={USER_GROUPS.CLINIC_ADMIN}
+                  defaultChecked={formFields.type === USER_GROUPS.CLINIC_ADMIN}
+                  type="radio"
+                  label={translate('clinic_admin')}
+                  id="formClinicAdmin"
+                  disabled={!!editId}
+                />
+              </Col>
+            )}
+          </Form.Group>
+        </fieldset>
         <p className="text-muted font-italic">
           { hintMessage }
         </p>
@@ -278,6 +281,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
               ]}
               onChange={(e) => handleSingleSelectChange('country_id', e.id)}
               styles={customSelectStyles}
+              aria-label="Country"
             />
             <Form.Control.Feedback type="invalid">
               { errorCountryMessage }
@@ -315,6 +319,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
               options={clinics}
               onChange={(e) => handleSingleSelectChange('clinic_id', e.id)}
               styles={customSelectStyles}
+              aria-label="Clinic"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.clinic')}
