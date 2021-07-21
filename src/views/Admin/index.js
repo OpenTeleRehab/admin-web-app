@@ -32,6 +32,10 @@ const Admin = ({ translate }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    removeTabIndexAttr();
+  });
+
+  useEffect(() => {
     if (keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN)) {
       setType(USER_GROUPS.GLOBAL_ADMIN);
     } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN)) {
@@ -40,6 +44,20 @@ const Admin = ({ translate }) => {
       setType(USER_GROUPS.CLINIC_ADMIN);
     }
   }, [keycloak]);
+
+  const removeTabIndexAttr = () => {
+    setTimeout(() => {
+      if (keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN)) {
+        document.getElementById('amg-tab-tab-' + USER_ROLES.GLOBAL_ADMIN).removeAttribute('tabindex');
+      }
+      if (keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN)) {
+        document.getElementById('amg-tab-tab-' + USER_ROLES.COUNTRY_ADMIN).removeAttribute('tabindex');
+      }
+      if (keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN)) {
+        document.getElementById('amg-tab-tab-' + USER_ROLES.CLINIC_ADMIN).removeAttribute('tabindex');
+      }
+    }, 100);
+  };
 
   const handleEdit = (id) => {
     setEditId(id);
@@ -106,6 +124,11 @@ const Admin = ({ translate }) => {
     }
   };
 
+  const handleSelectTab = (key) => {
+    setType(key);
+    removeTabIndexAttr();
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
@@ -118,7 +141,7 @@ const Admin = ({ translate }) => {
         </div>
       </div>
 
-      <Tabs activeKey={type} onSelect={(key) => setType(key)} transition={false}>
+      <Tabs id="amg-tab" activeKey={type} onSelect={(key) => handleSelectTab(key)} transition={false}>
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN) && (
           <Tab eventKey={USER_GROUPS.GLOBAL_ADMIN} title={translate('global_admin')}>
             <GlobalAdmin handleEdit={handleEdit} type={type} handleDelete={handleDelete} handleSwitchStatus={handleSwitchStatus} />

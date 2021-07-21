@@ -5,6 +5,9 @@ export const USER_GROUPS = {
 };
 
 export const USER_ROLES = {
+  GLOBAL_ADMIN: 'global_admin',
+  COUNTRY_ADMIN: 'country_admin',
+  CLINIC_ADMIN: 'clinic_admin',
   MANAGE_GLOBAL_ADMIN: 'manage_global_admin',
   MANAGE_COUNTRY_ADMIN: 'manage_country_admin',
   MANAGE_CLINIC_ADMIN: 'manage_clinic_admin',

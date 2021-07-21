@@ -189,7 +189,7 @@ const Questionnaire = ({ translate }) => {
                 {
                   categoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
-                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">

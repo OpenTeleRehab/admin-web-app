@@ -41,6 +41,7 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
           const childSubCategories = _.filter(categories, { parent: sub.id });
           return (
             <ListGroup.Item
+              action
               key={sub.id}
               active={active && active.id === sub.id}
               onClick={() => setActive ? setActive(sub) : undefined}

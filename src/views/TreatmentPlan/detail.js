@@ -45,6 +45,10 @@ const ViewTreatmentPlan = () => {
   const [startDate, setStartDate] = useState('');
 
   useEffect(() => {
+    removeTabIndexAttr();
+  }, []);
+
+  useEffect(() => {
     if (id) {
       dispatch(getTreatmentPlansDetail({ id, lang: profile && profile.language_id, therapist_id: profile && profile.id }));
     }
@@ -66,6 +70,20 @@ const ViewTreatmentPlan = () => {
     }
     // eslint-disable-next-line
   }, [id, treatmentPlansDetail]);
+
+  const handleSelectTab = (key) => {
+    setKey(key);
+    removeTabIndexAttr();
+  };
+
+  const removeTabIndexAttr = () => {
+    setTimeout(() => {
+      document.getElementById('controlled-tab-tab-activities').removeAttribute('tabindex');
+      document.getElementById('controlled-tab-tab-adherence').removeAttribute('tabindex');
+      document.getElementById('controlled-tab-tab-questionnaires').removeAttribute('tabindex');
+      document.getElementById('controlled-tab-tab-goal_tracking').removeAttribute('tabindex');
+    }, 100);
+  };
 
   return (
     <>
@@ -103,7 +121,7 @@ const ViewTreatmentPlan = () => {
         <Tabs
           id="controlled-tab"
           activeKey={key}
-          onSelect={(k) => setKey(k)}
+          onSelect={(key) => handleSelectTab(key)}
         >
           <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
             <ActivitySection weeks={weeks} startDate={startDate} activities={activities} />
