@@ -476,7 +476,7 @@ const CreateExercise = ({ translate }) => {
                 {
                   categoryTreeData.map((category, index) => (
                     <Card key={index}>
-                      <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto">
                           <span className="mr-3">
