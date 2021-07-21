@@ -207,6 +207,7 @@ const EdiInformation = ({ editId }) => {
               getOptionLabel={option => option.name}
               options={countries}
               styles={customSelectStyles}
+              aria-label="Country"
             />
           </Form.Group>
         </Form.Row>
@@ -224,6 +225,7 @@ const EdiInformation = ({ editId }) => {
               getOptionLabel={option => option.name}
               options={clinics}
               styles={customSelectStyles}
+              aria-label="Clinic"
             />
           </Form.Group>
         </Form.Row>

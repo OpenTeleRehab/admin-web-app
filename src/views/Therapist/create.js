@@ -262,6 +262,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               value={profile !== undefined && getCountryName(profile.country_id, countries)}
               getOptionLabel={option => option.label}
               styles={customSelectStyles}
+              aria-label="Country"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.country')}
@@ -342,6 +343,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               ]}
               onChange={(e) => handleSingleSelectChange('profession', e.id)}
               styles={customSelectStyles}
+              aria-label="Profession"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.profession')}
@@ -356,6 +358,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               classNamePrefix="filter"
               className={errorClinic ? 'is-invalid' : ''}
               isDisabled={true}
+              aria-label="Clinic"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.clinic')}
@@ -373,6 +376,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               options={[{ id: '', name: translate('placeholder.language') }, ...languages]}
               onChange={(e) => handleSingleSelectChange('language_id', e.id)}
               styles={customSelectStyles}
+              aria-label="Language"
             />
           </Form.Group>
         </Form.Row>

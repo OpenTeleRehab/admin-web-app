@@ -151,7 +151,7 @@ const CreatePrivacyPolicy = ({ show, editId, handleClose }) => {
             aria-label="Language"
           />
         </Form.Group>
-        <Form.Group controlId="version">
+        <Form.Group>
           <Form.Label>{translate('privacy_policy.version')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Form.Control

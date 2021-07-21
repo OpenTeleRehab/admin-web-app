@@ -94,6 +94,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
                                 variant="link"
                                 size="sm"
                                 className="text-dark drag-button"
+                                aria-label="Drag button"
                               >
                                 <BsArrowsMove size={20}/>
                               </Button>
@@ -104,6 +105,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
                               size="sm"
                               className="text-primary p-0"
                               onClick={() => handleRowEdit(guidancePage.id)}
+                              aria-label="Edit"
                             >
                               <FaEdit size={20} />
                             </Button>
