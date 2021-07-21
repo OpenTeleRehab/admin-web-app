@@ -111,7 +111,7 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
         <Modal.Body>
           {therapistsSameClinic.length > 0 && patientTherapists.length > 0 && !isLastPatient &&
             <Form.Row>
-              <Form.Group as={Col} controlId="formProfession">
+              <Form.Group as={Col} controlId="formTherapist">
                 <Form.Label>{translate('common.therapist')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
                 <Select
@@ -123,6 +123,7 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
                   onChange={(e) => handleSingleSelectChange('therapist_id', e.id)}
                   styles={customSelectStyles}
                   className={errorTherapist ? 'is-invalid' : ''}
+                  aria-label="Therapist"
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.therapist')}
