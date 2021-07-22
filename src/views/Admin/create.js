@@ -300,6 +300,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
               value={profile !== undefined && getCountryName(profile.country_id, countries)}
               getOptionLabel={option => option.label}
               styles={customSelectStyles}
+              aria-label="Country"
             />
             <Form.Control.Feedback type="invalid">
               { translate('error.country') }

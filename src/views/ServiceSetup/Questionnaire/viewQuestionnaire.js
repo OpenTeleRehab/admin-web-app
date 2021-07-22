@@ -78,6 +78,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
                           <Form.Control
                             disabled
                             type="text"
+                            aria-label="Text input box"
                           />
                         </Form.Group>
                       </div>
@@ -90,6 +91,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
                           <Form.Control
                             disabled
                             type="number"
+                            aria-label="Number input box"
                           />
                         </Form.Group>
                       </div>
