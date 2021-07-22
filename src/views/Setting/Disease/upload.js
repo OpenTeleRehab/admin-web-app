@@ -65,7 +65,7 @@ const UploadDisease = ({ translate, handleCloseUploadDialog, showUploadDialog, s
         { isLoading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
         <Row>
           <Col>
-            <Form.Group controlId="formFile">
+            <Form.Group>
               <Form.Label>{translate('disease.bulk_upload.instruction')}</Form.Label>
               <span className="text-dark ml-1">*</span>
               <Row>
@@ -76,6 +76,7 @@ const UploadDisease = ({ translate, handleCloseUploadDialog, showUploadDialog, s
                       onChange={handleFileChange}
                       isInvalid={fileError}
                       accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      aria-label="File"
                     />
                     <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
                     <Form.Control.Feedback type="invalid">

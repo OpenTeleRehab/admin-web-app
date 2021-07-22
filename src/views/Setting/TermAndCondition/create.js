@@ -151,7 +151,7 @@ const CreateTermAndCondition = ({ show, editId, handleClose }) => {
             aria-label="Language"
           />
         </Form.Group>
-        <Form.Group controlId="version">
+        <Form.Group>
           <Form.Label>{translate('term_and_condition.version')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Form.Control
@@ -162,6 +162,7 @@ const CreateTermAndCondition = ({ show, editId, handleClose }) => {
             isInvalid={errorVersion}
             value={formFields.version}
             maxLength={settings.textMaxLength}
+            aria-label="Version"
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.term_and_condition.version')}
