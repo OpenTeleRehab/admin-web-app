@@ -259,7 +259,7 @@ const Exercise = ({ translate }) => {
                     <div className="position-absolute edit-btn">
                       <EditAction onClick={() => handleEdit(exercise.id)} />
                     </div>
-                    <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise.id)}>
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onClick={() => handleView(exercise.id)} onKeyPress={(e) => e.key === 'Enter' && handleView(exercise.id)}>
                       <div className="card-img bg-light">
                         {
                           exercise.files.length > 0 && (
