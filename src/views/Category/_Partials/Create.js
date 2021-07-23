@@ -179,6 +179,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
             ]}
             onChange={(e) => handleSingleSelectChange('current_category', e.id)}
             styles={customSelectStyles}
+            aria-label="Category"
           />
           }
           {allowNew &&
