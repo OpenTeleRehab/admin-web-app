@@ -1,3 +1,16 @@
+button {
+	&.card-header {
+		&:focus {
+			outline: 0 none;
+		}
+
+		&.focus-visible,
+		&:focus-visible {
+			outline: 5px auto $dark !important;
+		}
+	}
+}
+
 .btn-circle {
 	background-color: $white;
 	width: 25px;
