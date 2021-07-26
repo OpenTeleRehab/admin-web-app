@@ -201,6 +201,12 @@ const CreateQuestionnaire = ({ translate }) => {
     }
   };
 
+  const handleNewQuestion = (e) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -314,7 +320,7 @@ const CreateQuestionnaire = ({ translate }) => {
                     variant="link btn-lg"
                     onClick={handleAddQuestion}
                     className="py-1"
-                    onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}
+                    onKeyPress={(e) => handleNewQuestion(e)}
                   >
                     <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
                   </Button>
