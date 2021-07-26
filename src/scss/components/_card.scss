@@ -5,10 +5,20 @@
 		cursor: pointer;
 	}
 
+	&:focus {
+		outline: 0 none;
+	}
+
+	&.focus-visible,
+	&:focus-visible {
+		outline: 5px auto $dark !important;
+	}
+
 	.img-fluid {
 		max-width: 100%;
 		height: 177px;
 	}
+
 	.card-img {
 		height: 177px;
 	}
