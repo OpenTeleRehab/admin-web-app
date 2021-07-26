@@ -304,7 +304,7 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
-  const handleEnableField = (e) => {
+  const handleNewField = (e) => {
     if (e.key === 'Enter') {
       e.stopPropagation();
     }
@@ -575,7 +575,7 @@ const CreateExercise = ({ translate }) => {
                     variant="link"
                     onClick={handleAddFields}
                     className="p-0 mr-1"
-                    onKeyPress={(e) => handleEnableField(e)}
+                    onKeyPress={(e) => handleNewField(e)}
                   >
                     <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
                   </Button>
