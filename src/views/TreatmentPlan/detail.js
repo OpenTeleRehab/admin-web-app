@@ -105,13 +105,15 @@ const ViewTreatmentPlan = () => {
         <div className="patient-info">
           <span className="mr-4">
             <strong>{translate('common.description')}:</strong>&nbsp;
-            <OverlayTrigger
-              overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
-            >
-              <span className="card-title">
-                <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
-              </span>
-            </OverlayTrigger>
+            {formFields.description && (
+              <OverlayTrigger
+                overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
+              >
+                <span className="card-title">
+                  <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
+                </span>
+              </OverlayTrigger>
+            )}
           </span>
           <span className="mr-4"><strong>{translate('common.start_date')}:</strong> {formFields.start_date}</span>
           <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date}</span>
