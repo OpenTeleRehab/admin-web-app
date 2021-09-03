@@ -130,6 +130,7 @@ const CreatePrivacyPolicy = ({ show, editId, handleClose }) => {
 
   return (
     <Dialog
+      enforceFocus={false}
       size="lg"
       show={show}
       title={translate(editId ? 'privacy_policy.edit' : 'privacy_policy.new')}

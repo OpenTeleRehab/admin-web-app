@@ -227,6 +227,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
 
   return (
     <Dialog
+      enforceFocus={false}
       size="lg"
       show={show}
       title={translate(editId ? 'static_page.edit' : 'static_page.new')}
