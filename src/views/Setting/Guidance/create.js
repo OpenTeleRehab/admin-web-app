@@ -115,6 +115,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
 
   return (
     <Dialog
+      enforceFocus={false}
       size="lg"
       show={show}
       title={translate(editId ? 'guidance_page.edit' : 'guidance_page.new')}

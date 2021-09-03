@@ -130,6 +130,7 @@ const CreateTermAndCondition = ({ show, editId, handleClose }) => {
 
   return (
     <Dialog
+      enforceFocus={false}
       size="lg"
       show={show}
       title={translate(editId ? 'term_and_condition.edit' : 'term_and_condition.new')}
