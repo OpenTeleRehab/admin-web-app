@@ -238,7 +238,7 @@ const Questionnaire = ({ translate }) => {
                 <>
                   <ViewAction onClick={() => handleView(questionnaire)} />
                   <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} disabled={questionnaire.is_used} />
+                  <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
                 </>
               );
               return {
