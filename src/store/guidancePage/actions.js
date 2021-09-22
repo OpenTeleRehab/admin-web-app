@@ -77,3 +77,18 @@ export const updateGuidancePages = (payload) => async dispatch => {
     return false;
   }
 };
+
+export const deleteGuidance = id => async (dispatch) => {
+  dispatch(mutation.deleteGuidanceRequest());
+  const data = await guidancePage.deleteGuidancePage(id);
+  if (data.success) {
+    dispatch(mutation.deleteGuidanceSuccess());
+    dispatch(getGuidancePages());
+    dispatch(showSuccessNotification('toast_title.delete_guidance_page', data.message));
+    return true;
+  } else {
+    dispatch(mutation.deleteGuidanceFail());
+    dispatch(showErrorNotification('toast_title.delete_guidance_page', data.message));
+    return false;
+  }
+};

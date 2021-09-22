@@ -61,6 +61,18 @@ const updateGuidancePagesFail = () => ({
   type: 'UPDATE_GUIDANCE_PAGES_FAIL'
 });
 
+const deleteGuidanceRequest = () => ({
+  type: 'DELETE_GUIDANCE_REQUEST'
+});
+
+const deleteGuidanceSuccess = () => ({
+  type: 'DELETE_GUIDANCE_SUCCESS'
+});
+
+const deleteGuidanceFail = () => ({
+  type: 'DELETE_GUIDANCE_FAIL'
+});
+
 export const mutation = {
   getGuidancePagesRequest,
   getGuidancePagesSuccess,
@@ -76,5 +88,8 @@ export const mutation = {
   updateGuidancePageFail,
   updateGuidancePagesRequest,
   updateGuidancePagesSuccess,
-  updateGuidancePagesFail
+  updateGuidancePagesFail,
+  deleteGuidanceRequest,
+  deleteGuidanceSuccess,
+  deleteGuidanceFail
 };

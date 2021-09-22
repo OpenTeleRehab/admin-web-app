@@ -69,10 +69,23 @@ const updateGuidancePages = (payload) => {
     });
 };
 
+const deleteGuidancePage = (id) => {
+  return axios.delete(`/guidance-page/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const guidancePage = {
   getGuidancePage,
   getGuidancePages,
   createGuidancePage,
   updateGuidancePage,
-  updateGuidancePages
+  updateGuidancePages,
+  deleteGuidancePage
 };
