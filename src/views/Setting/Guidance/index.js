@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import {
-  updateGuidancePages, getGuidancePages
+  updateGuidancePages, getGuidancePages, deleteGuidance
 } from 'store/guidancePage/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DeleteAction } from 'components/ActionIcons';
 
 import { BsArrowsMove } from 'react-icons/bs';
 import {
@@ -13,6 +14,7 @@ import {
   Card
 } from 'react-bootstrap';
 import { FaEdit } from 'react-icons/fa/index';
+import Dialog from '../../../components/Dialog';
 
 let timer = null;
 
@@ -29,6 +31,8 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
   const [guidenceObjects, setGuidanceObjects] = useState([]);
+  const [deleteId, setDeleteId] = useState('');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (profile && profile.language_id) {
@@ -44,9 +48,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
   }, [language, dispatch]);
 
   useEffect(() => {
-    if (guidancePages.length) {
-      setGuidanceObjects(guidancePages);
-    }
+    setGuidanceObjects(guidancePages);
   }, [guidancePages]);
 
   const onDragEnd = (e) => {
@@ -66,6 +68,24 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
     if (updatedGuidances.length) {
       dispatch(updateGuidancePages({ guidancePages: updatedGuidances, lang: language }));
     }
+  };
+
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteId(null);
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteDialogConfirm = () => {
+    dispatch(deleteGuidance(deleteId)).then(result => {
+      if (result) {
+        handleDeleteDialogClose();
+      }
+    });
   };
 
   return (
@@ -100,6 +120,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
                               </Button>
                             </div>
 
+                            <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
                             <Button
                               variant="link"
                               size="sm"
@@ -128,6 +149,17 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
             </div>
           )}
         </Droppable>
+
+        <Dialog
+          show={showDeleteDialog}
+          title={translate('guidance.delete_confirmation_title')}
+          cancelLabel={translate('common.no')}
+          onCancel={handleDeleteDialogClose}
+          confirmLabel={translate('common.yes')}
+          onConfirm={handleDeleteDialogConfirm}
+        >
+          <p>{translate('common.delete_confirmation_message')}</p>
+        </Dialog>
       </DragDropContext>
     </>
   );
