@@ -239,7 +239,7 @@ const EducationMaterial = ({ translate }) => {
                 <>
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />
                   <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
-                  <DeleteAction onClick={() => handleDelete(educationMaterial.id)} disabled={educationMaterial.is_used} />
+                  <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
                 </>
               );
               return {

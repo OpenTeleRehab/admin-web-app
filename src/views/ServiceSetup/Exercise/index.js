@@ -254,7 +254,7 @@ const Exercise = ({ translate }) => {
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
                     <div className="position-absolute delete-btn">
-                      <DeleteAction disabled={exercise.is_used} onClick={() => handleDelete(exercise.id)} />
+                      <DeleteAction onClick={() => handleDelete(exercise.id)} />
                     </div>
                     <div className="position-absolute edit-btn">
                       <EditAction onClick={() => handleEdit(exercise.id)} />
