@@ -45,7 +45,7 @@ const Disease = ({ translate, handleRowEdit }) => {
   return (
     <div className="card">
       <BasicTable
-        rows={diseases.map(disease => {
+        rows={diseases.map((disease, index) => {
           const action = (
             <>
               <EditAction onClick={() => handleRowEdit(disease.id)}/>
@@ -53,7 +53,7 @@ const Disease = ({ translate, handleRowEdit }) => {
             </>
           );
           return {
-            id: disease.id,
+            id: index + 1,
             name: disease.name,
             action
           };
