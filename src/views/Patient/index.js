@@ -91,7 +91,7 @@ const Patient = ({ translate }) => {
             country: getCountryName(patient.country_id, countries),
             clinic: getClinicName(patient.clinic_id, clinics),
             region: getClinicRegion(patient.clinic_id, clinics),
-            treatment_status: renderStatusBadge(patient.upcomingTreatmentPlan)
+            treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.lastTreatmentPlan)
           };
         })}
       />
