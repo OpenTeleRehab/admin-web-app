@@ -2,7 +2,7 @@ import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
 const getDataForCountryAdmin = countryId => {
-  return axios.get('chart/country-admin-dashboard', { params: countryId })
+  return axios.get('chart/country-admin-dashboard', { params: countryId, headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
