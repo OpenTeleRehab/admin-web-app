@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Form
-} from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
@@ -9,6 +7,7 @@ import PropTypes from 'prop-types';
 import settings from 'settings';
 import { createGuidancePage, getGuidancePage, updateGuidancePage } from 'store/guidancePage/actions';
 import { Editor } from '@tinymce/tinymce-react';
+import { File } from '../../../services/file';
 
 const CreateGuidancePage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -159,13 +158,39 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
             isInvalid={errorContent}
             value={content}
             init={{
-              height: 500,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-              ],
-              toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link | help'
+              image_title: true,
+              automatic_uploads: true,
+              file_picker_types: 'image',
+              file_picker_callback: (cb, value, meta) => {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.onchange = function () {
+                  var file = this.files[0];
+                  var reader = new FileReader();
+                  reader.onload = async () => {
+                    const base64 = reader.result;
+                    const fileUpload = {
+                      url: base64,
+                      fileName: file.name,
+                      fileSize: file.size,
+                      fileType: file.type
+                    };
+                    const data = await File.upload(fileUpload);
+                    if (data.success) {
+                      const file = data.data;
+                      const path = process.env.REACT_APP_API_BASE_URL + '/file/' + file.id;
+                      cb(path, { title: file.filename });
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                };
+                input.click();
+              },
+              height: settings.tinymce.height,
+              plugins: settings.tinymce.plugins,
+              content_style: settings.tinymce.contentStyle,
+              toolbar: settings.tinymce.toolbar
             }}
             onEditorChange={handleEditorChange}
           />

@@ -11,11 +11,12 @@ import PropTypes from 'prop-types';
 import settings from 'settings';
 import { createStaticPage, getStaticPage, updateStaticPage } from 'store/staticPage/actions';
 import { toMB } from '../../../utils/file';
-import { BsUpload, BsXCircle } from 'react-icons/bs/index';
+import { BsUpload, BsXCircle } from 'react-icons/bs';
 import { Editor } from '@tinymce/tinymce-react';
 
 import { SketchPicker } from 'react-color';
 import Select from 'react-select';
+import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
@@ -364,14 +365,39 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             isInvalid={errorContent}
             value={content}
             init={{
-              height: 500,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-              ],
-              toolbar:
-              'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link | help'
+              image_title: true,
+              automatic_uploads: true,
+              file_picker_types: 'image',
+              file_picker_callback: (cb, value, meta) => {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.onchange = function () {
+                  var file = this.files[0];
+                  var reader = new FileReader();
+                  reader.onload = async () => {
+                    const base64 = reader.result;
+                    const fileUpload = {
+                      url: base64,
+                      fileName: file.name,
+                      fileSize: file.size,
+                      fileType: file.type
+                    };
+                    const data = await File.upload(fileUpload);
+                    if (data.success) {
+                      const file = data.data;
+                      const path = process.env.REACT_APP_API_BASE_URL + '/file/' + file.id;
+                      cb(path, { title: file.filename });
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                };
+                input.click();
+              },
+              height: settings.tinymce.height,
+              plugins: settings.tinymce.plugins,
+              content_style: settings.tinymce.contentStyle,
+              toolbar: settings.tinymce.toolbar
             }}
             onEditorChange={handleEditorChange}
           />
