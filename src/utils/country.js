@@ -28,7 +28,7 @@ export const getTotalTherapistLimit = (id, countries) => {
 export const getCountryIsoCode = () => {
   const profile = store.getState().auth.profile;
   const countries = store.getState().country.countries;
-  const country = countries.find(item => item.id === profile && profile.country_id);
+  const country = countries.find(item => item.id === profile.country_id);
 
   return country ? country.iso_code : '';
 };
