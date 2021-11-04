@@ -14,7 +14,7 @@ const TreatmentHistory = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const history = useHistory();
-  const { patientId } = useParams();
+  const { patientId, countryId } = useParams();
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
 
   const columns = [
@@ -42,6 +42,7 @@ const TreatmentHistory = () => {
       clearTimeout(timer);
       timer = setTimeout(() => {
         dispatch(getTreatmentPlans({
+          country_id: countryId,
           patient_id: patientId,
           search_value: searchValue,
           filters: filters,
@@ -54,10 +55,10 @@ const TreatmentHistory = () => {
         });
       }, 500);
     }
-  }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
+  }, [currentPage, pageSize, searchValue, filters, patientId, dispatch, countryId]);
 
   const handleRowClick = (row) => {
-    history.push(ROUTES.VIEW_TREATMENT_PLAN_DETAIL.replace(':patientId', patientId).replace(':id', row.id));
+    history.push(ROUTES.VIEW_TREATMENT_PLAN_DETAIL.replace(':patientId', patientId).replace(':countryId', countryId).replace(':id', row.id));
   };
 
   return (

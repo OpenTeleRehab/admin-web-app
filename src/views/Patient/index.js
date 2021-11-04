@@ -6,7 +6,7 @@ import CustomTable from 'components/Table';
 import { getCountryName } from 'utils/country';
 import { getClinicName, getClinicRegion } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
-import { getPatients } from 'store/therapist/actions';
+import { getGlobalPatients } from 'store/globalPatient/actions';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { USER_GROUPS } from 'variables/user';
 import * as ROUTES from 'variables/routes';
@@ -46,7 +46,7 @@ const Patient = ({ translate }) => {
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    dispatch(getPatients({
+    dispatch(getGlobalPatients({
       page_size: pageSize,
       page: currentPage + 1,
       search_value: searchValue,
@@ -61,7 +61,7 @@ const Patient = ({ translate }) => {
   }, [currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
 
   const handleRowClick = (row) => {
-    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
+    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id).replace(':countryId', row.country_id));
   };
 
   return (
@@ -84,7 +84,8 @@ const Patient = ({ translate }) => {
         hover="hover-primary"
         rows={patients.map(patient => {
           return {
-            id: patient.id,
+            id: patient.patient_id,
+            country_id: patient.country_id,
             identity: patient.identity,
             email: patient.email,
             age: patient.date_of_birth !== null ? AgeCalculation(patient.date_of_birth, translate) : '',

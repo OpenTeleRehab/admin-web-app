@@ -14,7 +14,7 @@ export const QUESTIONNAIRE_EDIT = SERVICE_SETUP + '/questionnaire/edit/:id';
 
 export const THERAPIST = '/therapist';
 export const PATIENT = '/patient';
-export const VIEW_PATIENT_DETAIL = `${PATIENT}/:patientId`;
+export const VIEW_PATIENT_DETAIL = `${PATIENT}/:patientId/country/:countryId`;
 export const CATEGORY = '/category';
 export const CATEGORY_EDUCATION = CATEGORY + '#education';
 export const CATEGORY_QUESTIONNAIRE = CATEGORY + '#questionnaire';
