@@ -29,7 +29,7 @@ const ViewTreatmentPlan = () => {
   const { profile } = useSelector((state) => state.auth);
 
   const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
-  const { id, patientId } = useParams();
+  const { id, patientId, countryId } = useParams();
   const [formFields, setFormFields] = useState({
     name: '',
     description: '',
@@ -50,9 +50,9 @@ const ViewTreatmentPlan = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getTreatmentPlansDetail({ id, lang: profile && profile.language_id, therapist_id: profile && profile.id }));
+      dispatch(getTreatmentPlansDetail({ id, lang: profile && profile.language_id, therapist_id: profile && profile.id, country_id: countryId }));
     }
-  }, [id, patientId, dispatch, profile]);
+  }, [id, patientId, dispatch, profile, countryId]);
 
   useEffect(() => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {
@@ -97,7 +97,7 @@ const ViewTreatmentPlan = () => {
             className="ml-auto"
             variant="outline-primary"
             as={Link}
-            to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId)}
+            to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId).replace(':countryId', countryId)}
           >
             &lt; {translate('treatment_plan.back_to_list')}
           </Button>
