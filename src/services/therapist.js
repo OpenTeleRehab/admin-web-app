@@ -91,9 +91,9 @@ const getPatients = payload => {
     });
 };
 
-const getPatientByTherapistIds = (therapistIds) => {
+const getPatientByTherapistIds = (therapistIds, payload) => {
   const params = { therapist_ids: therapistIds };
-  return patientAxios.get('patient/list/by-therapist-ids', { params })
+  return patientAxios.get('patient/list/by-therapist-ids', { params, headers: { country: payload.country_code } })
     .then(
       res => {
         return res.data;

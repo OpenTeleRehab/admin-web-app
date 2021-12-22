@@ -9,7 +9,7 @@ import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import CreateTherapist from 'views/Therapist/create';
 import { getTherapists, updateTherapistStatus, resendEmail } from 'store/therapist/actions';
-import { getCountryName, getCountryISO } from 'utils/country';
+import { getCountryName, getCountryISO, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicRegion, getTotalTherapistLimit } from 'utils/clinic';
 import * as moment from 'moment';
 import settings from 'settings';
@@ -131,7 +131,7 @@ const Therapist = ({ translate }) => {
   useEffect(() => {
     if (therapists && therapists.length > 0 && totalCount) {
       const therapistIds = _.map(therapists, 'id');
-      therapistService.getPatientByTherapistIds(therapistIds).then(res => {
+      therapistService.getPatientByTherapistIds(therapistIds, { country_code: getCountryIsoCode(profile.country_id) }).then(res => {
         if (res.data) {
           setPatients(res.data);
         }
