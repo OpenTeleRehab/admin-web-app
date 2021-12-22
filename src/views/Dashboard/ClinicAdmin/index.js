@@ -21,9 +21,7 @@ const ClinicAdminDashboard = () => {
 
   useEffect(() => {
     if (profile !== undefined) {
-      dispatch(getChartDataClinicAdmin({
-        clinic_id: profile.clinic_id
-      }));
+      dispatch(getChartDataClinicAdmin({ clinic_id: profile.clinic_id }));
     }
   }, [dispatch, profile]);
 
