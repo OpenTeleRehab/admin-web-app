@@ -169,7 +169,7 @@ const EdiInformation = ({ editId }) => {
             placeholder={translate('placeholder.gender')}
             classNamePrefix="filter"
             value={settings.genders.options.filter(option => option.value === formFields.gender)}
-            getOptionLabel={option => option.text}
+            getOptionLabel={option => translate(option.value)}
             options={[{ value: '', text: translate('placeholder.gender') }, ...settings.genders.options]}
             onChange={(e) => handleSingleSelectChange('gender', e.value)}
             aria-label="Gender"
