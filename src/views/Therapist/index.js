@@ -137,7 +137,7 @@ const Therapist = ({ translate }) => {
         }
       });
     };
-  }, [therapists, totalCount]);
+  }, [therapists, totalCount, profile]);
 
   useEffect(() => {
     if (profile !== undefined && profile.type === USER_GROUPS.CLINIC_ADMIN) {

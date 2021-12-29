@@ -59,8 +59,12 @@ const Questionnaire = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
-  }, [language, dispatch]);
+    let languageId = profile.language_id;
+    if (language) {
+      languageId = language;
+    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: languageId }));
+  }, [language, dispatch, profile]);
 
   useEffect(() => {
     if (categoryTreeData.length) {
