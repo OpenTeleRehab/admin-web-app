@@ -39,6 +39,7 @@ import { TABS } from 'variables/exercises';
 import Upload from './upload';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const CreateExercise = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
@@ -620,6 +622,7 @@ const CreateExercise = ({ translate }) => {
           <Upload />
         }
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

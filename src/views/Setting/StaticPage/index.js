@@ -15,6 +15,7 @@ import settings from '../../../settings';
 import { toMB } from '../../../utils/file';
 import _ from 'lodash';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const StaticPage = ({ translate, handleRowEdit }) => {
@@ -22,6 +23,7 @@ const StaticPage = ({ translate, handleRowEdit }) => {
   const { staticPages, filters, partnerLogoFile } = useSelector(state => state.staticPage);
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [partnerLogo, setPartnerLogo] = useState(undefined);
   const { maxFileSize } = settings.educationMaterial;
   const [formFields, setFormFields] = useState({
@@ -150,6 +152,7 @@ const StaticPage = ({ translate, handleRowEdit }) => {
           columns={columns}
         />
       </div>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

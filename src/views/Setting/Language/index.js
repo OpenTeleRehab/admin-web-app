@@ -7,10 +7,13 @@ import BasicTable from 'components/Table/basic';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import Dialog from 'components/Dialog';
 import { deleteLanguage, getLanguages } from 'store/language/actions';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Language = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
   const languages = useSelector(state => state.language.languages);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [columns] = useState([
     { name: 'id', title: translate('common.id') },
@@ -77,6 +80,7 @@ const Language = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

@@ -6,11 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from 'components/Table';
 import { getSystemLimits, updateSystemLimit } from 'store/systemLimit/actions';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
   const { systemLimits } = useSelector(state => state.systemLimit);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
   const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
   const [editingStateColumnExtensions] = useState([
@@ -54,6 +57,7 @@ const SystemLimit = ({ translate }) => {
           return data;
         })}
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

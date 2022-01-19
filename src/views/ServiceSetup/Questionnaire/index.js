@@ -27,6 +27,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const Questionnaire = ({ translate }) => {
@@ -41,6 +42,7 @@ const Questionnaire = ({ translate }) => {
   const { questionnaires, filters } = useSelector(state => state.questionnaire);
   const { profile } = useSelector((state) => state.auth);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -275,6 +277,7 @@ const Questionnaire = ({ translate }) => {
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
       {viewQuestionnaire && <ViewQuestionnaire questionnaire={questionnaire} show={viewQuestionnaire} handleClose={handleQuestionnaireViewClose}/>}
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

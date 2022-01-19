@@ -12,11 +12,13 @@ import SubCategoryCard from '../_Partials/SubCategoryCard';
 import SearchInput from 'components/Form/SearchInput';
 import { getCategories } from 'store/category/actions';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CategoryList = ({ type, translate }) => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
@@ -148,6 +150,7 @@ const CategoryList = ({ type, translate }) => {
           allowNew={allowNew}
         />
       }
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

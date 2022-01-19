@@ -47,7 +47,8 @@ export const USER_ROLES = {
   MANAGE_GUIDANCE_PAGE: 'manage_guidance_page',
   MANAGE_DISEASE: 'manage_disease',
   VIEW_TERM_CONDITION: 'view_term_condition',
-  VIEW_PRIVACY_POLICY: 'view_privacy_policy'
+  VIEW_PRIVACY_POLICY: 'view_privacy_policy',
+  MANAGE_COLOR_SCHEME: 'manage_color_scheme'
 };
 
 export const SETTING_ROLES = [

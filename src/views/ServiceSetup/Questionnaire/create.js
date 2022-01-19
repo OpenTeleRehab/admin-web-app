@@ -25,6 +25,7 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import scssColors from '../../../scss/custom.scss';
 import Select from 'react-select';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
     title: '',
@@ -372,6 +374,7 @@ const CreateQuestionnaire = ({ translate }) => {
           </Col>
         </Row>
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

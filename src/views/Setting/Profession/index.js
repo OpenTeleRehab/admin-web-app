@@ -7,9 +7,12 @@ import BasicTable from 'components/Table/basic';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { deleteProfession } from 'store/profession/actions';
 import Dialog from 'components/Dialog';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Profession = ({ translate, handleRowEdit }) => {
   const professions = useSelector((state) => state.profession.professions);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [deleteId, setDeleteId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const dispatch = useDispatch();
@@ -66,6 +69,7 @@ const Profession = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

@@ -7,9 +7,12 @@ import BasicTable from 'components/Table/basic';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { deleteDisease, getDiseases } from 'store/disease/actions';
 import Dialog from 'components/Dialog';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Disease = ({ translate, handleRowEdit }) => {
   const diseases = useSelector((state) => state.disease.diseases);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [deleteId, setDeleteId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const dispatch = useDispatch();
@@ -70,6 +73,7 @@ const Disease = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

@@ -18,6 +18,7 @@ import StaticPage from 'views/Setting/StaticPage';
 import GuidancePage from 'views/Setting/Guidance';
 import Disease from 'views/Setting/Disease';
 import Organization from './Organization';
+import ColorScheme from 'views/Setting/ColorScheme';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -49,6 +50,7 @@ const VIEW_STATIC_PAGE = 'static_page';
 const VIEW_GUIDANCE_PAGE = 'guidance_page';
 const VIEW_DISEASE = 'disease';
 const VIEW_ORGANIZATION = 'organization';
+const VIEW_COLOR_SCHEME = 'color_scheme';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -83,6 +85,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_DISEASE);
     } else if (hash.includes('#' + VIEW_ORGANIZATION)) {
       setView(VIEW_ORGANIZATION);
+    } else if (hash.includes('#' + VIEW_COLOR_SCHEME)) {
+      setView(VIEW_COLOR_SCHEME);
     } else {
       for (const role of SETTING_ROLES) {
         if (keycloak.hasRealmRole(role)) {
@@ -249,6 +253,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_COLOR_SCHEME} eventKey={VIEW_COLOR_SCHEME}>
+              {translate('setting.color_scheme')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -263,7 +274,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
-
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
     </>
   );
 };

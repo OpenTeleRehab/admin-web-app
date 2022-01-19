@@ -20,12 +20,14 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import keycloak from '../../../utils/keycloak';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
   const { privacyPolicies, privacyPolicy } = useSelector(state => state.privacyPolicy);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector(state => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [privacyPolicyData, setPrivacyPolicyData] = useState([]);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
@@ -175,6 +177,7 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
         </Form.Group>
         <div dangerouslySetInnerHTML={{ __html: privacyPolicy.content }} />
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

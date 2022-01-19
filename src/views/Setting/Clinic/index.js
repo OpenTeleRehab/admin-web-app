@@ -8,10 +8,13 @@ import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getCountryISO } from 'utils/country';
 import Dialog from 'components/Dialog';
 import { deleteClinic } from 'store/clinic/actions';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Clinic = ({ translate, handleRowEdit }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const countries = useSelector(state => state.country.countries);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
 
   const [editId, setEditId] = useState('');
@@ -79,6 +82,7 @@ const Clinic = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

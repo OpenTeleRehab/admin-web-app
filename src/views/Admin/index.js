@@ -13,6 +13,8 @@ import CreateAdmin from './create';
 import PropTypes from 'prop-types';
 import { USER_GROUPS, USER_ROLES } from 'variables/user';
 import Dialog from 'components/Dialog';
+import customColorScheme from '../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Admin = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -24,6 +26,7 @@ const Admin = ({ translate }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showSwitchStatusDialog, setShowSwitchStatusDialog] = useState(false);
   const users = useSelector(state => state.user.users);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [id, setId] = useState(null);
   const [formFields, setFormFields] = useState({
     enabled: 0,
@@ -183,6 +186,7 @@ const Admin = ({ translate }) => {
           <p className="error-feedback">{errorCountryInUsed}</p>
         </div>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

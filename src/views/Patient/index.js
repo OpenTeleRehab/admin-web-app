@@ -11,6 +11,8 @@ import { renderStatusBadge } from 'utils/treatmentPlan';
 import { USER_GROUPS } from 'variables/user';
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
+import customColorScheme from '../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Patient = ({ translate }) => {
   const dispatch = useDispatch();
@@ -18,6 +20,7 @@ const Patient = ({ translate }) => {
   const patients = useSelector(state => state.patient.patients);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
@@ -96,6 +99,7 @@ const Patient = ({ translate }) => {
           };
         })}
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };
