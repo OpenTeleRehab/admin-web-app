@@ -29,6 +29,7 @@ import { guidancePage } from 'store/guidancePage/reducers';
 import { privacyPolicy } from 'store/privacyPolicy/reducers';
 import { treatmentPlan } from 'store/treatmentPlan/reducers';
 import { disease } from 'store/disease/reducers';
+import { organization } from 'store/organization/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -55,7 +56,8 @@ export const rootReducer = {
   privacyPolicy,
   treatmentPlan,
   guidancePage,
-  disease
+  disease,
+  organization
 };
 
 const devTool =

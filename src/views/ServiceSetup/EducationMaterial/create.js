@@ -257,7 +257,7 @@ const CreateEducationMaterial = ({ translate }) => {
                       href={`${process.env.REACT_APP_API_BASE_URL}/file/${materialFile.id}`}
                       /* eslint-disable-next-line react/jsx-no-target-blank */
                       target="_blank"
-                      className="pl-2"
+                      className="pl-2" rel="noreferrer"
                     >
                       {materialFile.fileName}
                     </a>

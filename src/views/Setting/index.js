@@ -16,6 +16,7 @@ import Language from 'views/Setting/Language';
 import StaticPage from 'views/Setting/StaticPage';
 import GuidancePage from 'views/Setting/Guidance';
 import Disease from 'views/Setting/Disease';
+import Organization from './Organization';
 
 import * as ROUTES from 'variables/routes';
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
@@ -29,6 +30,7 @@ import CreatePrivacyPolicy from 'views/Setting/PrivacyPolicy/create';
 import CreateGuidancePage from 'views/Setting/Guidance/create';
 import CreateDisease from 'views/Setting/Disease/create';
 import UploadDisease from './Disease/upload';
+import CreateOrganization from './Organization/create';
 
 const VIEW_COUNTRY = 'country';
 const VIEW_TRANSLATION = 'translation';
@@ -41,6 +43,7 @@ const VIEW_LANGUAGE = 'language';
 const VIEW_STATIC_PAGE = 'static_page';
 const VIEW_GUIDANCE_PAGE = 'guidance_page';
 const VIEW_DISEASE = 'disease';
+const VIEW_ORGANIZATION = 'organization';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -72,6 +75,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_GUIDANCE_PAGE);
     } else if (hash.includes('#' + VIEW_DISEASE)) {
       setView(VIEW_DISEASE);
+    } else if (hash.includes('#' + VIEW_ORGANIZATION)) {
+      setView(VIEW_ORGANIZATION);
     } else {
       for (const role of SETTING_ROLES) {
         if (keycloak.hasRealmRole(role)) {
@@ -108,7 +113,7 @@ const Setting = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('setting')}</h1>
-        {[VIEW_COUNTRY, VIEW_LANGUAGE, VIEW_TERM_AND_CONDITION, VIEW_PRIVACY_POLICY, VIEW_CLINIC, VIEW_STATIC_PAGE, VIEW_PROFESSION, VIEW_GUIDANCE_PAGE, VIEW_DISEASE].map(v => {
+        {[VIEW_COUNTRY, VIEW_LANGUAGE, VIEW_TERM_AND_CONDITION, VIEW_PRIVACY_POLICY, VIEW_CLINIC, VIEW_STATIC_PAGE, VIEW_PROFESSION, VIEW_GUIDANCE_PAGE, VIEW_DISEASE, VIEW_ORGANIZATION].map(v => {
           if (v === view) {
             return (
               <div className="d-flex">
@@ -142,6 +147,7 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_GUIDANCE_PAGE && <CreateGuidancePage show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_PROFESSION && <CreateProfession show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_DISEASE && <CreateDisease show={show} editId={editId} handleClose={handleClose} />}
+      {show && view === VIEW_ORGANIZATION && <CreateOrganization show={show} editId={editId} handleClose={handleClose} />}
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
       <Nav variant="tabs" activeKey={view} className="mb-3">
@@ -222,6 +228,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_ORGANIZATION} eventKey={VIEW_ORGANIZATION}>
+              {translate('setting.organization')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -235,6 +248,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
 
     </>
   );

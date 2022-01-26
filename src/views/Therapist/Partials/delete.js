@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { Therapist as therapistService } from 'services/therapist';
-import { Col } from 'react-bootstrap/esm/index';
 import Select from 'react-select';
 import scssColors from 'scss/custom.scss';
 import { getTranslate, Translate } from 'react-localize-redux';

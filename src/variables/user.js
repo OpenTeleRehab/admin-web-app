@@ -41,7 +41,8 @@ export const USER_ROLES = {
   MANAGE_LANGUAGE: 'manage_language',
   MANAGE_STATIC_PAGE: 'manage_static_page',
   MANAGE_GUIDANCE_PAGE: 'manage_guidance_page',
-  MANAGE_DISEASE: 'manage_disease'
+  MANAGE_DISEASE: 'manage_disease',
+  MANAGE_ORGANIZATION: 'manage_organization'
 };
 
 export const SETTING_ROLES = [
@@ -53,5 +54,6 @@ export const SETTING_ROLES = [
   USER_ROLES.MANAGE_STATIC_PAGE,
   USER_ROLES.MANAGE_TERM_CONDITION,
   USER_ROLES.MANAGE_PRIVACY_POLICY,
-  USER_ROLES.MANAGE_GUIDANCE_PAGE
+  USER_ROLES.MANAGE_GUIDANCE_PAGE,
+  USER_ROLES.MANAGE_ORGANIZATION
 ];
