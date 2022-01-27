@@ -36,8 +36,8 @@ const Admin = ({ translate }) => {
   });
 
   useEffect(() => {
-    if (keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN)) {
-      setType(USER_GROUPS.GLOBAL_ADMIN);
+    if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
+      setType(USER_GROUPS.ORGANIZATION_ADMIN);
     } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN)) {
       setType(USER_GROUPS.COUNTRY_ADMIN);
     } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN)) {
@@ -47,8 +47,8 @@ const Admin = ({ translate }) => {
 
   const removeTabIndexAttr = () => {
     setTimeout(() => {
-      if (keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN)) {
-        document.getElementById('amg-tab-tab-' + USER_ROLES.GLOBAL_ADMIN).removeAttribute('tabindex');
+      if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
+        document.getElementById('amg-tab-tab-' + USER_ROLES.ORGANIZATION_ADMIN).removeAttribute('tabindex');
       }
       if (keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN)) {
         document.getElementById('amg-tab-tab-' + USER_ROLES.COUNTRY_ADMIN).removeAttribute('tabindex');
@@ -142,8 +142,8 @@ const Admin = ({ translate }) => {
       </div>
 
       <Tabs id="amg-tab" activeKey={type} onSelect={(key) => handleSelectTab(key)} transition={false}>
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN) && (
-          <Tab eventKey={USER_GROUPS.GLOBAL_ADMIN} title={translate('global_admin')}>
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && (
+          <Tab eventKey={USER_GROUPS.ORGANIZATION_ADMIN} title={translate('organization_admin')}>
             <GlobalAdmin handleEdit={handleEdit} type={type} handleDelete={handleDelete} handleSwitchStatus={handleSwitchStatus} />
           </Tab>
         )}

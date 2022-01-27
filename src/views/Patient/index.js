@@ -51,7 +51,7 @@ const Patient = ({ translate }) => {
       page: currentPage + 1,
       search_value: searchValue,
       order_by: orderBy,
-      type: USER_GROUPS.GLOBAL_ADMIN,
+      type: USER_GROUPS.ORGANIZATION_ADMIN,
       filters
     })).then(result => {
       if (result) {

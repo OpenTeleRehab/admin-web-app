@@ -45,7 +45,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
     if (editId && users.length) {
       const editingData = users.find(user => user.id === editId);
       setFormFields({
-        type: editingData.type || USER_GROUPS.GLOBAL_ADMIN,
+        type: editingData.type || USER_GROUPS.ORGANIZATION_ADMIN,
         email: editingData.email || '',
         first_name: editingData.first_name || '',
         last_name: editingData.last_name || '',
@@ -73,7 +73,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
       });
     }
 
-    if (formFields.type === USER_GROUPS.GLOBAL_ADMIN) {
+    if (formFields.type === USER_GROUPS.ORGANIZATION_ADMIN) {
       setHintMessage(translate('admin.hint_message_global_admin'));
     } else if (formFields.type === USER_GROUPS.COUNTRY_ADMIN) {
       setHintMessage(translate('admin.hint_message_country_admin'));
@@ -199,22 +199,22 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
         <fieldset>
           <legend className="d-none">Admin type</legend>
           <Form.Group as={Row}>
-            { keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN) && (
-              <Col xs={5} md={4}>
+            { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && (
+              <Col md={6}>
                 <Form.Check
                   name="type"
                   onChange={handleChange}
                   value={USER_GROUPS.GLOBAL_ADMIN}
                   defaultChecked={formFields.type === USER_GROUPS.GLOBAL_ADMIN}
                   type="radio"
-                  label={translate('global_admin')}
+                  label={translate('organization_admin')}
                   id="formGlobalAdmin"
                   disabled={!!editId}
                 />
               </Col>
             )}
             { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN) && (
-              <Col xs={7} md={8} >
+              <Col md={6} >
                 <Form.Check
                   name="type"
                   onChange={handleChange}

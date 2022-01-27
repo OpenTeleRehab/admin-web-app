@@ -38,7 +38,7 @@ const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    if (type === USER_GROUPS.GLOBAL_ADMIN) {
+    if (type === USER_GROUPS.ORGANIZATION_ADMIN) {
       clearTimeout(timer);
       timer = setTimeout(() => {
         dispatch(getUsers({

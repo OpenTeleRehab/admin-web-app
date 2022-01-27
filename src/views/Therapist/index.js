@@ -123,7 +123,7 @@ const Therapist = ({ translate }) => {
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
   useEffect(() => {
-    if (keycloak.hasRealmRole(USER_ROLES.MANAGE_GLOBAL_ADMIN)) {
+    if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
       setIsGlobalAdmin(true);
     }
   }, [keycloak]);
