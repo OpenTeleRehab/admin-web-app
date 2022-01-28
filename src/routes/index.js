@@ -42,7 +42,7 @@ const routes = [
     exact: true,
     type: PRIVATE,
     roles: [
-      USER_ROLES.MANAGE_GLOBAL_ADMIN,
+      USER_ROLES.MANAGE_ORGANIZATION_ADMIN,
       USER_ROLES.MANAGE_COUNTRY_ADMIN,
       USER_ROLES.MANAGE_CLINIC_ADMIN
     ]
@@ -53,7 +53,7 @@ const routes = [
     component: Therapist,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_GLOBAL_ADMIN]
+    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
   },
   {
     title: 'patient',
@@ -61,7 +61,7 @@ const routes = [
     component: Patient,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_GLOBAL_ADMIN]
+    roles: [USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
   },
   {
     title: 'patient.detail',

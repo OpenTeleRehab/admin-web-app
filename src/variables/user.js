@@ -1,13 +1,16 @@
 export const USER_GROUPS = {
+  ORGANIZATION_ADMIN: 'organization_admin',
   GLOBAL_ADMIN: 'global_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin'
 };
 
 export const USER_ROLES = {
+  ORGANIZATION_ADMIN: 'organization_admin',
   GLOBAL_ADMIN: 'global_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
+  MANAGE_ORGANIZATION_ADMIN: 'manage_organization_admin',
   MANAGE_GLOBAL_ADMIN: 'manage_global_admin',
   MANAGE_COUNTRY_ADMIN: 'manage_country_admin',
   MANAGE_CLINIC_ADMIN: 'manage_clinic_admin',
@@ -31,6 +34,7 @@ export const USER_ROLES = {
   INPUT_GOAL_PROGRESS: 'input_goal_progress',
   MESSAGE_CALL_BETWEEN_THERAPIST_PATIENT: 'message_call_between_therapist_patient',
   VIEW_EDIT_OWN_PROFILE: 'view_edit_own_profile',
+  MANAGE_ORGANIZATION: 'manage_organization',
   MANAGE_COUNTRY: 'manage_country',
   MANAGE_TRANSLATION: 'manage_translation',
   MANAGE_SYSTEM_LIMIT: 'manage_system_limit',
@@ -45,6 +49,7 @@ export const USER_ROLES = {
 };
 
 export const SETTING_ROLES = [
+  USER_ROLES.MANAGE_ORGANIZATION,
   USER_ROLES.MANAGE_COUNTRY,
   USER_ROLES.MANAGE_TRANSLATION,
   USER_ROLES.MANAGE_SYSTEM_LIMIT,

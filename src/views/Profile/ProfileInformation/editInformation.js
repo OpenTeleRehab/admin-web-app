@@ -195,7 +195,7 @@ const EdiInformation = ({ editId }) => {
         </Form.Group>
       </Form.Row>
 
-      { profile.type !== USER_GROUPS.GLOBAL_ADMIN && (
+      { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && (
         <Form.Row>
           <Form.Group className="col-sm-4 md-4" controlId="formCountry">
             <Form.Label>{translate('common.country')}</Form.Label>
