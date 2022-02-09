@@ -1,4 +1,4 @@
-import axios from 'utils/axios';
+import axios from 'utils/gAdminAxios';
 import _ from 'lodash';
 
 const getEducationMaterial = (id, language) => {
