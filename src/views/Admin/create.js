@@ -204,8 +204,8 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
                 <Form.Check
                   name="type"
                   onChange={handleChange}
-                  value={USER_GROUPS.GLOBAL_ADMIN}
-                  defaultChecked={formFields.type === USER_GROUPS.GLOBAL_ADMIN}
+                  value={USER_GROUPS.ORGANIZATION_ADMIN}
+                  defaultChecked={formFields.type === USER_GROUPS.ORGANIZATION_ADMIN}
                   type="radio"
                   label={translate('organization_admin')}
                   id="formGlobalAdmin"
