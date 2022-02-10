@@ -1,4 +1,4 @@
-import axios from 'utils/axios';
+import axios from 'utils/gAdminAxios';
 
 const getCategories = payload => {
   return axios.get('/category',

@@ -73,11 +73,13 @@ const Exercise = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
-    let languageId = profile.language_id;
-    if (language) {
-      languageId = language;
+    if (profile) {
+      let languageId = profile.language_id;
+      if (language) {
+        languageId = language;
+      }
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: languageId }));
     }
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: languageId }));
   }, [language, dispatch, profile]);
 
   useEffect(() => {

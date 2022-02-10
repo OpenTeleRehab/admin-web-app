@@ -1,4 +1,4 @@
-import axios from 'utils/axios';
+import axios from 'utils/gAdminAxios';
 
 const getTranslations = () => {
   return axios.get('/translation/i18n/admin_portal')
