@@ -79,6 +79,7 @@ const Therapist = ({ translate }) => {
   ];
 
   const columnExtensions = [
+    { columnName: 'id', wordWrapEnabled: true, width: 250 },
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'limit_patient', wordWrapEnabled: true },
