@@ -23,6 +23,12 @@ export const organization = (state = initialState, action) => {
         organization: action.data
       });
     }
+    case 'GET_ORGANIZATION_THERAPIST_AND_TREATMENT_LIMIT_SUCCESS': {
+      return Object.assign({}, state, {
+        orgTherapistLimit: action.data.max_therapist,
+        orgOngoingTreatmentLimit: action.data.max_ongoing_treatment_plan
+      });
+    }
     default:
       return state;
   }

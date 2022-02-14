@@ -41,6 +41,8 @@ const Organization = ({ translate, handleRowEdit }) => {
     { name: 'name', title: translate('common.name') },
     { name: 'type', title: translate('organization.type') },
     { name: 'admin_email', title: translate('organization.admin_email') },
+    { name: 'max_number_of_therapist', title: translate('organization.max_number_of_therapist') },
+    { name: 'max_ongoing_treatment_plan', title: translate('organization.max_ongoing_treatment_plan') },
     { name: 'action', title: translate('common.action') }
   ]);
 
@@ -59,6 +61,8 @@ const Organization = ({ translate, handleRowEdit }) => {
             name: organization.name,
             type: translate('organization.' + organization.type),
             admin_email: organization.admin_email,
+            max_number_of_therapist: organization.max_number_of_therapist,
+            max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
             action
           };
         })}

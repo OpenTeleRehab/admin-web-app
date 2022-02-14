@@ -8,6 +8,7 @@ import { createCountry, updateCountry, getDefinedCountries } from 'store/country
 import { Clinic as clinicService } from 'services/clinic';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import _ from 'lodash';
 
 const CreateCountry = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -19,8 +20,11 @@ const CreateCountry = ({ show, editId, handleClose }) => {
   const languages = useSelector(state => state.language.languages);
   const countries = useSelector(state => state.country.countries);
   const definedCountries = useSelector(state => state.country.definedCountries);
+  const orgTherapistLimit = useSelector(state => state.organization.orgTherapistLimit);
   const [totalTherapistLimitByCountry, setTotalTherapistLimitByCountry] = useState(0);
   const [errorTherapistLimitMessage, setErrorTherapistLimitMessage] = useState('');
+  const [errorOrgTherapistLimitMessage, setErrorOrgTherapistLimitMessage] = useState('');
+  const [overOrgLimit, setOverOrgLimit] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -54,6 +58,35 @@ const CreateCountry = ({ show, editId, handleClose }) => {
       });
     }
   }, [editId, countries]);
+
+  useEffect(() => {
+    if (countries.length) {
+      if (editId) {
+        const otherCountries = _.filter(countries, country => country.id !== editId);
+        const totalTherapistLimit = _.sumBy(otherCountries, country => {
+          return country.therapist_limit;
+        });
+        const total = parseInt(totalTherapistLimit) + parseInt(formFields.therapist_limit);
+        if (total > parseInt(orgTherapistLimit)) {
+          setOverOrgLimit(true);
+        } else {
+          setOverOrgLimit(false);
+        }
+      } else {
+        const totalTherapistLimitOfAllCountry = _.sumBy(countries, country => {
+          return country.therapist_limit;
+        });
+        const total = parseInt(totalTherapistLimitOfAllCountry) + parseInt(formFields.therapist_limit);
+        if (total === parseInt(orgTherapistLimit)) {
+          setOverOrgLimit(false);
+        } else if (total > parseInt(orgTherapistLimit)) {
+          setOverOrgLimit(true);
+        } else {
+          setOverOrgLimit(false);
+        }
+      }
+    }
+  }, [countries, editId, formFields.therapist_limit]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -100,6 +133,10 @@ const CreateCountry = ({ show, editId, handleClose }) => {
       canSave = false;
       setErrorTherapistLimit(true);
       setErrorTherapistLimitMessage(translate('error.country.therapist_limit.lessthan.theraist_limit_clinic'));
+    } else if (overOrgLimit) {
+      canSave = false;
+      setErrorOrgTherapistLimitMessage(true);
+      setErrorOrgTherapistLimitMessage(translate('error.country.therapist_limit.more_than.org_therapist_limit'));
     } else {
       setErrorTherapistLimit(false);
     }
@@ -211,11 +248,12 @@ const CreateCountry = ({ show, editId, handleClose }) => {
             onChange={handleChange}
             type="text"
             placeholder={translate('placeholder.country.therapist_limit')}
-            isInvalid={errorTherapistLimit}
+            isInvalid={errorTherapistLimit || errorOrgTherapistLimitMessage}
             value={formFields.therapist_limit}
           />
           <Form.Control.Feedback type="invalid">
             { errorTherapistLimitMessage }
+            { errorOrgTherapistLimitMessage }
           </Form.Control.Feedback>
         </Form.Group>
       </Form>

@@ -72,3 +72,17 @@ export const deleteOrganization = id => async (dispatch) => {
     return false;
   }
 };
+
+export const getOrganizationTherapistAndTreatmentLimit = orgName => async dispatch => {
+  dispatch(mutation.getOrganizationTherapistAndTreatmentLimitRequest());
+  dispatch(showSpinner(true));
+  const data = await Organization.getTherapistAndTreatmentLimit(orgName);
+  if (data) {
+    dispatch(mutation.getOrganizationTherapistAndTreatmentLimitSuccess(data.data));
+    dispatch(showSpinner(false));
+  } else {
+    dispatch(mutation.getOrganizationTherapistAndTreatmentLimitFail());
+    dispatch(showSpinner(false));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};

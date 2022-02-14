@@ -9,6 +9,7 @@ import { getSystemLimits, updateSystemLimit } from 'store/systemLimit/actions';
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
   const { systemLimits } = useSelector(state => state.systemLimit);
+  const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
   const [showInlineEdited] = useState(true);
   const [editingStateColumnExtensions] = useState([
     { columnName: 'content_type', editingEnabled: false }
@@ -45,7 +46,7 @@ const SystemLimit = ({ translate }) => {
         rows={systemLimits.map(systemLimit => {
           const data = {
             content_type: translate(systemLimit.content_type),
-            value: systemLimit.value
+            value: systemLimit.content_type === 'number_of_ongoing_treatment_per_therapist' ? orgOngoingTreatmentLimit : systemLimit.value
           };
 
           return data;
