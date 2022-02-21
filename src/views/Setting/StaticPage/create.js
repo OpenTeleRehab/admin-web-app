@@ -18,6 +18,7 @@ import { SketchPicker } from 'react-color';
 import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
+import { USER_GROUPS } from '../../../variables/user';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -263,6 +264,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
           <Form.Label>{translate('setting.translations.platform')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Select
+            isDisabled={profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN}
             placeholder={translate('placeholder.platform')}
             classNamePrefix="filter"
             className={errorPlatform ? 'is-invalid' : ''}
@@ -291,6 +293,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               value={formFields.url}
               maxLength={settings.textMaxLength}
               isInvalid={errorUrl}
+              disabled={profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN}
             />
 
             <Form.Control.Feedback type="invalid">

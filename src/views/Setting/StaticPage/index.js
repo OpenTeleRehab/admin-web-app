@@ -14,6 +14,7 @@ import { BsUpload, BsXCircle } from 'react-icons/bs';
 import settings from '../../../settings';
 import { toMB } from '../../../utils/file';
 import _ from 'lodash';
+import { USER_GROUPS } from '../../../variables/user';
 
 let timer = null;
 const StaticPage = ({ translate, handleRowEdit }) => {
@@ -27,6 +28,7 @@ const StaticPage = ({ translate, handleRowEdit }) => {
     file: undefined
   });
   const [fileError, setFileError] = useState(false);
+  const [pages, setPages] = useState(staticPages);
   const columns = [
     { name: 'title', title: translate('static_page.title') },
     { name: 'platform', title: translate('setting.translations.platform') },
@@ -53,6 +55,12 @@ const StaticPage = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     dispatch(getPartnerLogo());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
+      setPages(_.filter(staticPages, (item) => { return item.platform === 'patient_app' && item.url === 'about-us'; }));
+    }
+  }, [staticPages, profile]);
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -124,12 +132,13 @@ const StaticPage = ({ translate, handleRowEdit }) => {
       </div>
       <div className="card">
         <BasicTable
-          rows={staticPages.map(staticPage => {
+          rows={pages.map(staticPage => {
             const action = (
               <>
                 <EditAction className="ml-1" onClick={() => handleRowEdit(staticPage.id)} />
               </>
             );
+
             return {
               title: staticPage.title,
               platform: staticPage.platform,

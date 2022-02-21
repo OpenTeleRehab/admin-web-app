@@ -17,6 +17,8 @@ import { STATUS_VARIANTS } from 'variables/privacyPolicy';
 import Dialog from 'components/Dialog';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { USER_ROLES } from '../../../variables/user';
+import keycloak from '../../../utils/keycloak';
 
 const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
@@ -107,9 +109,13 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
           const action = (
             <>
               <ViewAction onClick={() => handleViewContent(privacyPolicy.id)}/>
-              <PublishAction className="ml-1" onClick={() => handlePublish(privacyPolicy.id)} disabled={publishedDate} />
-              <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} disabled={publishedDate} />
-              <DeleteAction className="ml-1" disabled />
+              { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && (
+                <>
+                  <PublishAction className="ml-1" onClick={() => handlePublish(privacyPolicy.id)} disabled={publishedDate} />
+                  <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} disabled={publishedDate} />
+                  <DeleteAction className="ml-1" disabled />
+                </>
+              )}
             </>
           );
           const status = privacyPolicy.status && (

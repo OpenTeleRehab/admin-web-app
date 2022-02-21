@@ -17,6 +17,8 @@ import { STATUS_VARIANTS } from 'variables/termAndCondition';
 import Dialog from 'components/Dialog';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { USER_ROLES } from '../../../variables/user';
+import keycloak from '../../../utils/keycloak';
 
 const TermAndCondition = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
@@ -107,9 +109,13 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
           const action = (
             <>
               <ViewAction onClick={() => handleViewContent(term.id)} />
-              <PublishAction className="ml-1" onClick={() => handlePublish(term.id)} disabled={publishedDate} />
-              <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} disabled={publishedDate} />
-              <DeleteAction className="ml-1" disabled />
+              { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && (
+                <>
+                  <PublishAction className="ml-1" onClick={() => handlePublish(term.id)} disabled={publishedDate} />
+                  <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} disabled={publishedDate} />
+                  <DeleteAction className="ml-1" disabled />
+                </>
+              )}
             </>
           );
           const status = term.status && (
