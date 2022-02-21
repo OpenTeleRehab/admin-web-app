@@ -8,6 +8,7 @@ import { getProfessions } from 'store/profession/actions';
 import { getLanguages } from 'store/language/actions';
 import { getDefaultLimitedPatients } from 'store/setting/actions';
 import { getProfile } from 'store/auth/actions';
+import { getOrganizationTherapistAndTreatmentLimit } from './store/organization/actions';
 import SplashScreen from './components/SplashScreen';
 
 const ConfigurationProvider = ({ children }) => {
@@ -28,6 +29,7 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(getProfessions());
       dispatch(getLanguages());
       dispatch(getDefaultLimitedPatients());
+      dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));
     }
   }, [loading, dispatch]);
 

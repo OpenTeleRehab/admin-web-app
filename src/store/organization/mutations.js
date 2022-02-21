@@ -63,6 +63,19 @@ const deleteOrganizationFail = () => ({
   type: 'DELETE_ORGANIZATION_FAIL'
 });
 
+const getOrganizationTherapistAndTreatmentLimitRequest = () => ({
+  type: 'GET_ORGANIZATION_THERAPIST_AND_TREATMENT_LIMIT_REQUEST'
+});
+
+const getOrganizationTherapistAndTreatmentLimitSuccess = (data) => ({
+  type: 'GET_ORGANIZATION_THERAPIST_AND_TREATMENT_LIMIT_SUCCESS',
+  data
+});
+
+const getOrganizationTherapistAndTreatmentLimitFail = () => ({
+  type: 'GET_ORGANIZATION_THERAPIST_AND_TREATMENT_LIMIT_FAIL'
+});
+
 export const mutation = {
   getOrganizationsFail,
   getOrganizationsRequest,
@@ -70,6 +83,9 @@ export const mutation = {
   getOrganizationRequest,
   getOrganizationSuccess,
   getOrganizationFail,
+  getOrganizationTherapistAndTreatmentLimitRequest,
+  getOrganizationTherapistAndTreatmentLimitSuccess,
+  getOrganizationTherapistAndTreatmentLimitFail,
   createOrganizationRequest,
   createOrganizationSuccess,
   createOrganizationFail,

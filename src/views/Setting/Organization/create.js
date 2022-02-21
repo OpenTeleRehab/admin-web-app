@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Form } from 'react-bootstrap';
+import { Col, Form, InputGroup } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
@@ -21,12 +21,16 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   const [errorName, setErrorName] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorSubDomainName, setErrorSubDomainName] = useState(false);
+  const [errorMaxNumberOfTherapist, setErrorMaxNumberOfTherapist] = useState(false);
+  const [errorMaxOngoingTreatmentPlan, setErrorMaxOngoingTreatmentPlan] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
     type: '',
     admin_email: '',
-    sub_domain_name: ''
+    sub_domain_name: '',
+    max_number_of_therapist: 0,
+    max_ongoing_treatment_plan: 0
   });
 
   useEffect(() => {
@@ -41,11 +45,19 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         name: organization.name,
         type: organization.type,
         admin_email: organization.admin_email,
-        sub_domain_name: organization.sub_domain_name
+        sub_domain_name: organization.sub_domain_name,
+        max_number_of_therapist: organization.max_number_of_therapist,
+        max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan
       });
     }
     // eslint-disable-next-line
   }, [editId, organization]);
+
+  useEffect(() => {
+    if (formFields.name) {
+      setFormFields({ ...formFields, sub_domain_name: formFields.name.replace(/\s+/g, '_') });
+    }
+  }, [formFields.name]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -74,6 +86,20 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
       setErrorSubDomainName(true);
     } else {
       setErrorSubDomainName(false);
+    }
+
+    if (formFields.max_number_of_therapist === '') {
+      canSave = false;
+      setErrorMaxNumberOfTherapist(true);
+    } else {
+      setErrorMaxNumberOfTherapist(false);
+    }
+
+    if (formFields.max_ongoing_treatment_plan === '') {
+      canSave = false;
+      setErrorMaxOngoingTreatmentPlan(true);
+    } else {
+      setErrorMaxOngoingTreatmentPlan(false);
     }
 
     if (canSave) {
@@ -124,6 +150,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
               isInvalid={errorName}
               value={formFields.name}
               maxLength={settings.textMaxLength}
+              disabled={!!editId}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.name')}
@@ -152,17 +179,59 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
           <Form.Group as={Col} controlId="subDomainName">
             <Form.Label>{translate('organization.sub_domain_name')}</Form.Label>
             <span className="text-dark ml-1">*</span>
+            <InputGroup className="mb-3">
+              <Form.Control
+                name="sub_domain_name"
+                onChange={handleChange}
+                type="text"
+                placeholder={translate('placeholder.organization.sub_domain_name')}
+                isInvalid={errorSubDomainName}
+                value={formFields.sub_domain_name}
+                maxLength={settings.textMaxLength}
+                disabled={!!editId}
+              />
+              <InputGroup.Append className="show-hide-password-btn">
+                <InputGroup.Text id="basic-addon1">.opentelerehab.com</InputGroup.Text>
+              </InputGroup.Append>
+              <Form.Control.Feedback type="invalid">
+                {translate('error.organization.sub_domain_name')}
+              </Form.Control.Feedback>
+            </InputGroup>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="maxNumberOfTherapist">
+            <Form.Label>{translate('organization.max_number_of_therapist')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
             <Form.Control
-              name="sub_domain_name"
+              name="max_number_of_therapist"
               onChange={handleChange}
-              type="text"
-              placeholder={translate('placeholder.organization.sub_domain_name')}
-              isInvalid={errorSubDomainName}
-              value={formFields.sub_domain_name}
-              maxLength={settings.textMaxLength}
+              type="number"
+              min={0}
+              placeholder={translate('placeholder.organization.max_number_of_therapist')}
+              isInvalid={errorMaxNumberOfTherapist}
+              value={formFields.max_number_of_therapist}
             />
             <Form.Control.Feedback type="invalid">
-              {translate('error.organization.sub_domain_name')}
+              {translate('error.organization.max_number_of_therapist')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="maxOngoingTreatmentPlan">
+            <Form.Label>{translate('organization.max_ongoing_treatment_plan')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Form.Control
+              name="max_ongoing_treatment_plan"
+              onChange={handleChange}
+              type="number"
+              min={0}
+              placeholder={translate('placeholder.organization.max_ongoing_treatment_plan')}
+              isInvalid={errorMaxOngoingTreatmentPlan}
+              value={formFields.max_ongoing_treatment_plan}
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.organization.max_ongoing_treatment_plan')}
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>

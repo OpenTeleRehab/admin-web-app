@@ -1,4 +1,5 @@
 import axios from 'utils/axios';
+import gAdminAxios from 'utils/gAdminAxios';
 
 const getOrganizations = () => {
   return axios.get('/organization')
@@ -61,10 +62,24 @@ const deleteOrganization = id => {
     });
 };
 
+const getTherapistAndTreatmentLimit = orgName => {
+  const params = { org_name: orgName };
+  return gAdminAxios.get('org/org-therapist-and-treatment-limit', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Organization = {
   getOrganizations,
   getOrganization,
   createOrganization,
   updateOrganization,
-  deleteOrganization
+  deleteOrganization,
+  getTherapistAndTreatmentLimit
 };
