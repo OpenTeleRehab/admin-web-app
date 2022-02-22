@@ -125,11 +125,16 @@ const Setting = ({ translate }) => {
                     </Button>
                   </div>
                 )}
+
                 <div key={v} className="btn-toolbar mb-2 mb-md-0">
-                  <Button variant="primary" onClick={handleShow}>
-                    <BsPlus size={20} className="mr-1" />
-                    { translate(`${view}.new`) }
-                  </Button>
+                  {((view === VIEW_TERM_AND_CONDITION && !keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) || (view === VIEW_PRIVACY_POLICY && !keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY))) ? (
+                    ''
+                  ) : (
+                    <Button variant="primary" onClick={handleShow}>
+                      <BsPlus size={20} className="mr-1" />
+                      { translate(`${view}.new`) }
+                    </Button>
+                  )}
                 </div>
               </div>
             );
@@ -172,14 +177,14 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.VIEW_TERM_CONDITION)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_TERM_AND_CONDITION} eventKey={VIEW_TERM_AND_CONDITION}>
               {translate('setting.term_and_conditions')}
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.VIEW_PRIVACY_POLICY)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_PRIVACY_POLICY} eventKey={VIEW_PRIVACY_POLICY}>
               {translate('setting.privacy_policy')}
@@ -240,12 +245,12 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_LANGUAGE) && view === VIEW_LANGUAGE && <Language handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_TRANSLATION) && view === VIEW_TRANSLATION && <Translation /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && view === VIEW_TERM_AND_CONDITION && <TermAndCondition handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.VIEW_TERM_CONDITION)) && view === VIEW_TERM_AND_CONDITION && <TermAndCondition handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SYSTEM_LIMIT) && view === VIEW_SYSTEM_LIMIT && <SystemLimit /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && view === VIEW_CLINIC && <Clinic handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION) && view === VIEW_PROFESSION && <Profession handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.VIEW_PRIVACY_POLICY)) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }

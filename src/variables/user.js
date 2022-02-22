@@ -45,11 +45,12 @@ export const USER_ROLES = {
   MANAGE_LANGUAGE: 'manage_language',
   MANAGE_STATIC_PAGE: 'manage_static_page',
   MANAGE_GUIDANCE_PAGE: 'manage_guidance_page',
-  MANAGE_DISEASE: 'manage_disease'
+  MANAGE_DISEASE: 'manage_disease',
+  VIEW_TERM_CONDITION: 'view_term_condition',
+  VIEW_PRIVACY_POLICY: 'view_privacy_policy'
 };
 
 export const SETTING_ROLES = [
-  USER_ROLES.MANAGE_ORGANIZATION,
   USER_ROLES.MANAGE_COUNTRY,
   USER_ROLES.MANAGE_TRANSLATION,
   USER_ROLES.MANAGE_SYSTEM_LIMIT,
