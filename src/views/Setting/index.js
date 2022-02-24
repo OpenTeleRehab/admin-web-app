@@ -3,6 +3,7 @@ import { Button, Nav } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { BsPlus, BsUpload } from 'react-icons/bs';
 import { useKeycloak } from '@react-keycloak/web';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Country from 'views/Setting/Country';
@@ -19,7 +20,11 @@ import Disease from 'views/Setting/Disease';
 import Organization from './Organization';
 
 import * as ROUTES from 'variables/routes';
-import { USER_ROLES, SETTING_ROLES } from 'variables/user';
+import {
+  USER_ROLES,
+  SETTING_ROLES,
+  USER_GROUPS
+} from 'variables/user';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
 import CreateLanguage from 'views/Setting/Language/create';
@@ -48,6 +53,7 @@ const VIEW_ORGANIZATION = 'organization';
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const { hash } = useLocation();
+  const { profile } = useSelector((state) => state.auth);
   const [view, setView] = useState(undefined);
   const [show, setShow] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
@@ -127,14 +133,17 @@ const Setting = ({ translate }) => {
                 )}
 
                 <div key={v} className="btn-toolbar mb-2 mb-md-0">
-                  {((view === VIEW_TERM_AND_CONDITION && !keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) || (view === VIEW_PRIVACY_POLICY && !keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY))) ? (
-                    ''
-                  ) : (
-                    <Button variant="primary" onClick={handleShow}>
-                      <BsPlus size={20} className="mr-1" />
-                      { translate(`${view}.new`) }
-                    </Button>
-                  )}
+                  {((view === VIEW_TERM_AND_CONDITION && !keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) ||
+                    (view === VIEW_PRIVACY_POLICY && !keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
+                    (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN)
+                  ) ? (
+                      ''
+                    ) : (
+                      <Button variant="primary" onClick={handleShow}>
+                        <BsPlus size={20} className="mr-1" />
+                        { translate(`${view}.new`) }
+                      </Button>
+                    )}
                 </div>
               </div>
             );

@@ -25,6 +25,7 @@ const getStaticPages = payload => {
       return e.response.data;
     });
 };
+
 const createStaticPage = (payload) => {
   const formData = new FormData();
   _.forIn(payload, (value, key) => {
