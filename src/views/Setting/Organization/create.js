@@ -55,7 +55,10 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
 
   useEffect(() => {
     if (formFields.name) {
-      setFormFields({ ...formFields, sub_domain_name: formFields.name.replace(/\s+/g, '_') });
+      setFormFields({
+        ...formFields,
+        sub_domain_name: formFields.name.replace(/\s+/g, '').toLowerCase()
+      });
     }
   }, [formFields.name]);
 
