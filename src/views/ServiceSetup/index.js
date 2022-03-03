@@ -31,28 +31,30 @@ const ServiceSetup = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('service_setup')}</h1>
-        <div className="btn-toolbar mb-2 mb-md-0">
+        { process.env.REACT_APP_NAME === 'hi' &&
           <div className="btn-toolbar mb-2 mb-md-0">
-            {view === VIEW_EXERCISE
-              ? <Button
-                as={Link} to={ROUTES.EXERCISE_CREATE}>
-                <BsPlus size={20} className="mr-1" />
-                {translate('common.new_content')}
-              </Button>
-              : view === VIEW_EDUCATION
+            <div className="btn-toolbar mb-2 mb-md-0">
+              {view === VIEW_EXERCISE
                 ? <Button
-                  as={Link} to={ROUTES.EDUCATION_MATERIAL_CREATE}>
+                  as={Link} to={ROUTES.EXERCISE_CREATE}>
                   <BsPlus size={20} className="mr-1" />
                   {translate('common.new_content')}
                 </Button>
-                : <Button
-                  as={Link} to={ROUTES.QUESTIONNAIRE_CREATE}>
-                  <BsPlus size={20} className="mr-1" />
-                  {translate('common.new_content')}
-                </Button>
-            }
+                : view === VIEW_EDUCATION
+                  ? <Button
+                    as={Link} to={ROUTES.EDUCATION_MATERIAL_CREATE}>
+                    <BsPlus size={20} className="mr-1" />
+                    {translate('common.new_content')}
+                  </Button>
+                  : <Button
+                    as={Link} to={ROUTES.QUESTIONNAIRE_CREATE}>
+                    <BsPlus size={20} className="mr-1" />
+                    {translate('common.new_content')}
+                  </Button>
+              }
+            </div>
           </div>
-        </div>
+        }
       </div>
 
       <Nav variant="tabs" activeKey={view} className="mb-3">

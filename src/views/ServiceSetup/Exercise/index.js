@@ -259,12 +259,16 @@ const Exercise = ({ translate }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    <div className="position-absolute delete-btn">
-                      <DeleteAction onClick={() => handleDelete(exercise.id)} />
-                    </div>
-                    <div className="position-absolute edit-btn">
-                      <EditAction onClick={() => handleEdit(exercise.id)} />
-                    </div>
+                    { process.env.REACT_APP_NAME === 'hi' &&
+                      <>
+                        <div className="position-absolute delete-btn">
+                          <DeleteAction onClick={() => handleDelete(exercise.id)} />
+                        </div>
+                        <div className="position-absolute edit-btn">
+                          <EditAction onClick={() => handleEdit(exercise.id)} />
+                        </div>
+                      </>
+                    }
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onClick={() => handleView(exercise.id)} onKeyPress={(e) => e.key === 'Enter' && handleView(exercise.id)}>
                       <div className="card-img bg-light">
                         {

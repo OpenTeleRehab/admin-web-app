@@ -241,8 +241,12 @@ const Questionnaire = ({ translate }) => {
               const action = (
                 <>
                   <ViewAction onClick={() => handleView(questionnaire)} />
-                  <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
+                  { process.env.REACT_APP_NAME === 'hi' &&
+                    <>
+                      <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
+                      <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
+                    </>
+                  }
                 </>
               );
               return {
