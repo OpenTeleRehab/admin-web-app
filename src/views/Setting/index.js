@@ -135,7 +135,7 @@ const Setting = ({ translate }) => {
                 <div key={v} className="btn-toolbar mb-2 mb-md-0">
                   {((view === VIEW_TERM_AND_CONDITION && !keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) ||
                     (view === VIEW_PRIVACY_POLICY && !keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
-                    (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN)
+                    (view === VIEW_STATIC_PAGE && profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN)
                   ) ? (
                       ''
                     ) : (
