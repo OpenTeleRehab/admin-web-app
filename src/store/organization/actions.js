@@ -73,10 +73,10 @@ export const deleteOrganization = id => async (dispatch) => {
   }
 };
 
-export const getOrganizationTherapistAndTreatmentLimit = subDomain => async dispatch => {
+export const getOrganizationTherapistAndTreatmentLimit = orgName => async dispatch => {
   dispatch(mutation.getOrganizationTherapistAndTreatmentLimitRequest());
   dispatch(showSpinner(true));
-  const data = await Organization.getTherapistAndTreatmentLimit(subDomain);
+  const data = await Organization.getTherapistAndTreatmentLimit(orgName);
   if (data) {
     dispatch(mutation.getOrganizationTherapistAndTreatmentLimitSuccess(data.data));
     dispatch(showSpinner(false));

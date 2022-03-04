@@ -62,8 +62,9 @@ const deleteOrganization = id => {
     });
 };
 
-const getTherapistAndTreatmentLimit = subDomain => {
-  const params = { sub_domain: subDomain };
+const getTherapistAndTreatmentLimit = orgName => {
+  const params = { org_name: orgName };
+
   return gAdminAxios.get('org/org-therapist-and-treatment-limit', { params })
     .then(
       res => {
