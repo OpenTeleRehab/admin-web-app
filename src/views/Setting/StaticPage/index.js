@@ -59,6 +59,8 @@ const StaticPage = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
       setPages(_.filter(staticPages, (item) => { return item.url === 'about-us'; }));
+    } else {
+      setPages(staticPages);
     }
   }, [staticPages, profile]);
 
