@@ -1,4 +1,4 @@
-import axios from 'utils/axios';
+import axios from 'utils/gAdminAxios';
 
 const getTermAndConditions = () => {
   return axios.get('/term-condition')
