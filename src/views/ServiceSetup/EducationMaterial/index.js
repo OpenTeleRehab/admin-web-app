@@ -242,8 +242,12 @@ const EducationMaterial = ({ translate }) => {
               const action = (
                 <>
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />
-                  <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
-                  <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
+                  { process.env.REACT_APP_NAME === 'hi' &&
+                    <>
+                      <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
+                      <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
+                    </>
+                  }
                 </>
               );
               return {
