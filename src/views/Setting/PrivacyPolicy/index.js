@@ -4,6 +4,7 @@ import { withLocalize } from 'react-localize-redux';
 import { Badge, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import * as moment from 'moment';
+import _ from 'lodash';
 
 import settings from 'settings';
 import BasicTable from 'components/Table/basic';
@@ -13,11 +14,11 @@ import {
   getPrivacyPolicy,
   publishPrivacyPolicy
 } from 'store/privacyPolicy/actions';
-import { STATUS_VARIANTS } from 'variables/privacyPolicy';
+import { STATUS_VARIANTS, STATUSES } from 'variables/privacyPolicy';
 import Dialog from 'components/Dialog';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_ROLES } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import keycloak from '../../../utils/keycloak';
 
 const PrivacyPolicy = ({ translate, handleRowEdit }) => {
@@ -26,6 +27,7 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector(state => state.auth);
 
+  const [privacyPolicyData, setPrivacyPolicyData] = useState([]);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
   const [publishedId, setPublishedId] = useState(null);
   const [showViewDialog, setShowViewDialog] = useState(false);
@@ -60,6 +62,14 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     dispatch(getPrivacyPolicies());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
+      setPrivacyPolicyData(_.filter(privacyPolicies, (item) => { return item.status === STATUSES.PUBLISHED; }));
+    } else {
+      setPrivacyPolicyData(privacyPolicies);
+    }
+  }, [profile, privacyPolicies]);
 
   const handlePublish = (id) => {
     setPublishedId(id);
@@ -104,7 +114,7 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   return (
     <div className="card">
       <BasicTable
-        rows={privacyPolicies.map(privacyPolicy => {
+        rows={privacyPolicyData.map(privacyPolicy => {
           const publishedDate = privacyPolicy.published_date;
           const action = (
             <>
