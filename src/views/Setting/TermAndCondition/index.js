@@ -4,6 +4,7 @@ import { withLocalize } from 'react-localize-redux';
 import { Badge, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import * as moment from 'moment';
+import _ from 'lodash';
 
 import settings from 'settings';
 import BasicTable from 'components/Table/basic';
@@ -13,11 +14,11 @@ import {
   getTermAndConditions,
   publishTermAndCondition
 } from 'store/termAndCondition/actions';
-import { STATUS_VARIANTS } from 'variables/termAndCondition';
+import { STATUS_VARIANTS, STATUSES } from 'variables/termAndCondition';
 import Dialog from 'components/Dialog';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_ROLES } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import keycloak from '../../../utils/keycloak';
 
 const TermAndCondition = ({ translate, handleRowEdit }) => {
@@ -26,6 +27,7 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector(state => state.auth);
 
+  const [termsConditionsData, setTermsConditionsData] = useState([]);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
   const [publishedId, setPublishedId] = useState(null);
   const [showViewDialog, setShowViewDialog] = useState(false);
@@ -60,6 +62,14 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     dispatch(getTermAndConditions());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
+      setTermsConditionsData(_.filter(termAndConditions, (item) => { return item.status === STATUSES.PUBLISHED; }));
+    } else {
+      setTermsConditionsData(termAndConditions);
+    }
+  }, [profile, termAndConditions]);
 
   const handlePublish = (id) => {
     setPublishedId(id);
@@ -104,7 +114,7 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
   return (
     <div className="card">
       <BasicTable
-        rows={termAndConditions.map(term => {
+        rows={termsConditionsData.map(term => {
           const publishedDate = term.published_date;
           const action = (
             <>
