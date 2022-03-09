@@ -39,6 +39,7 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { USER_GROUPS } from '../../../variables/user';
 
 let timer = null;
 const Exercise = ({ translate }) => {
@@ -259,7 +260,7 @@ const Exercise = ({ translate }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    { process.env.REACT_APP_NAME === 'hi' &&
+                    { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
                       <>
                         <div className="position-absolute delete-btn">
                           <DeleteAction onClick={() => handleDelete(exercise.id)} />

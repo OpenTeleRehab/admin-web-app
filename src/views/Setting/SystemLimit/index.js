@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import CustomTable from 'components/Table';
 import { getSystemLimits, updateSystemLimit } from 'store/systemLimit/actions';
+import { USER_GROUPS } from '../../../variables/user';
 
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
   const { systemLimits } = useSelector(state => state.systemLimit);
+  const { profile } = useSelector((state) => state.auth);
   const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
-  const [showInlineEdited] = useState(true);
+  const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
   const [editingStateColumnExtensions] = useState([
     { columnName: 'content_type', editingEnabled: false }
   ]);

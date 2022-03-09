@@ -8,6 +8,8 @@ import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import { BsPlus } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
+import { USER_GROUPS } from '../../variables/user';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -15,6 +17,7 @@ const VIEW_QUESTIONNAIRE = 'questionnaire';
 
 const ServiceSetup = ({ translate }) => {
   const { hash } = useLocation();
+  const { profile } = useSelector((state) => state.auth);
   const [view, setView] = useState(undefined);
 
   useEffect(() => {
@@ -31,7 +34,7 @@ const ServiceSetup = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('service_setup')}</h1>
-        { process.env.REACT_APP_NAME === 'hi' &&
+        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
           <div className="btn-toolbar mb-2 mb-md-0">
             <div className="btn-toolbar mb-2 mb-md-0">
               {view === VIEW_EXERCISE

@@ -26,6 +26,7 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { USER_GROUPS } from '../../../variables/user';
 
 let timer = null;
 const Questionnaire = ({ translate }) => {
@@ -241,7 +242,7 @@ const Questionnaire = ({ translate }) => {
               const action = (
                 <>
                   <ViewAction onClick={() => handleView(questionnaire)} />
-                  { process.env.REACT_APP_NAME === 'hi' &&
+                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
                     <>
                       <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
                       <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />

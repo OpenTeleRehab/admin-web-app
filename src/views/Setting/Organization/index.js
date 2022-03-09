@@ -4,9 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withLocalize } from 'react-localize-redux';
 
 import BasicTable from 'components/Table/basic';
-import { EditAction, DeleteAction } from 'components/ActionIcons';
+import { EditAction } from 'components/ActionIcons';
 import Dialog from 'components/Dialog';
 import { deleteOrganization, getOrganizations } from 'store/organization/actions';
+import { renderStatusBadge } from '../../../utils/organization';
 
 const Organization = ({ translate, handleRowEdit }) => {
   const { organizations } = useSelector((state) => state.organization);
@@ -17,11 +18,6 @@ const Organization = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     dispatch(getOrganizations());
   }, [dispatch]);
-
-  const handleDelete = (id) => {
-    setDeleteId(id);
-    setShowDeleteDialog(true);
-  };
 
   const handleDeleteDialogClose = () => {
     setDeleteId(null);
@@ -39,10 +35,10 @@ const Organization = ({ translate, handleRowEdit }) => {
   const [columns] = useState([
     { name: 'id', title: translate('common.id') },
     { name: 'name', title: translate('common.name') },
-    { name: 'type', title: translate('organization.type') },
     { name: 'admin_email', title: translate('organization.admin_email') },
     { name: 'max_number_of_therapist', title: translate('organization.max_number_of_therapist') },
     { name: 'max_ongoing_treatment_plan', title: translate('organization.max_ongoing_treatment_plan') },
+    { name: 'status', title: translate('common.status') },
     { name: 'action', title: translate('common.action') }
   ]);
 
@@ -51,18 +47,15 @@ const Organization = ({ translate, handleRowEdit }) => {
       <BasicTable
         rows={organizations.map((organization, index) => {
           const action = (
-            <>
-              <EditAction onClick={() => handleRowEdit(organization.id)}/>
-              <DeleteAction className="ml-1" onClick={() => handleDelete(organization.id)} />
-            </>
+            <EditAction onClick={() => handleRowEdit(organization.id)}/>
           );
           return {
             id: index + 1,
             name: organization.name,
-            type: translate('organization.' + organization.type),
             admin_email: organization.admin_email,
             max_number_of_therapist: organization.max_number_of_therapist,
             max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
+            status: renderStatusBadge(organization.status),
             action
           };
         })}

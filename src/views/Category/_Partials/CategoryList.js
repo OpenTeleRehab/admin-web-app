@@ -11,10 +11,12 @@ import Create from '../_Partials/Create';
 import SubCategoryCard from '../_Partials/SubCategoryCard';
 import SearchInput from 'components/Form/SearchInput';
 import { getCategories } from 'store/category/actions';
+import { USER_GROUPS } from '../../../variables/user';
 
 const CategoryList = ({ type, translate }) => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
+  const { profile } = useSelector((state) => state.auth);
 
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
@@ -82,14 +84,16 @@ const CategoryList = ({ type, translate }) => {
         <Card>
           <Card.Header className="pl-2 d-flex justify-content-between align-items-start">
             <h5 className="m-0 text-truncate">{translate('category')}</h5>
-            <Button
-              aria-label="New Category"
-              variant="outline-primary"
-              className="btn-circle float-right"
-              onClick={() => handleCreate(activeSub1 ? activeSub1.parent : '')}
-            >
-              <BsPlus size={20} />
-            </Button>
+            { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+              <Button
+                aria-label="New Category"
+                variant="outline-primary"
+                className="btn-circle float-right"
+                onClick={() => handleCreate(activeSub1 ? activeSub1.parent : '')}
+              >
+                <BsPlus size={20} />
+              </Button>
+            }
           </Card.Header>
           <Card.Body className="px-2">
             {categories.length > 0 && (

@@ -7,9 +7,11 @@ import SubCategoryList from './subCategoryList';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import SearchInput from 'components/Form/SearchInput';
+import { USER_GROUPS } from '../../../variables/user';
 
 const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, handleCreate, handleEdit }) => {
   const localize = useSelector((state) => state.localize);
+  const { profile } = useSelector((state) => state.auth);
   const translate = getTranslate(localize);
   const [searchValue, setSearchValue] = useState('');
 
@@ -47,14 +49,16 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
     <Card>
       <Card.Header className="pl-4 d-flex justify-content-between align-items-start">
         <h5 className="m-0 text-truncate">{activeCategory.title}</h5>
-        <Button
-          aria-label="Create category"
-          variant="outline-primary"
-          className="btn-circle"
-          onClick={() => handleCreate(activeCategory.id, false)}
-        >
-          <BsPlus size={20} />
-        </Button>
+        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+          <Button
+            aria-label="Create category"
+            variant="outline-primary"
+            className="btn-circle"
+            onClick={() => handleCreate(activeCategory.id, false)}
+          >
+            <BsPlus size={20} />
+          </Button>
+        }
       </Card.Header>
       {subCategories.length > 0 && (
         <Card.Body className="px-2">
