@@ -7,9 +7,11 @@ import { getTranslate } from 'react-localize-redux';
 import Dialog from '../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCategory } from '../../../store/category/actions';
+import { USER_GROUPS } from '../../../variables/user';
 
 const SubCategoryList = ({ type, subCategories, categories, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
+  const { profile } = useSelector((state) => state.auth);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
 
@@ -55,10 +57,12 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
                   </Badge>
                 )}
               </div>
-              <div>
-                <EditAction onClick={() => handleEdit(sub.id)} />
-                <DeleteAction onClick={() => handleDelete(sub.id)} disabled={sub.is_used} />
-              </div>
+              { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                <div>
+                  <EditAction onClick={() => handleEdit(sub.id)} />
+                  <DeleteAction onClick={() => handleDelete(sub.id)} disabled={sub.is_used} />
+                </div>
+              }
             </ListGroup.Item>
           );
         })}
