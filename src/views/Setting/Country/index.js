@@ -8,10 +8,13 @@ import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getLanguageName } from 'utils/language';
 import Dialog from 'components/Dialog';
 import { deleteCountry, getCountries } from 'store/country/actions';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Country = ({ translate, handleRowEdit }) => {
   const countries = useSelector(state => state.country.countries);
   const languages = useSelector(state => state.language.languages);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
 
   const columns = [
@@ -81,6 +84,7 @@ const Country = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

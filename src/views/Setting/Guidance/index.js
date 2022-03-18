@@ -15,6 +15,8 @@ import {
 } from 'react-bootstrap';
 import { FaEdit } from 'react-icons/fa/index';
 import Dialog from '../../../components/Dialog';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 let timer = null;
 
@@ -30,6 +32,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
   const { guidancePages, filters } = useSelector(state => state.guidancePage);
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [guidenceObjects, setGuidanceObjects] = useState([]);
   const [deleteId, setDeleteId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -161,6 +164,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
           <p>{translate('common.delete_confirmation_message')}</p>
         </Dialog>
       </DragDropContext>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

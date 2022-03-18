@@ -10,12 +10,15 @@ import { getLocalizations, updateLocalization } from 'store/localization/actions
 import Spinner from 'react-bootstrap/Spinner';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 let timer = null;
 const Translation = ({ translate }) => {
   const dispatch = useDispatch();
   const { localizations, loading } = useSelector(state => state.localization);
   const languages = useSelector(state => state.language.languages);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -114,6 +117,7 @@ const Translation = ({ translate }) => {
           return data;
         })}
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
       { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
     </>
   );

@@ -11,12 +11,14 @@ import settings from 'settings';
 import { CHART } from '../../../variables/dashboard';
 import { ContextAwareToggle } from '../../../components/Accordion/ContextAwareToggle';
 import scssColors from 'scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CountryAdminDashboard = ({ translate }) => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
   const dashboardData = useSelector(state => state.dashboard.countyAdminData);
   const clinics = useSelector(state => state.clinic.clinics);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [totalClinicAdmin, setTotalClinicAdmin] = useState(0);
   const [totalTherapist, setTotalTherapist] = useState(0);
   const [therapistLimit, setTherapistLimit] = useState(0);
@@ -256,7 +258,7 @@ const CountryAdminDashboard = ({ translate }) => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaClinicMedical size={45} color="#0077C8"/>
+                  <FaClinicMedical size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('dashboard.total_clinic_admin')}</h6>
@@ -271,7 +273,7 @@ const CountryAdminDashboard = ({ translate }) => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaUserMd size={45} color="#0077C8"/>
+                  <FaUserMd size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('dashboard.total_therapist')}</h6>
@@ -371,6 +373,7 @@ const CountryAdminDashboard = ({ translate }) => {
           </Accordion.Collapse>
         </Card>
       </Accordion>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

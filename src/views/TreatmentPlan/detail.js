@@ -21,12 +21,14 @@ import { renderStatusBadge } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
 import EllipsisText from 'react-ellipsis-text';
 import ActivitySection from './_Partials/activitySection';
+import customColorScheme from '../../utils/customColorScheme';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
   const { id, patientId, countryId } = useParams();
@@ -145,6 +147,7 @@ const ViewTreatmentPlan = () => {
           }
         </Tabs>
       </div>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

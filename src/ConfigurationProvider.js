@@ -10,6 +10,7 @@ import { getDefaultLimitedPatients } from 'store/setting/actions';
 import { getProfile } from 'store/auth/actions';
 import { getOrganizationTherapistAndTreatmentLimit } from './store/organization/actions';
 import SplashScreen from './components/SplashScreen';
+import { getColorScheme } from './store/colorScheme/actions';
 
 const ConfigurationProvider = ({ children }) => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(getLanguages());
       dispatch(getDefaultLimitedPatients());
       dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));
+      dispatch(getColorScheme());
     }
   }, [loading, dispatch]);
 

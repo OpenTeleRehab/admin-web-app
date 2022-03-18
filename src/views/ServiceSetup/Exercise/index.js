@@ -40,6 +40,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const Exercise = ({ translate }) => {
@@ -50,6 +51,7 @@ const Exercise = ({ translate }) => {
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [id, setId] = useState(null);
   const [showView, setShowView] = useState(false);
 
@@ -342,6 +344,7 @@ const Exercise = ({ translate }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

@@ -14,12 +14,14 @@ import settings from '../../../settings';
 import { ContextAwareToggle } from '../../../components/Accordion/ContextAwareToggle';
 import MapChart from '../../../components/MapChart';
 import scssColors from 'scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const GlobalAdminDashboard = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
   const globalAdminData = useSelector(state => state.dashboard.globalAdminData);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const countries = useSelector(state => state.country.countries);
   const [totalGlobalAdmin, setTotalGlobalAdmin] = useState(0);
   const [totalCountryAdmin, setTotalCountryAdmin] = useState(0);
@@ -347,7 +349,7 @@ const GlobalAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <AiOutlineGlobal size={45} color="#0077C8"/>
+                  <AiOutlineGlobal size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_global_admin')}</h6>
@@ -362,7 +364,7 @@ const GlobalAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaFlag size={45} color="#0077C8"/>
+                  <FaFlag size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_country_admin')}</h6>
@@ -377,7 +379,7 @@ const GlobalAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaClinicMedical size={45} color="#0077C8"/>
+                  <FaClinicMedical size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_clinic_admin')}</h6>
@@ -392,7 +394,7 @@ const GlobalAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <IoPerson size={45} color="#0077C8"/>
+                  <IoPerson size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_therapist')}</h6>
@@ -559,6 +561,7 @@ const GlobalAdminDashboard = () => {
           </Accordion.Collapse>
         </Card>
       </Accordion>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme)}
     </>
   );
 };

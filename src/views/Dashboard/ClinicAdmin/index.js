@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getChartDataClinicAdmin } from 'store/dashboard/actions';
 import _ from 'lodash';
 import { getTranslate } from 'react-localize-redux';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const ClinicAdminDashboard = () => {
   const localize = useSelector((state) => state.localize);
@@ -14,6 +15,7 @@ const ClinicAdminDashboard = () => {
   const dispatch = useDispatch();
   const dashboardData = useSelector(state => state.dashboard.clinicAdminData);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [totalTherapist, setTotalTherapist] = useState(0);
   const [totalPatient, setTotalPatient] = useState(0);
   const [totalOngoingTreatment, setTotalOngoingTreatment] = useState(0);
@@ -47,7 +49,7 @@ const ClinicAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <IoPerson size={45} color="#0077C8"/>
+                  <IoPerson size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_therapist')}</h6>
@@ -62,7 +64,7 @@ const ClinicAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <IoPerson size={45} color="#0077C8"/>
+                  <IoPerson size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_patient')}</h6>
@@ -77,7 +79,7 @@ const ClinicAdminDashboard = () => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaNotesMedical size={45} color="#0077C8"/>
+                  <FaNotesMedical size={45} color={!_.isEmpty(colorScheme) ? colorScheme.primary_color : '#0077C8'}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total.ongoing_treatment_plan')}</h6>
@@ -88,6 +90,7 @@ const ClinicAdminDashboard = () => {
           </Card>
         </Col>
       </Row>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

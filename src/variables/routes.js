@@ -31,6 +31,7 @@ export const SETTING_GUIDANCE_PAGE = SETTING + '#guidance_page';
 export const SETTING_LANGUAGE = SETTING + '#language';
 export const SETTING_DISEASE = SETTING + '#disease';
 export const SETTING_ORGANIZATION = SETTING + '#organization';
+export const SETTING_COLOR_SCHEME = SETTING + '#color_scheme';
 
 export const PROFILE = '/profile';
 export const FAQ = '/faq';

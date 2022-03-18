@@ -7,6 +7,8 @@ import { getTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { Button } from 'react-bootstrap/esm/index';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 let timer = null;
 const TreatmentHistory = () => {
@@ -16,6 +18,7 @@ const TreatmentHistory = () => {
   const history = useHistory();
   const { patientId, countryId } = useParams();
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const columns = [
     { name: 'name', title: translate('common.treatment_name') },
@@ -100,6 +103,7 @@ const TreatmentHistory = () => {
           })}
         />
       </div>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

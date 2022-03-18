@@ -28,6 +28,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS } from '../../../variables/user';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const EducationMaterial = ({ translate }) => {
@@ -42,6 +43,7 @@ const EducationMaterial = ({ translate }) => {
   const { educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { profile } = useSelector((state) => state.auth);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -271,6 +273,7 @@ const EducationMaterial = ({ translate }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

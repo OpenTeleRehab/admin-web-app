@@ -30,6 +30,7 @@ import { Therapist as therapistService } from 'services/therapist';
 import { Clinic as clinicService } from 'services/clinic';
 import { getProfessionName } from 'utils/profession';
 import { getChatRooms } from 'utils/therapist';
+import customColorScheme from '../../utils/customColorScheme';
 
 let timer = null;
 
@@ -41,6 +42,7 @@ const Therapist = ({ translate }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const professions = useSelector(state => state.profession.professions);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
@@ -285,6 +287,7 @@ const Therapist = ({ translate }) => {
       >
         <p>{translate('common.switchStatus_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

@@ -8,9 +8,12 @@ import { EditAction } from 'components/ActionIcons';
 import Dialog from 'components/Dialog';
 import { deleteOrganization, getOrganizations } from 'store/organization/actions';
 import { renderStatusBadge } from '../../../utils/organization';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const Organization = ({ translate, handleRowEdit }) => {
   const { organizations } = useSelector((state) => state.organization);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [deleteId, setDeleteId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const dispatch = useDispatch();
@@ -71,6 +74,7 @@ const Organization = ({ translate, handleRowEdit }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

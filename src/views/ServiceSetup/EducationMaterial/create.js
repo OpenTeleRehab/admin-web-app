@@ -25,6 +25,7 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const CreateEducationMaterial = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const { educationMaterial, filters } = useSelector(state => state.educationMaterial);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
@@ -328,6 +330,7 @@ const CreateEducationMaterial = ({ translate }) => {
           </Col>
         </Row>
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

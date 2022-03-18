@@ -20,12 +20,14 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import keycloak from '../../../utils/keycloak';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const TermAndCondition = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
   const { termAndConditions, termAndCondition } = useSelector(state => state.termAndCondition);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector(state => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [termsConditionsData, setTermsConditionsData] = useState([]);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
@@ -175,6 +177,7 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
         </Form.Group>
         <div dangerouslySetInnerHTML={{ __html: termAndCondition.content }} />
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };
