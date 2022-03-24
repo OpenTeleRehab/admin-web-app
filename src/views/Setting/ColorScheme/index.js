@@ -25,9 +25,7 @@ const ColorScheme = () => {
 
   const [formFields, setFormFields] = useState({
     primary_color: '#0077C8',
-    secondary_color: '#06038D',
-    primary_text_color: '#ffffff',
-    secondary_text_color: '#ffffff'
+    secondary_color: '#06038D'
   });
 
   useEffect(() => {
@@ -38,9 +36,7 @@ const ColorScheme = () => {
     if (colorScheme.id) {
       setFormFields({
         primary_color: colorScheme.primary_color || '#0077C8',
-        secondary_color: colorScheme.secondary_color || '#06038D',
-        primary_text_color: colorScheme.primary_text_color || '#ffffff',
-        secondary_text_color: colorScheme.secondary_text_color || '#ffffff'
+        secondary_color: colorScheme.secondary_color || '#06038D'
       });
     }
   }, [colorScheme]);
@@ -52,16 +48,6 @@ const ColorScheme = () => {
 
   const handleSecondaryColorChange = (color, editor) => {
     setFormFields({ ...formFields, secondary_color: color.hex });
-    setDisabled(false);
-  };
-
-  const handlePrimaryTextColorChange = (color, editor) => {
-    setFormFields({ ...formFields, primary_text_color: color.hex });
-    setDisabled(false);
-  };
-
-  const handleSecondaryTextColorChange = (color, editor) => {
-    setFormFields({ ...formFields, secondary_text_color: color.hex });
     setDisabled(false);
   };
 
@@ -98,24 +84,6 @@ const ColorScheme = () => {
             <SketchPicker
               onChange={handleSecondaryColorChange}
               color={formFields.secondary_color}
-            />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="primaryTextColor" className="col-md-6">
-          <Form.Label column sm="4">{translate('common.primary_text_color')}</Form.Label>
-          <Col sm="8">
-            <SketchPicker
-              onChange={handlePrimaryTextColorChange}
-              color={formFields.primary_text_color}
-            />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="secondaryTextColor" className="col-md-6">
-          <Form.Label column sm="4">{translate('common.secondary_text_color')}</Form.Label>
-          <Col sm="8">
-            <SketchPicker
-              onChange={handleSecondaryTextColorChange}
-              color={formFields.secondary_text_color}
             />
           </Col>
         </Form.Group>
