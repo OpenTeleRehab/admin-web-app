@@ -14,7 +14,6 @@ const SystemLimit = ({ translate }) => {
   const { systemLimits } = useSelector(state => state.systemLimit);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
   const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
   const [editingStateColumnExtensions] = useState([
     { columnName: 'content_type', editingEnabled: false }
@@ -51,7 +50,7 @@ const SystemLimit = ({ translate }) => {
         rows={systemLimits.map(systemLimit => {
           const data = {
             content_type: translate(systemLimit.content_type),
-            value: systemLimit.content_type === 'number_of_ongoing_treatment_per_therapist' ? orgOngoingTreatmentLimit : systemLimit.value
+            value: systemLimit.value
           };
 
           return data;
