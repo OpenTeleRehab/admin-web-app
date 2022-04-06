@@ -12,6 +12,7 @@ export const getProfile = () => async dispatch => {
   const data = await Auth.getProfile();
   if (data) {
     dispatch(mutation.getProfileSuccess(data.data));
+    return data;
   } else {
     dispatch(mutation.getProfileFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
