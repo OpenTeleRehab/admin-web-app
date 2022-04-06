@@ -1,17 +1,5 @@
 import axios from 'utils/gAdminAxios';
 
-const getTermAndConditions = () => {
-  return axios.get('/term-condition')
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
 const getTermAndCondition = (id, language) => {
   const langParam = language ? `?lang=${language}` : '';
   return axios.get(`/term-condition/${id}` + langParam)
@@ -25,32 +13,8 @@ const getTermAndCondition = (id, language) => {
     });
 };
 
-const createTermAndCondition = payload => {
-  return axios.post('/term-condition', payload)
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
-const updateTermAndCondition = (id, payload) => {
-  return axios.put(`/term-condition/${id}`, payload)
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
-const publishTermAndCondition = id => {
-  return axios.post(`/term-condition/publish/${id}`)
+const getTermAndConditions = () => {
+  return axios.get('/term-condition')
     .then(
       res => {
         return res.data;
@@ -73,11 +37,8 @@ const getPublishTermConditionPage = id => {
     });
 };
 
-export const TermAndCondition = {
-  getTermAndConditions,
+export const termAndCondition = {
   getTermAndCondition,
-  createTermAndCondition,
-  updateTermAndCondition,
-  publishTermAndCondition,
+  getTermAndConditions,
   getPublishTermConditionPage
 };

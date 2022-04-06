@@ -1,4 +1,5 @@
-import { PrivacyPolicy } from 'services/privacyPolicy';
+import { privacyPolicy } from 'services/privacyPolicy';
+import { privacyPolicyAuth } from 'services/privacyPolicyAuth';
 import { mutation } from './mutations';
 import {
   showErrorNotification,
@@ -10,7 +11,7 @@ import {
 
 export const getPrivacyPolicies = () => async dispatch => {
   dispatch(mutation.getPrivacyPoliciesRequest());
-  const data = await PrivacyPolicy.getPrivacyPolicies();
+  const data = await privacyPolicy.getPrivacyPolicies();
   if (data.success) {
     dispatch(mutation.getPrivacyPoliciesSuccess(data.data));
   } else {
@@ -21,7 +22,7 @@ export const getPrivacyPolicies = () => async dispatch => {
 
 export const getPrivacyPolicy = (id, language) => async dispatch => {
   dispatch(mutation.getPrivacyPolicyRequest());
-  const res = await PrivacyPolicy.getPrivacyPolicy(id, language);
+  const res = await privacyPolicy.getPrivacyPolicy(id, language);
   if (res) {
     dispatch(mutation.getPrivacyPolicySuccess(res.data));
   } else {
@@ -34,7 +35,7 @@ export const getPrivacyPolicy = (id, language) => async dispatch => {
 export const createPrivacyPolicy = payload => async (dispatch) => {
   dispatch(mutation.createPrivacyPolicyRequest());
   dispatch(showSpinner(true));
-  const data = await PrivacyPolicy.createPrivacyPolicy(payload);
+  const data = await privacyPolicyAuth.createPrivacyPolicy(payload);
   if (data.success) {
     dispatch(mutation.createPrivacyPolicySuccess());
     dispatch(getPrivacyPolicies());
@@ -51,7 +52,7 @@ export const createPrivacyPolicy = payload => async (dispatch) => {
 
 export const updatePrivacyPolicy = (id, payload) => async (dispatch) => {
   dispatch(mutation.updatePrivacyPolicyRequest());
-  const data = await PrivacyPolicy.updatePrivacyPolicy(id, payload);
+  const data = await privacyPolicyAuth.updatePrivacyPolicy(id, payload);
   if (data.success) {
     dispatch(mutation.updatePrivacyPolicySuccess());
     dispatch(getPrivacyPolicies());
@@ -65,7 +66,7 @@ export const updatePrivacyPolicy = (id, payload) => async (dispatch) => {
 };
 
 export const publishPrivacyPolicy = id => async (dispatch) => {
-  const data = await PrivacyPolicy.publishPrivacyPolicy(id);
+  const data = await privacyPolicyAuth.publishPrivacyPolicy(id);
   if (data.success) {
     dispatch(getPrivacyPolicies());
     dispatch(showSuccessNotification('toast_title.publish_privacy_policy', data.message));
@@ -79,7 +80,7 @@ export const publishPrivacyPolicy = id => async (dispatch) => {
 
 export const getPublishPrivacyPolicy = () => async dispatch => {
   dispatch(mutation.getPublishPrivacyPolicyRequest());
-  const res = await PrivacyPolicy.getPublishPrivacyPolicy();
+  const res = await privacyPolicy.getPublishPrivacyPolicy();
   if (res) {
     dispatch(mutation.getPublishPrivacyPolicySuccess(res.data));
   } else {
