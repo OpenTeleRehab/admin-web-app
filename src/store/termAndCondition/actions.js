@@ -1,4 +1,5 @@
-import { TermAndCondition } from 'services/termAndCondition';
+import { termAndCondition } from 'services/termAndCondition';
+import { termAndConditionAuth } from 'services/termAndConditionAuth';
 import { mutation } from './mutations';
 import {
   showErrorNotification,
@@ -10,7 +11,7 @@ import {
 
 export const getTermAndConditions = () => async dispatch => {
   dispatch(mutation.getTermAndConditionsRequest());
-  const data = await TermAndCondition.getTermAndConditions();
+  const data = await termAndCondition.getTermAndConditions();
   if (data.success) {
     dispatch(mutation.getTermAndConditionsSuccess(data.data));
   } else {
@@ -21,7 +22,7 @@ export const getTermAndConditions = () => async dispatch => {
 
 export const getTermAndCondition = (id, language) => async (dispatch) => {
   dispatch(mutation.getTermAndConditionRequest());
-  const res = await TermAndCondition.getTermAndCondition(id, language);
+  const res = await termAndCondition.getTermAndCondition(id, language);
   if (res) {
     dispatch(mutation.getTermAndConditionSuccess(res.data));
   } else {
@@ -34,7 +35,7 @@ export const getTermAndCondition = (id, language) => async (dispatch) => {
 export const createTermAndCondition = payload => async (dispatch) => {
   dispatch(mutation.createTermAndConditionRequest());
   dispatch(showSpinner(true));
-  const data = await TermAndCondition.createTermAndCondition(payload);
+  const data = await termAndConditionAuth.createTermAndCondition(payload);
   if (data.success) {
     dispatch(mutation.createTermAndConditionSuccess());
     dispatch(getTermAndConditions());
@@ -51,7 +52,7 @@ export const createTermAndCondition = payload => async (dispatch) => {
 
 export const updateTermAndCondition = (id, payload) => async (dispatch) => {
   dispatch(mutation.updateTermAndConditionRequest());
-  const data = await TermAndCondition.updateTermAndCondition(id, payload);
+  const data = await termAndConditionAuth.updateTermAndCondition(id, payload);
   if (data.success) {
     dispatch(mutation.updateTermAndConditionSuccess());
     dispatch(getTermAndConditions());
@@ -65,10 +66,8 @@ export const updateTermAndCondition = (id, payload) => async (dispatch) => {
 };
 
 export const publishTermAndCondition = id => async (dispatch) => {
-  // dispatch(mutation.updateTermAndConditionRequest());
-  const data = await TermAndCondition.publishTermAndCondition(id);
+  const data = await termAndConditionAuth.publishTermAndCondition(id);
   if (data.success) {
-    // dispatch(mutation.updateTermAndConditionSuccess());
     dispatch(getTermAndConditions());
     dispatch(showSuccessNotification('toast_title.publish_term_and_condition', data.message));
     return true;
@@ -82,7 +81,7 @@ export const publishTermAndCondition = id => async (dispatch) => {
 export const getPublishTermCondition = () => async dispatch => {
   dispatch(mutation.getPublishTermConditionRequest());
   dispatch(showSpinner(true));
-  const data = await TermAndCondition.getPublishTermConditionPage();
+  const data = await termAndCondition.getPublishTermConditionPage();
   if (data) {
     dispatch(mutation.getPublishTermConditionSuccess(data.data));
     dispatch(showSpinner(false));

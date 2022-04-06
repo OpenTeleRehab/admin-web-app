@@ -15,7 +15,7 @@ import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
 
-const CreateTermAndCondition = ({ show, editId, handleClose }) => {
+const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
