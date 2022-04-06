@@ -18,9 +18,14 @@ const ConfigurationProvider = ({ children }) => {
 
   useEffect(() => {
     if (loading) {
-      dispatch(getProfile());
-      dispatch(getTranslations()).then(res => {
+      dispatch(getProfile()).then(res => {
         if (res) {
+          dispatch(getTranslations(res.data.language_id)).then(res => {
+            if (res) {
+              setLoading(false);
+            }
+          });
+        } else {
           setLoading(false);
         }
       });
