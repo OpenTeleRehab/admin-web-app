@@ -125,7 +125,7 @@ const StaticPage = ({ translate, handleRowEdit }) => {
               </div>
             )}
             <div className="btn bg-white btn-outline-primary text-primary position-relative overflow-hidden mr-3 mt-2 up-load-button-wrapper" role="button" tabIndex="0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
-              <BsUpload size={15}/> Upload Image
+              <BsUpload size={15}/> {translate('static_page.media_upload')}
               <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
             </div>
             <Button variant="primary" className="mt-2" disabled={!formFields.file} onClick={handleConfirm} tabIndex="0">
