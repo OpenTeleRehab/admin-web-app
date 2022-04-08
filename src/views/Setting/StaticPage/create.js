@@ -322,7 +322,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               </div>
             )}
             <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
-              <BsUpload size={15}/> Upload Image
+              <BsUpload size={15}/> {translate('static_page.media_upload')}
               <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
             </div>
           </div>
