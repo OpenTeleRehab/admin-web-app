@@ -25,7 +25,7 @@ const settings = {
     ]
   },
   educationMaterial: {
-    maxFileSize: 25 // MB
+    maxFileSize: 100 // MB
   },
   tinymce: {
     apiKey: 'hp4m52i3gyuf4edxwxu9jyt91br22arfth7bg6ckya5a83k0',
