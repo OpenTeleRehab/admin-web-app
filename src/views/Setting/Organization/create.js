@@ -54,7 +54,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   }, [editId, organization]);
 
   useEffect(() => {
-    if (formFields.name) {
+    if (formFields.name && !editId) {
       setFormFields({
         ...formFields,
         sub_domain_name: formFields.name.replace(/\s+/g, '').toLowerCase()
@@ -153,7 +153,6 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
               isInvalid={errorName}
               value={formFields.name}
               maxLength={settings.textMaxLength}
-              disabled={!!editId}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.name')}
