@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
@@ -18,6 +18,8 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
   const dispatch = useDispatch();
   const [isLastPatient, setIsLastPatient] = useState(false);
   const [lastPatientId, setLastPatientId] = useState(null);
+  const [confirmTransfer, setConfirmTransfer] = useState(false);
+  const [isTransfer, setIsTransfer] = useState(null);
 
   const customSelectStyles = {
     option: (provided) => ({
@@ -42,11 +44,19 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
     new_chat_rooms: ''
   });
 
+  useEffect(() => {
+    if (therapistsSameClinic.length > 0 && patientTherapists.length > 0) {
+      setConfirmTransfer(true);
+    }
+  }, [therapistsSameClinic, patientTherapists]);
+
   const handleDeleteConfirm = () => {
-    if (patientTherapists.length === 0) {
+    if (patientTherapists.length === 0 || !isTransfer) {
       dispatch(deleteTherapistUser(therapistId, { country_code: countryCode })).then(result => {
         if (result) {
           setShowDeleteDialog(false);
+          setConfirmTransfer(false);
+          setIsTransfer(null);
         }
       });
     } else {
@@ -56,6 +66,8 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
           dispatch(deleteTherapistUser(therapistId, { country_code: countryCode })).then(result => {
             if (result) {
               setShowDeleteDialog(false);
+              setConfirmTransfer(false);
+              setIsTransfer(null);
             }
           });
         }
@@ -65,6 +77,8 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
 
   const handleDeleteConfirmClose = () => {
     setFormFields({ ...formFields, therapist_id: '', therapist_identity: '', new_chat_rooms: '', chat_rooms: chatRooms });
+    setConfirmTransfer(false);
+    setIsTransfer(null);
     if (isLastPatient) {
       therapistService.transferPatientToTherapist(lastPatientId, formFields).then(res => {
         if (res) {
@@ -101,14 +115,24 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
     setFormFields({ ...formFields, [key]: value, therapist_identity: getIdentity(value, therapistsSameClinic), chat_rooms: chatRooms, new_chat_rooms: getChatRooms(value, therapists) });
   };
 
+  const handleConfirmTransfer = () => {
+    setIsTransfer(true);
+    setConfirmTransfer(false);
+  };
+
+  const handleNotTransfer = () => {
+    setIsTransfer(false);
+    setConfirmTransfer(false);
+  };
+
   return (
     <>
-      <Modal size="lg" show={showDeleteDialog} onHide={handleDeleteConfirmClose}>
+      <Modal size="lg" show={showDeleteDialog} onHide={handleDeleteConfirmClose} backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title>{patientTherapists.length > 0 && !isLastPatient ? <Translate id="patient_transfer_therapist" data={{ patientName: patientTherapists[currentIndex].last_name + ' ' + patientTherapists[currentIndex].first_name }} /> : translate('therapist.delete_confirmation_title')}</Modal.Title>
+          <Modal.Title>{patientTherapists.length > 0 && !isLastPatient && isTransfer ? <Translate id="patient_transfer_therapist" data={{ patientName: patientTherapists[currentIndex].last_name + ' ' + patientTherapists[currentIndex].first_name }} /> : confirmTransfer ? translate('therapist.transfer_confirmation_title') : translate('therapist.delete_confirmation_title')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {therapistsSameClinic.length > 0 && patientTherapists.length > 0 && !isLastPatient &&
+          {isTransfer && !isLastPatient &&
             <Form.Row>
               <Form.Group as={Col} controlId="formTherapist">
                 <Form.Label>{translate('common.therapist')}</Form.Label>
@@ -130,13 +154,16 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
               </Form.Group>
             </Form.Row>
           }
-          {(patientTherapists.length === 0 || isLastPatient) &&
-          <p>{translate('common.delete_confirmation_message')}</p>
+          {(patientTherapists.length === 0 || isLastPatient || isTransfer === false || confirmTransfer === false) &&
+            <p>{translate('common.delete_confirmation_message')}</p>
+          }
+          { confirmTransfer &&
+            <p>{translate('common.transfer_confirmation_message')}</p>
           }
         </Modal.Body>
         <Modal.Footer className="justify-content-between">
           <div className="action">
-            {isLastPatient || patientTherapists.length === 0 ? (
+            {isLastPatient || patientTherapists.length === 0 || isTransfer === false ? (
               <Button
                 className="ml-1"
                 variant="primary"
@@ -148,17 +175,17 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
               <Button
                 className="ml-1"
                 variant="primary"
-                onClick={() => handleNextPatient(patientTherapists[currentIndex].id)}
+                onClick={() => isTransfer ? handleNextPatient(patientTherapists[currentIndex].id) : handleConfirmTransfer()}
               >
-                <Translate id={ patientTherapists.length ? 'common.transfer' : 'common.yes'}/>
+                <Translate id={ isTransfer ? 'common.transfer' : 'common.yes'}/>
               </Button>
             )}
             <Button
               className="ml-1"
               variant="outline-dark"
-              onClick={handleDeleteConfirmClose}
+              onClick={ confirmTransfer ? handleNotTransfer : handleDeleteConfirmClose}
             >
-              <Translate id={(isLastPatient || patientTherapists.length === 0) ? 'common.no' : 'common.close'} />
+              <Translate id={(isLastPatient || patientTherapists.length === 0 || confirmTransfer || !isTransfer) ? 'common.no' : 'common.close'} />
             </Button>
           </div>
         </Modal.Footer>
