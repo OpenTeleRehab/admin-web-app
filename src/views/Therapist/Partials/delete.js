@@ -47,6 +47,8 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
   useEffect(() => {
     if (therapistsSameClinic.length > 0 && patientTherapists.length > 0) {
       setConfirmTransfer(true);
+    } else {
+      setConfirmTransfer(false);
     }
   }, [therapistsSameClinic, patientTherapists]);
 
@@ -154,7 +156,7 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
               </Form.Group>
             </Form.Row>
           }
-          {(patientTherapists.length === 0 || isLastPatient || isTransfer === false || confirmTransfer === false) &&
+          {(patientTherapists.length === 0 || isLastPatient || (isTransfer === false && confirmTransfer === false)) &&
             <p>{translate('common.delete_confirmation_message')}</p>
           }
           { confirmTransfer &&

@@ -26,6 +26,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import scssColors from '../../../scss/custom.scss';
 import Select from 'react-select';
 import customColorScheme from '../../../utils/customColorScheme';
+import Dialog from '../../../components/Dialog';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -49,6 +50,8 @@ const CreateQuestionnaire = ({ translate }) => {
   const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '' }, { description: '' }], file: null }]);
   const [questionTitleError, setQuestionTitleError] = useState([]);
   const [answerFieldError, setAnswerFieldError] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isUsed, setIsUsed] = useState(false);
 
   useEffect(() => {
     if (languages.length) {
@@ -101,6 +104,12 @@ const CreateQuestionnaire = ({ translate }) => {
       }
     }
   }, [id, questionnaire, categoryTreeData]);
+
+  useEffect(() => {
+    if (id && questionnaire.is_used) {
+      setIsUsed(true);
+    }
+  }, [id, questionnaire]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -175,7 +184,7 @@ const CreateQuestionnaire = ({ translate }) => {
 
   const enableButtons = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback && (!questionnaire.is_used || !id);
+    return languageObj && languageObj.code === languageObj.fallback && (questionnaire.is_used || !id);
   };
 
   const handleAddQuestion = () => {
@@ -199,7 +208,11 @@ const CreateQuestionnaire = ({ translate }) => {
   const handleFormSubmit = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleSave();
+      if (isUsed) {
+        handleShowConfirm();
+      } else {
+        handleSave();
+      }
     }
   };
 
@@ -207,6 +220,19 @@ const CreateQuestionnaire = ({ translate }) => {
     if (e.key === 'Enter') {
       e.stopPropagation();
     }
+  };
+
+  const handleClose = () => {
+    setShowConfirm(false);
+  };
+
+  const handleConfirm = () => {
+    handleSave();
+    setShowConfirm(false);
+  };
+
+  const handleShowConfirm = () => {
+    setShowConfirm(true);
   };
 
   return (
@@ -330,7 +356,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 <div className="py-2 questionnaire-save-cancel-wrapper px-3">
                   <Button
                     aria-label="Save"
-                    onClick={handleSave}
+                    onClick={isUsed ? handleShowConfirm : handleSave}
                     disabled={isLoading}
                   >
                     {translate('common.save')}
@@ -374,6 +400,16 @@ const CreateQuestionnaire = ({ translate }) => {
           </Col>
         </Row>
       </Form>
+      <Dialog
+        show={showConfirm}
+        title={translate('questionnaire.update_used_questionnaire_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleConfirm}
+      >
+        <p>{translate('questionnaire.update_used_questionnaire_confirmation_message')}</p>
+      </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
