@@ -59,7 +59,7 @@ const Exercise = ({ translate }) => {
   const [show, setShow] = useState(false);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(undefined);
   const [formFields, setFormFields] = useState({
     search_value: ''
   });
@@ -72,18 +72,17 @@ const Exercise = ({ translate }) => {
       setLanguage(filters.lang);
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
+    } else {
+      setLanguage('');
     }
   }, [filters, profile]);
 
   useEffect(() => {
-    if (profile) {
-      let languageId = profile.language_id;
-      if (language) {
-        languageId = language;
-      }
-      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: languageId }));
+    if (language !== undefined) {
+      dispatch(
+        getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
     }
-  }, [language, dispatch, profile]);
+  }, [language, dispatch]);
 
   useEffect(() => {
     if (categoryTreeData.length) {
