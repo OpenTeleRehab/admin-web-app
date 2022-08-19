@@ -39,7 +39,7 @@ const EducationMaterial = ({ translate }) => {
     search_value: ''
   });
   const { languages } = useSelector(state => state.language);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(undefined);
   const { educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { profile } = useSelector((state) => state.auth);
   const { categoryTreeData } = useSelector((state) => state.category);
@@ -58,16 +58,17 @@ const EducationMaterial = ({ translate }) => {
       setLanguage(filters.lang);
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
+    } else {
+      setLanguage('');
     }
   }, [filters, profile]);
 
   useEffect(() => {
-    let languageId = profile.language_id;
-    if (language) {
-      languageId = language;
+    if (language !== undefined) {
+      dispatch(
+        getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
     }
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: languageId }));
-  }, [language, dispatch, profile]);
+  }, [language, dispatch]);
 
   useEffect(() => {
     if (categoryTreeData.length) {
