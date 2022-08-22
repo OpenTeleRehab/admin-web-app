@@ -60,7 +60,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         sub_domain_name: formFields.name.replace(/\s+/g, '').toLowerCase()
       });
     }
-  }, [formFields.name]);
+  }, [formFields, editId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
