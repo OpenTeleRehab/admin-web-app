@@ -86,7 +86,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
         }
       }
     }
-  }, [countries, editId, formFields.therapist_limit]);
+  }, [countries, editId, formFields.therapist_limit, orgTherapistLimit]);
 
   const handleChange = e => {
     const { name, value } = e.target;
