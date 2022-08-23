@@ -12,6 +12,7 @@ import _ from 'lodash';
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
   const { systemLimits } = useSelector(state => state.systemLimit);
+  const { orgTherapistLimit } = useSelector(state => state.organization);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
@@ -19,10 +20,27 @@ const SystemLimit = ({ translate }) => {
     { columnName: 'content_type', editingEnabled: false }
   ]);
   const [editingRowIds, setEditingRowIds] = useState([]);
+  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     dispatch(getSystemLimits());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (systemLimits.length) {
+      const data = systemLimits.map(systemLimit => ({
+        content_type: translate(systemLimit.content_type),
+        value: systemLimit.value
+      }));
+      if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
+        data.push({
+          content_type: translate('number_of_ongoing_treatment_per_therapist'),
+          value: orgTherapistLimit
+        });
+      }
+      setRows(data);
+    }
+  }, [systemLimits]);
 
   const commitChanges = ({ changed }) => {
     if (changed && editingRowIds) {
@@ -47,14 +65,7 @@ const SystemLimit = ({ translate }) => {
         setEditingRowIds={setEditingRowIds}
         hideSearchFilter={true}
         hidePagination={true}
-        rows={systemLimits.map(systemLimit => {
-          const data = {
-            content_type: translate(systemLimit.content_type),
-            value: systemLimit.value
-          };
-
-          return data;
-        })}
+        rows={rows}
       />
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
