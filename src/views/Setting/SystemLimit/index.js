@@ -40,7 +40,7 @@ const SystemLimit = ({ translate }) => {
       }
       setRows(data);
     }
-  }, [systemLimits]);
+  }, [systemLimits, orgTherapistLimit]);
 
   const commitChanges = ({ changed }) => {
     if (changed && editingRowIds) {
