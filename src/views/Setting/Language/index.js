@@ -4,11 +4,16 @@ import { withLocalize } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BasicTable from 'components/Table/basic';
-import { EditAction, DeleteAction } from 'components/ActionIcons';
+import { EditAction, DeleteAction, TranslateAction } from 'components/ActionIcons';
 import Dialog from 'components/Dialog';
-import { deleteLanguage, getLanguages } from 'store/language/actions';
+import {
+  autoTranslateLanguage,
+  deleteLanguage,
+  getLanguages
+} from 'store/language/actions';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import settings from '../../../settings';
 
 const Language = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
@@ -24,6 +29,8 @@ const Language = ({ translate, handleRowEdit }) => {
 
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [autoTranslateId, setAutoTranslateId] = useState(null);
+  const [showAutoTranslateDialog, setShowAutoTranslateDialog] = useState(false);
 
   useEffect(() => {
     dispatch(getLanguages());
@@ -47,13 +54,35 @@ const Language = ({ translate, handleRowEdit }) => {
     });
   };
 
+  const handleAutoTranslate = (id) => {
+    setAutoTranslateId(id);
+    setShowAutoTranslateDialog(true);
+  };
+
+  const handleAutoTranslateDialogClose = () => {
+    setAutoTranslateId(null);
+    setShowAutoTranslateDialog(false);
+  };
+
+  const handleAutoTranslateDialogConfirm = () => {
+    dispatch(autoTranslateLanguage(autoTranslateId)).then(result => {
+      if (result) {
+        handleAutoTranslateDialogClose();
+      }
+    });
+  };
+
   return (
     <div className="card">
       <BasicTable
         rows={languages.map(language => {
           const action = (
             <>
-              <EditAction onClick={() => handleRowEdit(language.id)} />
+              <TranslateAction
+                onClick={() => handleAutoTranslate(language.id)}
+                disabled={language.auto_translated || settings.autoTranslationExceptions.includes(language.code)}
+              />
+              <EditAction className="ml-1" onClick={() => handleRowEdit(language.id)} />
               <DeleteAction
                 className="ml-1"
                 onClick={() => handleDelete(language.id)}
@@ -79,6 +108,16 @@ const Language = ({ translate, handleRowEdit }) => {
         onConfirm={handleDeleteDialogConfirm}
       >
         <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
+      <Dialog
+        show={showAutoTranslateDialog}
+        title={translate('language.auto_translate_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleAutoTranslateDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleAutoTranslateDialogConfirm}
+      >
+        <p>{translate('common.auto_translate_confirmation_message')}</p>
       </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
