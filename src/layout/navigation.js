@@ -26,6 +26,12 @@ const navItems = [
     ]
   },
   {
+    label: 'translator',
+    to: ROUTES.TRANSLATOR,
+    exact: true,
+    roles: [USER_ROLES.MANAGE_TRANSLATOR]
+  },
+  {
     label: 'therapist',
     to: ROUTES.THERAPIST,
     exact: true,

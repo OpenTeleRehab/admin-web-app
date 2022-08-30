@@ -7,6 +7,7 @@ import PrivateRoute from 'routes/privateRoute';
 import DashboardPage from 'views/Dashboard';
 import NotFoundPage from 'views/NotFound';
 import AdminPage from 'views/Admin';
+import TranslatorPage from 'views/Translator';
 import CategoryPage from 'views/Category';
 import Setting from 'views/Setting';
 import ServiceSetupPage from 'views/ServiceSetup';
@@ -45,6 +46,16 @@ const routes = [
       USER_ROLES.MANAGE_ORGANIZATION_ADMIN,
       USER_ROLES.MANAGE_COUNTRY_ADMIN,
       USER_ROLES.MANAGE_CLINIC_ADMIN
+    ]
+  },
+  {
+    title: 'translator',
+    path: ROUTES.TRANSLATOR,
+    component: TranslatorPage,
+    exact: true,
+    type: PRIVATE,
+    roles: [
+      USER_ROLES.MANAGE_TRANSLATOR
     ]
   },
   {
