@@ -1,5 +1,6 @@
 export const DASHBOARD = '/';
 export const ADMIN = '/admin';
+export const TRANSLATOR = '/translator';
 
 export const SERVICE_SETUP = '/service-setup';
 export const SERVICE_SETUP_EDUCATION = SERVICE_SETUP + '#education';

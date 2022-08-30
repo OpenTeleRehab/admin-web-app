@@ -2,7 +2,8 @@ export const USER_GROUPS = {
   ORGANIZATION_ADMIN: 'organization_admin',
   GLOBAL_ADMIN: 'global_admin',
   COUNTRY_ADMIN: 'country_admin',
-  CLINIC_ADMIN: 'clinic_admin'
+  CLINIC_ADMIN: 'clinic_admin',
+  TRANSLATOR: 'translator'
 };
 
 export const USER_ROLES = {
@@ -48,7 +49,8 @@ export const USER_ROLES = {
   MANAGE_DISEASE: 'manage_disease',
   VIEW_TERM_CONDITION: 'view_term_condition',
   VIEW_PRIVACY_POLICY: 'view_privacy_policy',
-  MANAGE_COLOR_SCHEME: 'manage_color_scheme'
+  MANAGE_COLOR_SCHEME: 'manage_color_scheme',
+  MANAGE_TRANSLATOR: 'manage_translator'
 };
 
 export const SETTING_ROLES = [

@@ -31,6 +31,7 @@ import { treatmentPlan } from 'store/treatmentPlan/reducers';
 import { disease } from 'store/disease/reducers';
 import { organization } from 'store/organization/reducers';
 import { colorScheme } from 'store/colorScheme/reducers';
+import { translator } from 'store/translator/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -59,7 +60,8 @@ export const rootReducer = {
   guidancePage,
   disease,
   organization,
-  colorScheme
+  colorScheme,
+  translator
 };
 
 const devTool =
