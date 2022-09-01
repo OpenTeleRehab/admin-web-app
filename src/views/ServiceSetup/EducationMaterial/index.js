@@ -27,8 +27,9 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 let timer = null;
 const EducationMaterial = ({ translate }) => {
@@ -246,11 +247,11 @@ const EducationMaterial = ({ translate }) => {
               const action = (
                 <>
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
-                    <>
-                      <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
-                      <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
-                    </>
+                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL)) &&
+                    <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
+                  }
+                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL) &&
+                    <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
                   }
                 </>
               );

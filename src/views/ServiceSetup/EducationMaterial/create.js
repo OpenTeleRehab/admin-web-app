@@ -26,12 +26,15 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
+import { USER_ROLES } from '../../../variables/user';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
   const { maxFileSize } = settings.educationMaterial;
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL);
 
   const { languages } = useSelector(state => state.language);
   const { educationMaterial, filters } = useSelector(state => state.educationMaterial);
@@ -245,6 +248,7 @@ const CreateEducationMaterial = ({ translate }) => {
                   aria-label="File"
                   id="file"
                   onKeyPress={(event) => handleFileUpload(event)}
+                  disabled={isTranslating}
                 />
                 <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
                 <Form.Control.Feedback type="invalid">
@@ -274,7 +278,7 @@ const CreateEducationMaterial = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -283,7 +287,7 @@ const CreateEducationMaterial = ({ translate }) => {
                         <ContextAwareToggle eventKey={index + 1} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index + 1}>
+                    <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}

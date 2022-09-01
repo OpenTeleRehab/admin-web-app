@@ -11,8 +11,9 @@ import Create from '../_Partials/Create';
 import SubCategoryCard from '../_Partials/SubCategoryCard';
 import SearchInput from 'components/Form/SearchInput';
 import { getCategories } from 'store/category/actions';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 const CategoryList = ({ type, translate }) => {
   const dispatch = useDispatch();
@@ -86,7 +87,7 @@ const CategoryList = ({ type, translate }) => {
         <Card>
           <Card.Header className="pl-2 d-flex justify-content-between align-items-start">
             <h5 className="m-0 text-truncate">{translate('category')}</h5>
-            { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+            { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_CATEGORY)) &&
               <Button
                 aria-label="New Category"
                 variant="outline-primary"

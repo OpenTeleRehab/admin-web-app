@@ -40,11 +40,14 @@ import Upload from './upload';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
+import { USER_ROLES } from '../../../variables/user';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
@@ -163,7 +166,7 @@ const CreateExercise = ({ translate }) => {
 
   const enableButtons = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback;
+    return languageObj && languageObj.code === languageObj.fallback && !isTranslating;
   };
 
   const handleSave = () => {
@@ -361,9 +364,11 @@ const CreateExercise = ({ translate }) => {
                 <h4>{translate('exercise.media')}</h4>
                 { mediaUploads.map((mediaUpload, index) => (
                   <div key={index} className="mb-2 position-relative w-75" >
-                    <div className="position-absolute remove-btn-wrapper">
-                      <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
-                    </div>
+                    {!isTranslating &&
+                      <div className="position-absolute remove-btn-wrapper">
+                        <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
+                      </div>
+                    }
 
                     { mediaUpload.fileType === 'audio/mpeg' &&
                       <div className="img-thumbnail w-100 pt-2">
@@ -385,10 +390,12 @@ const CreateExercise = ({ translate }) => {
                     <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
                   </div>
                 ))}
-                <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
-                  <BsUpload size={15}/> {translate('exercise.media_upload')}
-                  <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload"/>
-                </div>
+                {!isTranslating &&
+                  <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
+                    <BsUpload size={15}/> {translate('exercise.media_upload')}
+                    <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload"/>
+                  </div>
+                }
                 { mediaUploadsError &&
                   <div className="text-danger">{translate('exercise.media_upload.required')}</div>
                 }
@@ -430,6 +437,7 @@ const CreateExercise = ({ translate }) => {
                   value={true}
                   checked={formFields.show_sets_reps}
                   label={translate('exercise.set_efault_exercise_sets_and_reps')}
+                  disabled={isTranslating}
                 />
               </Form.Group>
               {formFields.show_sets_reps && (
@@ -445,6 +453,7 @@ const CreateExercise = ({ translate }) => {
                         value={formFields.sets}
                         onChange={handleChange}
                         isInvalid={setsError}
+                        disabled={isTranslating}
                       />
                       <Form.Control.Feedback type="invalid">
                         {translate('exercise.sets.required')}
@@ -460,6 +469,7 @@ const CreateExercise = ({ translate }) => {
                         value={formFields.reps}
                         onChange={handleChange}
                         isInvalid={repsError}
+                        disabled={isTranslating}
                       />
                       <Form.Control.Feedback type="invalid">
                         {translate('exercise.reps.required')}
@@ -473,6 +483,7 @@ const CreateExercise = ({ translate }) => {
                       value={true}
                       checked={formFields.include_feedback}
                       label={translate('exercise.include_collecting_feedback')}
+                      disabled={isTranslating}
                     />
                   </Form.Group>
                 </Card>
@@ -484,6 +495,7 @@ const CreateExercise = ({ translate }) => {
                   value={true}
                   checked={formFields.get_pain_level}
                   label={translate('exercise.get_pain_level_feedback')}
+                  disabled={isTranslating}
                 />
               </Form.Group>
 
@@ -491,7 +503,7 @@ const CreateExercise = ({ translate }) => {
                 {
                   categoryTreeData.map((category, index) => (
                     <Card key={index}>
-                      <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                      <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                         {category.label}
                         <div className="ml-auto">
                           <span className="mr-3">
@@ -500,7 +512,7 @@ const CreateExercise = ({ translate }) => {
                           <ContextAwareToggle eventKey={index + 1} />
                         </div>
                       </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index + 1}>
+                      <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
                         <Card.Body>
                           <CheckboxTree
                             nodes={category.children || []}

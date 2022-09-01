@@ -94,7 +94,7 @@ const routes = [
     component: ServiceSetupPage,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_EXERCISE]
+    roles: [USER_ROLES.SETUP_EXERCISE, USER_ROLES.TRANSLATE_EXERCISE, USER_ROLES.TRANSLATE_QUESTIONNAIRE, USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL]
   },
   {
     title: 'exercise.create',
@@ -110,7 +110,7 @@ const routes = [
     component: CreateExercise,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_EXERCISE]
+    roles: [USER_ROLES.SETUP_EXERCISE, USER_ROLES.TRANSLATE_EXERCISE]
   },
   {
     title: 'education_material.create',
@@ -126,7 +126,7 @@ const routes = [
     component: CreateEducationMaterial,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_EDUCATIONAL_MATERIAL]
+    roles: [USER_ROLES.SETUP_EDUCATIONAL_MATERIAL, USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL]
   },
   {
     title: 'questionnaire.create',
@@ -142,7 +142,7 @@ const routes = [
     component: CreateQuestionnaire,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_QUESTIONNAIRE]
+    roles: [USER_ROLES.SETUP_QUESTIONNAIRE, USER_ROLES.TRANSLATE_QUESTIONNAIRE]
   },
   {
     title: 'category',
@@ -150,7 +150,7 @@ const routes = [
     component: CategoryPage,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_CATEGORY]
+    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
   },
   {
     title: 'setting',

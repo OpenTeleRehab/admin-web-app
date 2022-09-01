@@ -50,7 +50,16 @@ export const USER_ROLES = {
   VIEW_TERM_CONDITION: 'view_term_condition',
   VIEW_PRIVACY_POLICY: 'view_privacy_policy',
   MANAGE_COLOR_SCHEME: 'manage_color_scheme',
-  MANAGE_TRANSLATOR: 'manage_translator'
+  MANAGE_TRANSLATOR: 'manage_translator',
+  TRANSLATE_TRANSLATION: 'translate_translation',
+  TRANSLATE_EDUCATIONAL_MATERIAL: 'translate_educational_material',
+  TRANSLATE_EXERCISE: 'translate_exercise',
+  TRANSLATE_QUESTIONNAIRE: 'translate_questionnaire',
+  TRANSLATE_GUIDANCE_PAGE: 'translate_guidance_page',
+  TRANSLATE_PRIVACY_POLICY: 'translate_privacy_policy',
+  TRANSLATE_STATIC_PAGE: 'translate_static_page',
+  TRANSLATE_TERM_CONDITION: 'translate_term_condition',
+  TRANSLATE_CATEGORY: 'translate_category'
 };
 
 export const SETTING_ROLES = [
@@ -63,5 +72,9 @@ export const SETTING_ROLES = [
   USER_ROLES.MANAGE_TERM_CONDITION,
   USER_ROLES.MANAGE_PRIVACY_POLICY,
   USER_ROLES.MANAGE_GUIDANCE_PAGE,
-  USER_ROLES.MANAGE_ORGANIZATION
+  USER_ROLES.MANAGE_ORGANIZATION,
+  USER_ROLES.TRANSLATE_TRANSLATION,
+  USER_ROLES.TRANSLATE_STATIC_PAGE,
+  USER_ROLES.TRANSLATE_PRIVACY_POLICY,
+  USER_ROLES.TRANSLATE_GUIDANCE_PAGE
 ];
