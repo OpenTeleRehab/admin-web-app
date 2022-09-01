@@ -93,6 +93,30 @@ const uploadExercisesFail = () => ({
   type: 'UPLOAD_EXERCISES_FAIL'
 });
 
+const approveTranslationRequest = () => ({
+  type: 'APPROVE_TRANSLATION_REQUEST'
+});
+
+const approveTranslationSuccess = () => ({
+  type: 'APPROVE_TRANSLATION_SUCCESS'
+});
+
+const approveTranslationFail = () => ({
+  type: 'APPROVE_TRANSLATION_FAIL'
+});
+
+const rejectTranslationRequest = () => ({
+  type: 'REJECT_TRANSLATION_REQUEST'
+});
+
+const rejectTranslationSuccess = () => ({
+  type: 'REJECT_TRANSLATION_SUCCESS'
+});
+
+const rejectTranslationFail = () => ({
+  type: 'REJECT_TRANSLATION_FAIL'
+});
+
 export const mutation = {
   getExercisesFail,
   getExercisesRequest,
@@ -115,5 +139,11 @@ export const mutation = {
   downloadExercisesFail,
   uploadExercisesRequest,
   uploadExercisesSuccess,
-  uploadExercisesFail
+  uploadExercisesFail,
+  approveTranslationRequest,
+  approveTranslationSuccess,
+  approveTranslationFail,
+  rejectTranslationRequest,
+  rejectTranslationSuccess,
+  rejectTranslationFail
 };

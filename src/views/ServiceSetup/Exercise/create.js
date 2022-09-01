@@ -27,8 +27,9 @@ import CheckboxTree from 'react-checkbox-tree';
 
 import * as ROUTES from 'variables/routes';
 import {
+  approveTranslation,
   createExercise,
-  getExercise,
+  getExercise, rejectTranslation,
   updateExercise
 } from 'store/exercise/actions';
 import { getCategoryTreeData } from 'store/category/actions';
@@ -42,6 +43,7 @@ import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
+import SelectLanguage from '../_Partials/SelectLanguage';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -76,6 +78,9 @@ const CreateExercise = ({ translate }) => {
   const [selectedCategories, setSelectedCategories] = useState({});
   const [expanded, setExpanded] = useState([]);
   const [tab, setTab] = useState(TABS.CREATE);
+  const [editTranslations, setEditTranslations] = useState([]);
+  const [editTranslationIndex, setEditTranslationIndex] = useState(1);
+  const [editTranslation, setEditTranslation] = useState(null);
 
   useEffect(() => {
     if (languages.length) {
@@ -110,15 +115,25 @@ const CreateExercise = ({ translate }) => {
   useEffect(() => {
     if (id && exercise.id) {
       const showSetsReps = exercise.sets > 0;
-      setFormFields({
+      let data = {
         title: exercise.title,
         include_feedback: showSetsReps && exercise.include_feedback,
         get_pain_level: exercise.get_pain_level,
         show_sets_reps: showSetsReps,
         sets: exercise.sets,
         reps: exercise.reps
-      });
-      setAdditionalFields(exercise.additional_fields);
+      };
+      if (_.isEmpty(editTranslation)) {
+        setAdditionalFields(exercise.additional_fields);
+      } else {
+        data = {
+          ...data,
+          id: editTranslation.id,
+          title: editTranslation.title
+        };
+        setAdditionalFields(editTranslation.additional_fields);
+      }
+      setFormFields(data);
       setMediaUploads(exercise.files);
       if (categoryTreeData.length) {
         const rootCategoryStructure = {};
@@ -133,7 +148,16 @@ const CreateExercise = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
-  }, [id, exercise, categoryTreeData]);
+  }, [id, exercise, categoryTreeData, editTranslation]);
+
+  useEffect(() => {
+    if (!_.isEmpty(editTranslations)) {
+      setEditTranslation(editTranslations[editTranslationIndex - 1]);
+    } else {
+      setEditTranslation(null);
+    }
+    // eslint-disable-next-line
+  }, [editTranslations, editTranslationIndex]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -322,6 +346,69 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
+  const enableRejectApprove = () => {
+    return !(language.code !== 'en' && _.isEmpty(editTranslations));
+  };
+
+  const handleReject = () => {
+    if (isTranslating && !_.isEmpty(editTranslation)) {
+      setIsLoading(true);
+      dispatch(rejectTranslation(editTranslation.id)).then(result => {
+        if (result) {
+          dispatch(getExercise(id, language));
+        }
+        setIsLoading(false);
+      });
+    }
+  };
+
+  const handleApprove = () => {
+    let canSave = true;
+
+    if (formFields.title === '') {
+      canSave = false;
+      setTitleError(true);
+    } else {
+      setTitleError(false);
+    }
+
+    const errorInputFields = [];
+    const errorValueFields = [];
+    for (let i = 0; i < additionalFields.length; i++) {
+      if (additionalFields[i].field === '') {
+        canSave = false;
+        errorInputFields.push(true);
+      } else {
+        errorInputFields.push(false);
+      }
+
+      if (additionalFields[i].value === '') {
+        canSave = false;
+        errorValueFields.push(true);
+      } else {
+        errorValueFields.push(false);
+      }
+    }
+    setInputFieldError(errorInputFields);
+    setInputValueError(errorValueFields);
+
+    if (canSave) {
+      setIsLoading(true);
+      const payload = {
+        ...formFields,
+        additional_fields: JSON.stringify(additionalFields),
+        lang: language
+      };
+
+      dispatch(approveTranslation(editTranslation.id, payload)).then(result => {
+        if (result) {
+          setIsLoading(false);
+          dispatch(getExercise(id, language));
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -404,16 +491,28 @@ const CreateExercise = ({ translate }) => {
             <Col sm={7} xl={8} className="mb-5">
               <Form.Group controlId="formLanguage">
                 <Form.Label>{translate('common.show_language.version')}</Form.Label>
-                <Select
-                  isDisabled={!id}
-                  classNamePrefix="filter"
-                  value={languages.filter(option => option.id === language)}
-                  getOptionLabel={option => option.name}
-                  options={languages}
-                  onChange={(e) => setLanguage(e.id)}
-                  styles={customSelectStyles}
-                  aria-label="Language"
-                />
+                {!isTranslating ? (
+                  <Select
+                    isDisabled={!id}
+                    classNamePrefix="filter"
+                    value={languages.filter(option => option.id.toString() === language.toString())}
+                    getOptionLabel={option => option.name}
+                    options={languages}
+                    onChange={(e) => setLanguage(e.id)}
+                    styles={customSelectStyles}
+                    aria-label="Language"
+                  />
+                ) : (
+                  <SelectLanguage
+                    translate={translate}
+                    resource={exercise}
+                    setLanguage={setLanguage}
+                    language={language}
+                    setEditTranslationIndex={setEditTranslationIndex}
+                    setEditTranslations={setEditTranslations}
+                    isDisabled={!id}
+                  />
+                )}
               </Form.Group>
               <h4>{translate('exercise.information')}</h4>
               <Form.Group controlId="formTitle">
@@ -609,6 +708,25 @@ const CreateExercise = ({ translate }) => {
           <Col sm={12} xl={11} className="question-wrapper">
             <div className="sticky-btn d-flex justify-content-end">
               <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+                {enableRejectApprove() &&
+                    <div className="mr-2">
+                      <Button
+                        onClick={handleApprove}
+                        variant="outline-primary"
+                        disabled={isLoading}
+                      >
+                        {translate('common.approve')}
+                      </Button>
+                      <Button
+                        onClick={handleReject}
+                        className="ml-2"
+                        variant="outline-primary"
+                        disabled={isLoading}
+                      >
+                        {translate('common.reject')}
+                      </Button>
+                    </div>
+                }
                 <Button
                   id="formSave"
                   onClick={handleSave}
