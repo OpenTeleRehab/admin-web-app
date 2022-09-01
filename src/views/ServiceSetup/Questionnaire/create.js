@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
+  approveTranslation,
   createQuestionnaire,
-  getQuestionnaire,
+  getQuestionnaire, rejectTranslation,
   updateQuestionnaire
 } from '../../../store/questionnaire/actions';
 import Question from './Question/question';
@@ -29,6 +30,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import Dialog from '../../../components/Dialog';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
+import SelectLanguage from '../_Partials/SelectLanguage';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -55,6 +57,9 @@ const CreateQuestionnaire = ({ translate }) => {
   const [answerFieldError, setAnswerFieldError] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isUsed, setIsUsed] = useState(false);
+  const [editTranslations, setEditTranslations] = useState([]);
+  const [editTranslationIndex, setEditTranslationIndex] = useState(1);
+  const [editTranslation, setEditTranslation] = useState(null);
 
   useEffect(() => {
     if (languages.length) {
@@ -88,11 +93,19 @@ const CreateQuestionnaire = ({ translate }) => {
 
   useEffect(() => {
     if (id && questionnaire.id) {
-      setFormFields({
-        title: questionnaire.title,
-        description: questionnaire.description
-      });
-      setQuestions(questionnaire.questions);
+      if (_.isEmpty(editTranslation)) {
+        setFormFields({
+          title: questionnaire.title,
+          description: questionnaire.description
+        });
+        setQuestions(questionnaire.questions);
+      } else {
+        setFormFields({
+          title: editTranslation.title,
+          description: editTranslation.description
+        });
+        setQuestions(editTranslation.questions);
+      }
       if (categoryTreeData.length) {
         const rootCategoryStructure = {};
         categoryTreeData.forEach(category => {
@@ -106,7 +119,16 @@ const CreateQuestionnaire = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
-  }, [id, questionnaire, categoryTreeData]);
+  }, [id, questionnaire, categoryTreeData, editTranslation]);
+
+  useEffect(() => {
+    if (!_.isEmpty(editTranslations)) {
+      setEditTranslation(editTranslations[editTranslationIndex - 1]);
+    } else {
+      setEditTranslation(null);
+    }
+    // eslint-disable-next-line
+  }, [editTranslations, editTranslationIndex]);
 
   useEffect(() => {
     if (id && questionnaire.is_used) {
@@ -238,6 +260,74 @@ const CreateQuestionnaire = ({ translate }) => {
     setShowConfirm(true);
   };
 
+  const enableRejectApprove = () => {
+    return !(language.code !== 'en' && _.isEmpty(editTranslations));
+  };
+
+  const handleReject = () => {
+    if (isTranslating && !_.isEmpty(editTranslation)) {
+      setIsLoading(true);
+      dispatch(rejectTranslation(editTranslation.id)).then(result => {
+        if (result) {
+          dispatch(getQuestionnaire(id, language));
+        }
+        setIsLoading(false);
+      });
+    }
+  };
+
+  const handleApprove = () => {
+    let canSave = true;
+    const errorQuestionTitle = [];
+    const errorAnswerField = [];
+
+    if (formFields.title === '') {
+      canSave = false;
+      setTitleError(true);
+    } else {
+      setTitleError(false);
+    }
+
+    for (let i = 0; i < questions.length; i++) {
+      if (questions[i].title === '') {
+        canSave = false;
+        errorQuestionTitle.push(true);
+      } else {
+        errorQuestionTitle.push(false);
+      }
+    }
+
+    for (let i = 0; i < questions.length; i++) {
+      errorAnswerField.push([]);
+      for (let j = 0; j < questions[i].answers.length; j++) {
+        if (questions[i].answers[j].description === '') {
+          canSave = false;
+          errorAnswerField[i].push(true);
+        } else {
+          errorAnswerField[i].push(false);
+        }
+      }
+    }
+    setQuestionTitleError(errorQuestionTitle);
+    setAnswerFieldError(errorAnswerField);
+
+    if (canSave) {
+      setIsLoading(true);
+      const payload = {
+        ...formFields,
+        lang: language,
+        questions
+      };
+
+      dispatch(approveTranslation(editTranslation.id, payload)).then(result => {
+        if (result) {
+          setIsLoading(false);
+          dispatch(getQuestionnaire(id, language));
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -266,16 +356,28 @@ const CreateQuestionnaire = ({ translate }) => {
           <Col sm={6} xl={5}>
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
-              <Select
-                isDisabled={!id}
-                classNamePrefix="filter"
-                value={languages.filter(option => option.id === language)}
-                getOptionLabel={option => option.name}
-                options={languages}
-                onChange={(e) => setLanguage(e.id)}
-                styles={customSelectStyles}
-                aria-label="Language"
-              />
+              {!isTranslating ? (
+                <Select
+                  isDisabled={!id}
+                  classNamePrefix="filter"
+                  value={languages.filter(option => option.id === language)}
+                  getOptionLabel={option => option.name}
+                  options={languages}
+                  onChange={(e) => setLanguage(e.id)}
+                  styles={customSelectStyles}
+                  aria-label="Language"
+                />
+              ) : (
+                <SelectLanguage
+                  translate={translate}
+                  resource={questionnaire}
+                  setLanguage={setLanguage}
+                  language={language ? language.toString() : null}
+                  setEditTranslationIndex={setEditTranslationIndex}
+                  setEditTranslations={setEditTranslations}
+                  isDisabled={!id}
+                />
+              )}
             </Form.Group>
           </Col>
         </Row>
@@ -380,13 +482,33 @@ const CreateQuestionnaire = ({ translate }) => {
             {!enableButtons() &&
               <div className="sticky-btn d-flex justify-content-end">
                 <div className="py-2 questionnaire-save-cancel-wrapper px-3">
-                  <Button
-                    aria-label="Save"
-                    onClick={handleSave}
-                    disabled={isLoading}
-                  >
-                    {translate('common.save')}
-                  </Button>
+                  {enableRejectApprove() &&
+                    <>
+                      <Button
+                        onClick={handleApprove}
+                        disabled={isLoading}
+                      >
+                        {translate('common.approve')}
+                      </Button>
+                      <Button
+                        onClick={handleReject}
+                        className="ml-2"
+                        variant="outline-primary"
+                        disabled={isLoading}
+                      >
+                        {translate('common.reject')}
+                      </Button>
+                    </>
+                  }
+                  {!enableRejectApprove() &&
+                    <Button
+                      aria-label="Save"
+                      onClick={handleSave}
+                      disabled={isLoading}
+                    >
+                      {translate('common.save')}
+                    </Button>
+                  }
                   <Button
                     aria-label="Cancel"
                     className="ml-2"

@@ -159,8 +159,8 @@ SelectLanguage.propTypes = {
   translate: PropTypes.func,
   resource: PropTypes.object,
   setLanguage: PropTypes.func,
-  setEditTranslationIndex: PropTypes.number,
-  setEditTranslations: PropTypes.array,
+  setEditTranslationIndex: PropTypes.func,
+  setEditTranslations: PropTypes.func,
   isDisabled: PropTypes.bool,
   language: PropTypes.string
 };

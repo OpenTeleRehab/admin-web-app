@@ -68,6 +68,30 @@ const clearFilterEducationMaterialsRequest = () => ({
   type: 'CLEAR_FILTER_EDUCATION_MATERIALS_REQUEST'
 });
 
+const approveTranslationRequest = () => ({
+  type: 'APPROVE_TRANSLATION_REQUEST'
+});
+
+const approveTranslationSuccess = () => ({
+  type: 'APPROVE_TRANSLATION_SUCCESS'
+});
+
+const approveTranslationFail = () => ({
+  type: 'APPROVE_TRANSLATION_FAIL'
+});
+
+const rejectTranslationRequest = () => ({
+  type: 'REJECT_TRANSLATION_REQUEST'
+});
+
+const rejectTranslationSuccess = () => ({
+  type: 'REJECT_TRANSLATION_SUCCESS'
+});
+
+const rejectTranslationFail = () => ({
+  type: 'REJECT_TRANSLATION_FAIL'
+});
+
 export const mutation = {
   getEducationMaterialRequest,
   getEducationMaterialSuccess,
@@ -84,5 +108,11 @@ export const mutation = {
   deleteEducationMaterialRequest,
   deleteEducationMaterialSuccess,
   deleteEducationMaterialFail,
-  clearFilterEducationMaterialsRequest
+  clearFilterEducationMaterialsRequest,
+  approveTranslationRequest,
+  approveTranslationSuccess,
+  approveTranslationFail,
+  rejectTranslationRequest,
+  rejectTranslationSuccess,
+  rejectTranslationFail
 };
