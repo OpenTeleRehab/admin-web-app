@@ -14,6 +14,8 @@ import { FaCopy, FaTrashAlt } from 'react-icons/fa';
 import settings from '../../../../settings';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import _ from 'lodash';
+import keycloak from '../../../../utils/keycloak';
+import { USER_ROLES } from '../../../../variables/user';
 
 const reorderQuestion = (questions, startIndex, endIndex) => {
   const result = Array.from(questions);
@@ -24,6 +26,7 @@ const reorderQuestion = (questions, startIndex, endIndex) => {
 
 const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, modifiable }) => {
   const { languages } = useSelector(state => state.language);
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
   const handleFileChange = (e, index) => {
     const { name, files } = e.target;
@@ -96,7 +99,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const enableButtons = (question, isEnabled) => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback && (modifiable || !question.id || isEnabled);
+    return languageObj && languageObj.code === languageObj.fallback && (modifiable || !question.id || isEnabled) && !isTranslating;
   };
 
   const handleCloneQuestion = (index) => {

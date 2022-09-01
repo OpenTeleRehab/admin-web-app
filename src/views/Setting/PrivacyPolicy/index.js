@@ -124,9 +124,11 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
               { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && (
                 <>
                   <PublishAction className="ml-1" onClick={() => handlePublish(privacyPolicy.id)} disabled={publishedDate} />
-                  <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} disabled={publishedDate} />
                   <DeleteAction className="ml-1" disabled />
                 </>
+              )}
+              { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PRIVACY_POLICY)) && (
+                <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} disabled={publishedDate} />
               )}
             </>
           );

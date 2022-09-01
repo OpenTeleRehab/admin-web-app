@@ -26,8 +26,9 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 let timer = null;
 const Questionnaire = ({ translate }) => {
@@ -245,9 +246,11 @@ const Questionnaire = ({ translate }) => {
               const action = (
                 <>
                   <ViewAction onClick={() => handleView(questionnaire)} />
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE)) &&
+                    <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
+                  }
+                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE) &&
                     <>
-                      <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
                       <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
                     </>
                   }

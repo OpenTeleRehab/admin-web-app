@@ -27,11 +27,14 @@ import scssColors from '../../../scss/custom.scss';
 import Select from 'react-select';
 import customColorScheme from '../../../utils/customColorScheme';
 import Dialog from '../../../components/Dialog';
+import keycloak from '../../../utils/keycloak';
+import { USER_ROLES } from '../../../variables/user';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
@@ -184,7 +187,7 @@ const CreateQuestionnaire = ({ translate }) => {
 
   const enableButtons = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback;
+    return languageObj && languageObj.code === languageObj.fallback && !isTranslating;
   };
 
   const handleAddQuestion = () => {
@@ -296,7 +299,7 @@ const CreateQuestionnaire = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -305,7 +308,7 @@ const CreateQuestionnaire = ({ translate }) => {
                         <ContextAwareToggle eventKey={index + 1} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index + 1}>
+                    <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}

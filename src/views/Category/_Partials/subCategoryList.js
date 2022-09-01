@@ -7,7 +7,8 @@ import { getTranslate } from 'react-localize-redux';
 import Dialog from '../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCategory } from '../../../store/category/actions';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
+import keycloak from '../../../utils/keycloak';
 
 const SubCategoryList = ({ type, subCategories, categories, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
@@ -57,12 +58,14 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
                   </Badge>
                 )}
               </div>
-              { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
-                <div>
-                  <EditAction onClick={() => handleEdit(sub.id)} />
+              <div>
+                { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_CATEGORY) &&
                   <DeleteAction onClick={() => handleDelete(sub.id)} disabled={sub.is_used} />
-                </div>
-              }
+                }
+                { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_CATEGORY)) &&
+                  <EditAction onClick={() => handleEdit(sub.id)} />
+                }
+              </div>
             </ListGroup.Item>
           );
         })}

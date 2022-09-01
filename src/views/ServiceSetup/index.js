@@ -9,7 +9,8 @@ import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import { BsPlus } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
-import { USER_GROUPS } from '../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../variables/user';
+import keycloak from '../../utils/keycloak';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -34,7 +35,7 @@ const ServiceSetup = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('service_setup')}</h1>
-        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE) &&
           <div className="btn-toolbar mb-2 mb-md-0">
             <div className="btn-toolbar mb-2 mb-md-0">
               {view === VIEW_EXERCISE

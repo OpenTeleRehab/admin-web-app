@@ -17,6 +17,8 @@ import { FaEdit } from 'react-icons/fa/index';
 import Dialog from '../../../components/Dialog';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import keycloak from '../../../utils/keycloak';
+import { USER_ROLES } from '../../../variables/user';
 
 let timer = null;
 
@@ -112,27 +114,33 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
                           <h5>{guidancePage.title}</h5>
 
                           <div className="d-flex align-items-center">
-                            <div {...provided.dragHandleProps}>
+                            {keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && (
+                              <>
+                                <div {...provided.dragHandleProps}>
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="text-dark drag-button"
+                                    aria-label="Drag button"
+                                  >
+                                    <BsArrowsMove size={20}/>
+                                  </Button>
+                                </div>
+
+                                <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
+                              </>
+                            )}
+                            {(keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && (
                               <Button
                                 variant="link"
                                 size="sm"
-                                className="text-dark drag-button"
-                                aria-label="Drag button"
+                                className="text-primary p-0"
+                                onClick={() => handleRowEdit(guidancePage.id)}
+                                aria-label="Edit"
                               >
-                                <BsArrowsMove size={20}/>
+                                <FaEdit size={20} />
                               </Button>
-                            </div>
-
-                            <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="text-primary p-0"
-                              onClick={() => handleRowEdit(guidancePage.id)}
-                              aria-label="Edit"
-                            >
-                              <FaEdit size={20} />
-                            </Button>
+                            )}
                           </div>
                         </Card.Header>
                         <Card.Body className="d-flex justify-content-between">

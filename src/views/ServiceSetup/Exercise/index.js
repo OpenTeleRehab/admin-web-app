@@ -39,8 +39,9 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 let timer = null;
 const Exercise = ({ translate }) => {
@@ -261,15 +262,15 @@ const Exercise = ({ translate }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
-                      <>
-                        <div className="position-absolute delete-btn">
-                          <DeleteAction onClick={() => handleDelete(exercise.id)} />
-                        </div>
-                        <div className="position-absolute edit-btn">
-                          <EditAction onClick={() => handleEdit(exercise.id)} />
-                        </div>
-                      </>
+                    { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE) &&
+                      <div className="position-absolute delete-btn">
+                        <DeleteAction onClick={() => handleDelete(exercise.id)} />
+                      </div>
+                    }
+                    { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE)) &&
+                      <div className="position-absolute edit-btn">
+                        <EditAction onClick={() => handleEdit(exercise.id)} />
+                      </div>
                     }
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onClick={() => handleView(exercise.id)} onKeyPress={(e) => e.key === 'Enter' && handleView(exercise.id)}>
                       <div className="card-img bg-light">
