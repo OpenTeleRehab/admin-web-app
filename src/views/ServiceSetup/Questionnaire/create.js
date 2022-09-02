@@ -31,6 +31,7 @@ import Dialog from '../../../components/Dialog';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
+import FallbackText from '../../../components/Form/FallbackText';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -60,6 +61,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const [editTranslations, setEditTranslations] = useState([]);
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
+  const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
     if (languages.length) {
@@ -99,12 +101,14 @@ const CreateQuestionnaire = ({ translate }) => {
           description: questionnaire.description
         });
         setQuestions(questionnaire.questions);
+        setShowFallbackText(false);
       } else {
         setFormFields({
           title: editTranslation.title,
           description: editTranslation.description
         });
         setQuestions(editTranslation.questions);
+        setShowFallbackText(true);
       }
       if (categoryTreeData.length) {
         const rootCategoryStructure = {};
@@ -339,6 +343,9 @@ const CreateQuestionnaire = ({ translate }) => {
             <Form.Group controlId="formTitle">
               <Form.Label>{translate('questionnaire.title')}</Form.Label>
               <span className="text-dark ml-1">*</span>
+              {showFallbackText && questionnaire.fallback &&
+                  <FallbackText translate={translate} text={questionnaire.fallback.title} />
+              }
               <Form.Control
                 name="title"
                 onChange={handleChange}
@@ -385,6 +392,9 @@ const CreateQuestionnaire = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Form.Group controlId={'formDescription'}>
               <Form.Label>{translate('questionnaire.description')}</Form.Label>
+              {showFallbackText && questionnaire.fallback &&
+                  <FallbackText translate={translate} text={questionnaire.fallback.description} />
+              }
               <Form.Control
                 name="description"
                 as="textarea" rows={3}
@@ -444,6 +454,8 @@ const CreateQuestionnaire = ({ translate }) => {
               questionTitleError={questionTitleError}
               answerFieldError={answerFieldError}
               modifiable={!questionnaire.is_used || !id}
+              questionnaire={questionnaire}
+              showFallbackText={showFallbackText}
             />
             {enableButtons() &&
               <div className="sticky-btn d-flex justify-content-between">

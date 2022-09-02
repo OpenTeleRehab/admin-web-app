@@ -128,6 +128,7 @@ const SelectLanguage = ({ translate, resource, language, setLanguage, setEditTra
             </Button>
 
             <Button
+              className="ml-2"
               variant="primary"
               size={'sm'}
               disabled={currentIndex === editings.length}

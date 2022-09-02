@@ -44,6 +44,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
+import FallbackText from '../../../components/Form/FallbackText';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -81,6 +82,7 @@ const CreateExercise = ({ translate }) => {
   const [editTranslations, setEditTranslations] = useState([]);
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
+  const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
     if (languages.length) {
@@ -125,13 +127,23 @@ const CreateExercise = ({ translate }) => {
       };
       if (_.isEmpty(editTranslation)) {
         setAdditionalFields(exercise.additional_fields);
+        setShowFallbackText(false);
       } else {
         data = {
           ...data,
           id: editTranslation.id,
-          title: editTranslation.title
+          title: editTranslation.title,
+          fallback: exercise.fallback
         };
-        setAdditionalFields(editTranslation.additional_fields);
+        const newAdditionalFields = editTranslation.additional_fields.map(additionalField => {
+          const foundAdditionField = exercise.additional_fields.find(item => item.id === additionalField.parent_id);
+          return {
+            ...additionalField,
+            fallback: foundAdditionField ? foundAdditionField.fallback : additionalField.fallback
+          };
+        });
+        setAdditionalFields(newAdditionalFields);
+        setShowFallbackText(true);
       }
       setFormFields(data);
       setMediaUploads(exercise.files);
@@ -518,6 +530,9 @@ const CreateExercise = ({ translate }) => {
               <Form.Group controlId="formTitle">
                 <Form.Label>{translate('exercise.title')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
+                {showFallbackText && formFields.fallback &&
+                    <FallbackText translate={translate} text={formFields.fallback.title} />
+                }
                 <Form.Control
                   name="title"
                   onChange={handleChange}
@@ -656,6 +671,9 @@ const CreateExercise = ({ translate }) => {
                       <Form.Group controlId={`formLabel${index}`}>
                         <Form.Label>{translate('exercise.additional_field.label')}</Form.Label>
                         <span className="text-dark ml-1">*</span>
+                        {showFallbackText && additionalField.fallback &&
+                            <FallbackText translate={translate} text={additionalField.fallback.field} />
+                        }
                         <Form.Control
                           name="field"
                           placeholder={translate('exercise.additional_field.placeholder.label')}
@@ -670,6 +688,9 @@ const CreateExercise = ({ translate }) => {
                       <Form.Group controlId={`formValue${index}`}>
                         <Form.Label>{translate('exercise.additional_field.value')}</Form.Label>
                         <span className="text-dark ml-1">*</span>
+                        {showFallbackText && additionalField.fallback &&
+                            <FallbackText translate={translate} text={additionalField.fallback.value} />
+                        }
                         <Form.Control
                           name="value"
                           as="textarea"

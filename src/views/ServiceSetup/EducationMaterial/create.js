@@ -30,6 +30,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
+import FallbackText from '../../../components/Form/FallbackText';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -58,6 +59,7 @@ const CreateEducationMaterial = ({ translate }) => {
   const [editTranslations, setEditTranslations] = useState([]);
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
+  const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
     if (languages.length) {
@@ -94,6 +96,7 @@ const CreateEducationMaterial = ({ translate }) => {
       setFormFields({
         title: _.isEmpty(editTranslation) ? educationMaterial.title : editTranslation.title
       });
+      setShowFallbackText(!_.isEmpty(editTranslation));
       setMaterialFile(educationMaterial.file);
       if (categoryTreeData.length) {
         const rootCategoryStructure = {};
@@ -293,6 +296,9 @@ const CreateEducationMaterial = ({ translate }) => {
             <Form.Group controlId="formTitle">
               <Form.Label>{translate('education_material.title')}</Form.Label>
               <span className="text-dark ml-1">*</span>
+              {showFallbackText && educationMaterial.fallback &&
+                  <FallbackText translate={translate} text={educationMaterial.fallback.title} />
+              }
               <Form.Control
                 name="title"
                 onChange={handleChange}
