@@ -9,7 +9,12 @@ import { useHistory } from 'react-router-dom';
 
 import Dialog from 'components/Dialog';
 import CustomTable from 'components/Table';
-import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
+import {
+  DeleteAction,
+  EditAction,
+  TranslateAction,
+  ViewAction
+} from 'components/ActionIcons';
 import SearchInput from 'components/Form/SearchInput';
 import { getEducationMaterials, deleteEducationMaterial } from 'store/educationMaterial/actions';
 import ViewEducationMaterial from './view';
@@ -35,6 +40,7 @@ let timer = null;
 const EducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL);
 
   const [formFields, setFormFields] = useState({
     search_value: ''
@@ -157,6 +163,12 @@ const EducationMaterial = ({ translate }) => {
     setCurrentPage(0);
   };
 
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(0);
+  };
+
   const customSelectStyles = {
     option: (provided) => ({
       ...provided,
@@ -184,6 +196,16 @@ const EducationMaterial = ({ translate }) => {
             </Card.Header>
             <Card.Body>
               <Form.Group>
+                {isTranslating &&
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    name="suggestions"
+                    label={translate('exercise.show_suggestions')}
+                    id="showSuggestions"
+                    onChange={handleCheckBoxChange}
+                  />
+                }
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Select
                   classNamePrefix="filter"
@@ -246,11 +268,14 @@ const EducationMaterial = ({ translate }) => {
             rows={educationMaterials.map(educationMaterial => {
               const action = (
                 <>
+                  { isTranslating && !!educationMaterial.children.length &&
+                      <TranslateAction className="mr-1" onClick={() => {}} />
+                  }
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />
-                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL)) &&
+                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || isTranslating) &&
                     <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
                   }
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL) &&
+                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&
                     <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
                   }
                 </>
