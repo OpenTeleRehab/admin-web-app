@@ -507,7 +507,7 @@ const CreateExercise = ({ translate }) => {
                     translate={translate}
                     resource={exercise}
                     setLanguage={setLanguage}
-                    language={language}
+                    language={language ? language.toString() : null}
                     setEditTranslationIndex={setEditTranslationIndex}
                     setEditTranslations={setEditTranslations}
                     isDisabled={!id}
@@ -608,10 +608,10 @@ const CreateExercise = ({ translate }) => {
                           <span className="mr-3">
                             {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
                           </span>
-                          <ContextAwareToggle eventKey={index + 1} />
+                          <ContextAwareToggle eventKey={(index + 1).toString()} />
                         </div>
                       </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
+                      <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
                         <Card.Body>
                           <CheckboxTree
                             nodes={category.children || []}
@@ -709,31 +709,32 @@ const CreateExercise = ({ translate }) => {
             <div className="sticky-btn d-flex justify-content-end">
               <div className="py-2 questionnaire-save-cancel-wrapper px-3">
                 {enableRejectApprove() &&
-                    <div className="mr-2">
-                      <Button
-                        onClick={handleApprove}
-                        variant="outline-primary"
-                        disabled={isLoading}
-                      >
-                        {translate('common.approve')}
-                      </Button>
-                      <Button
-                        onClick={handleReject}
-                        className="ml-2"
-                        variant="outline-primary"
-                        disabled={isLoading}
-                      >
-                        {translate('common.reject')}
-                      </Button>
-                    </div>
+                  <>
+                    <Button
+                      onClick={handleApprove}
+                      disabled={isLoading}
+                    >
+                      {translate('common.approve')}
+                    </Button>
+                    <Button
+                      onClick={handleReject}
+                      className="ml-2"
+                      variant="outline-primary"
+                      disabled={isLoading}
+                    >
+                      {translate('common.reject')}
+                    </Button>
+                  </>
                 }
-                <Button
-                  id="formSave"
-                  onClick={handleSave}
-                  disabled={isLoading}
-                >
-                  {translate('common.save')}
-                </Button>
+                {!enableRejectApprove() &&
+                  <Button
+                    id="formSave"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {translate('common.save')}
+                  </Button>
+                }
                 <Button
                   className="ml-2"
                   variant="outline-dark"

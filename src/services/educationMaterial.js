@@ -74,10 +74,41 @@ const deleteEducationMaterial = id => {
     });
 };
 
+const approveTranslation = (id, payload) => {
+  const formData = new FormData();
+  _.forIn(payload, (value, key) => {
+    formData.append(key, value);
+  });
+
+  return axios.post(`/education-material/approve-translate/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(
+    res => {
+      return res.data;
+    }
+  ).catch((e) => {
+    return e.response.data;
+  });
+};
+
+const rejectTranslation = id => {
+  return axios.delete(`/education-material/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const EducationMaterial = {
   getEducationMaterial,
   createEducationMaterial,
   updateEducationMaterial,
   getEducationMaterials,
-  deleteEducationMaterial
+  deleteEducationMaterial,
+  approveTranslation,
+  rejectTranslation
 };

@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
+  approveTranslation,
   createEducationMaterial,
-  getEducationMaterial, updateEducationMaterial
+  getEducationMaterial, rejectTranslation, updateEducationMaterial
 } from '../../../store/educationMaterial/actions';
 import { formatFileSize, toMB } from '../../../utils/file';
 import settings from '../../../settings';
@@ -28,6 +29,7 @@ import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
+import SelectLanguage from '../_Partials/SelectLanguage';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -53,6 +55,9 @@ const CreateEducationMaterial = ({ translate }) => {
   const [titleError, setTitleError] = useState(false);
   const [fileError, setFileError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [editTranslations, setEditTranslations] = useState([]);
+  const [editTranslationIndex, setEditTranslationIndex] = useState(1);
+  const [editTranslation, setEditTranslation] = useState(null);
 
   useEffect(() => {
     if (languages.length) {
@@ -87,7 +92,7 @@ const CreateEducationMaterial = ({ translate }) => {
   useEffect(() => {
     if (id && educationMaterial.id) {
       setFormFields({
-        title: educationMaterial.title
+        title: _.isEmpty(editTranslation) ? educationMaterial.title : editTranslation.title
       });
       setMaterialFile(educationMaterial.file);
       if (categoryTreeData.length) {
@@ -103,7 +108,16 @@ const CreateEducationMaterial = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
-  }, [id, educationMaterial, categoryTreeData]);
+  }, [id, educationMaterial, categoryTreeData, editTranslation]);
+
+  useEffect(() => {
+    if (!_.isEmpty(editTranslations)) {
+      setEditTranslation(editTranslations[editTranslationIndex - 1]);
+    } else {
+      setEditTranslation(null);
+    }
+    // eslint-disable-next-line
+  }, [editTranslations, editTranslationIndex]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -198,6 +212,50 @@ const CreateEducationMaterial = ({ translate }) => {
     }
   };
 
+  const enableRejectApprove = () => {
+    return !(language.code !== 'en' && _.isEmpty(editTranslations));
+  };
+
+  const handleReject = () => {
+    if (isTranslating && !_.isEmpty(editTranslation)) {
+      setIsLoading(true);
+      dispatch(rejectTranslation(editTranslation.id)).then(result => {
+        if (result) {
+          dispatch(getEducationMaterial(id, language));
+        }
+        setIsLoading(false);
+      });
+    }
+  };
+
+  const handleApprove = () => {
+    let canSave = true;
+
+    if (formFields.title === '') {
+      canSave = false;
+      setTitleError(true);
+    } else {
+      setTitleError(false);
+    }
+
+    setFileError(false);
+
+    if (canSave) {
+      setIsLoading(true);
+      const payload = {
+        ...formFields,
+        lang: language
+      };
+
+      dispatch(approveTranslation(editTranslation.id, payload)).then(result => {
+        if (result) {
+          setIsLoading(false);
+          dispatch(getEducationMaterial(id, language));
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -209,16 +267,28 @@ const CreateEducationMaterial = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
-              <Select
-                isDisabled={!id}
-                classNamePrefix="filter"
-                value={languages.filter(option => option.id === language)}
-                getOptionLabel={option => option.name}
-                options={languages}
-                onChange={(e) => setLanguage(e.id)}
-                styles={customSelectStyles}
-                aria-label="language"
-              />
+              {!isTranslating ? (
+                <Select
+                  isDisabled={!id}
+                  classNamePrefix="filter"
+                  value={languages.filter(option => option.id === language)}
+                  getOptionLabel={option => option.name}
+                  options={languages}
+                  onChange={(e) => setLanguage(e.id)}
+                  styles={customSelectStyles}
+                  aria-label="language"
+                />
+              ) : (
+                <SelectLanguage
+                  translate={translate}
+                  resource={educationMaterial}
+                  setLanguage={setLanguage}
+                  language={language ? language.toString() : null}
+                  setEditTranslationIndex={setEditTranslationIndex}
+                  setEditTranslations={setEditTranslations}
+                  isDisabled={!id}
+                />
+              )}
             </Form.Group>
             <Form.Group controlId="formTitle">
               <Form.Label>{translate('education_material.title')}</Form.Label>
@@ -284,10 +354,10 @@ const CreateEducationMaterial = ({ translate }) => {
                         <span className="mr-3">
                           {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
                         </span>
-                        <ContextAwareToggle eventKey={index + 1} />
+                        <ContextAwareToggle eventKey={(index + 1).toString()} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
+                    <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}
@@ -316,12 +386,32 @@ const CreateEducationMaterial = ({ translate }) => {
           <Col sm={12} xl={11} className="question-wrapper">
             <div className="sticky-btn d-flex justify-content-end">
               <div className="py-2 questionnaire-save-cancel-wrapper px-3">
-                <Button
-                  onClick={handleSave}
-                  disabled={isLoading}
-                >
-                  {translate('common.save')}
-                </Button>
+                {enableRejectApprove() &&
+                  <>
+                    <Button
+                      onClick={handleApprove}
+                      disabled={isLoading}
+                    >
+                      {translate('common.approve')}
+                    </Button>
+                    <Button
+                      onClick={handleReject}
+                      className="ml-2"
+                      variant="outline-primary"
+                      disabled={isLoading}
+                    >
+                      {translate('common.reject')}
+                    </Button>
+                  </>
+                }
+                {!enableRejectApprove() &&
+                  <Button
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {translate('common.save')}
+                  </Button>
+                }
                 <Button
                   className="ml-2"
                   variant="outline-dark"
