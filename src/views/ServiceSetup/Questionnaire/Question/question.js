@@ -16,6 +16,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import keycloak from '../../../../utils/keycloak';
 import { USER_ROLES } from '../../../../variables/user';
+import FallbackText from '../../../../components/Form/FallbackText';
 
 const reorderQuestion = (questions, startIndex, endIndex) => {
   const result = Array.from(questions);
@@ -24,7 +25,7 @@ const reorderQuestion = (questions, startIndex, endIndex) => {
   return result;
 };
 
-const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, modifiable }) => {
+const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, questionnaire, showFallbackText, modifiable }) => {
   const { languages } = useSelector(state => state.language);
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
@@ -205,6 +206,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                           <Row>
                             <Col sm={8} xl={7}>
                               <Form.Group controlId={`formTitle${index}`}>
+                                {showFallbackText && question.fallback &&
+                                    <FallbackText translate={translate} text={questionnaire.questions[index].fallback.title} />
+                                }
                                 <Form.Control
                                   name="title"
                                   onChange={e => handleQuestionTitleChange(index, e)}
@@ -263,6 +267,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   <Row key={answerIndex}>
                                     <Col sm={8} xs={7}>
                                       <Form.Check type='checkbox'>
+                                        {showFallbackText && answer.fallback &&
+                                            <FallbackText translate={translate} text={questionnaire.questions[index].answers[answerIndex].fallback.description} />
+                                        }
                                         <Form.Check.Input type='checkbox' isValid className="mt-3" disabled aria-label="checkbox" />
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
@@ -305,6 +312,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   <Row key={answerIndex}>
                                     <Col sm={8} xl={7}>
                                       <Form.Check type='radio'>
+                                        {showFallbackText && answer.fallback &&
+                                            <FallbackText translate={translate} text={questionnaire.questions[index].answers[answerIndex].fallback.description} />
+                                        }
                                         <Form.Check.Input type='radio' isValid className="mt-3" disabled aria-label="radio button"/>
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
@@ -399,7 +409,9 @@ Question.propTypes = {
   language: PropTypes.string,
   questionTitleError: PropTypes.array,
   answerFieldError: PropTypes.array,
-  modifiable: PropTypes.bool
+  modifiable: PropTypes.bool,
+  questionnaire: PropTypes.object,
+  showFallbackText: PropTypes.bool
 };
 
 export default withLocalize(Question);

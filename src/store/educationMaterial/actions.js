@@ -89,7 +89,7 @@ export const approveTranslation = (id, payload) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.approveTranslationFail());
-    dispatch(showSuccessNotification('toast_title.translation.approve', 'success_message.translation.approve'));
+    dispatch(showSuccessNotification('toast_title.translation.approve', 'error_message.translation.approve'));
     return false;
   }
 };
@@ -103,7 +103,7 @@ export const rejectTranslation = (id) => async dispatch => {
     return true;
   } else {
     dispatch(mutation.rejectTranslationFail());
-    dispatch(showErrorNotification('toast_title.translation.reject', 'success_message.translation.reject'));
+    dispatch(showErrorNotification('toast_title.translation.reject', 'error_message.translation.reject'));
     return false;
   }
 };
