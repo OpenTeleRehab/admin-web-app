@@ -124,9 +124,11 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
               { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && (
                 <>
                   <PublishAction className="ml-1" onClick={() => handlePublish(term.id)} disabled={publishedDate} />
-                  <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} disabled={publishedDate} />
                   <DeleteAction className="ml-1" disabled />
                 </>
+              )}
+              { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TERM_CONDITION)) && (
+                <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} disabled={publishedDate} />
               )}
             </>
           );

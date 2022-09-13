@@ -27,8 +27,9 @@ import CheckboxTree from 'react-checkbox-tree';
 
 import * as ROUTES from 'variables/routes';
 import {
+  approveTranslation,
   createExercise,
-  getExercise,
+  getExercise, rejectTranslation,
   updateExercise
 } from 'store/exercise/actions';
 import { getCategoryTreeData } from 'store/category/actions';
@@ -40,11 +41,16 @@ import Upload from './upload';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
+import { USER_ROLES } from '../../../variables/user';
+import SelectLanguage from '../_Partials/SelectLanguage';
+import FallbackText from '../../../components/Form/FallbackText';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
@@ -73,6 +79,10 @@ const CreateExercise = ({ translate }) => {
   const [selectedCategories, setSelectedCategories] = useState({});
   const [expanded, setExpanded] = useState([]);
   const [tab, setTab] = useState(TABS.CREATE);
+  const [editTranslations, setEditTranslations] = useState([]);
+  const [editTranslationIndex, setEditTranslationIndex] = useState(1);
+  const [editTranslation, setEditTranslation] = useState(null);
+  const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
     if (languages.length) {
@@ -107,15 +117,35 @@ const CreateExercise = ({ translate }) => {
   useEffect(() => {
     if (id && exercise.id) {
       const showSetsReps = exercise.sets > 0;
-      setFormFields({
+      let data = {
         title: exercise.title,
         include_feedback: showSetsReps && exercise.include_feedback,
         get_pain_level: exercise.get_pain_level,
         show_sets_reps: showSetsReps,
         sets: exercise.sets,
         reps: exercise.reps
-      });
-      setAdditionalFields(exercise.additional_fields);
+      };
+      if (_.isEmpty(editTranslation)) {
+        setAdditionalFields(exercise.additional_fields);
+        setShowFallbackText(false);
+      } else {
+        data = {
+          ...data,
+          id: editTranslation.id,
+          title: editTranslation.title,
+          fallback: exercise.fallback
+        };
+        const newAdditionalFields = editTranslation.additional_fields.map(additionalField => {
+          const foundAdditionField = exercise.additional_fields.find(item => item.id === additionalField.parent_id);
+          return {
+            ...additionalField,
+            fallback: foundAdditionField ? foundAdditionField.fallback : additionalField.fallback
+          };
+        });
+        setAdditionalFields(newAdditionalFields);
+        setShowFallbackText(true);
+      }
+      setFormFields(data);
       setMediaUploads(exercise.files);
       if (categoryTreeData.length) {
         const rootCategoryStructure = {};
@@ -130,7 +160,16 @@ const CreateExercise = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
-  }, [id, exercise, categoryTreeData]);
+  }, [id, exercise, categoryTreeData, editTranslation]);
+
+  useEffect(() => {
+    if (!_.isEmpty(editTranslations)) {
+      setEditTranslation(editTranslations[editTranslationIndex - 1]);
+    } else {
+      setEditTranslation(null);
+    }
+    // eslint-disable-next-line
+  }, [editTranslations, editTranslationIndex]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -163,7 +202,7 @@ const CreateExercise = ({ translate }) => {
 
   const enableButtons = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback;
+    return languageObj && languageObj.code === languageObj.fallback && !isTranslating;
   };
 
   const handleSave = () => {
@@ -319,6 +358,69 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
+  const enableRejectApprove = () => {
+    return !(language.code !== 'en' && _.isEmpty(editTranslations));
+  };
+
+  const handleReject = () => {
+    if (isTranslating && !_.isEmpty(editTranslation)) {
+      setIsLoading(true);
+      dispatch(rejectTranslation(editTranslation.id)).then(result => {
+        if (result) {
+          dispatch(getExercise(id, language));
+        }
+        setIsLoading(false);
+      });
+    }
+  };
+
+  const handleApprove = () => {
+    let canSave = true;
+
+    if (formFields.title === '') {
+      canSave = false;
+      setTitleError(true);
+    } else {
+      setTitleError(false);
+    }
+
+    const errorInputFields = [];
+    const errorValueFields = [];
+    for (let i = 0; i < additionalFields.length; i++) {
+      if (additionalFields[i].field === '') {
+        canSave = false;
+        errorInputFields.push(true);
+      } else {
+        errorInputFields.push(false);
+      }
+
+      if (additionalFields[i].value === '') {
+        canSave = false;
+        errorValueFields.push(true);
+      } else {
+        errorValueFields.push(false);
+      }
+    }
+    setInputFieldError(errorInputFields);
+    setInputValueError(errorValueFields);
+
+    if (canSave) {
+      setIsLoading(true);
+      const payload = {
+        ...formFields,
+        additional_fields: JSON.stringify(additionalFields),
+        lang: language
+      };
+
+      dispatch(approveTranslation(editTranslation.id, payload)).then(result => {
+        if (result) {
+          setIsLoading(false);
+          dispatch(getExercise(id, language));
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -361,9 +463,11 @@ const CreateExercise = ({ translate }) => {
                 <h4>{translate('exercise.media')}</h4>
                 { mediaUploads.map((mediaUpload, index) => (
                   <div key={index} className="mb-2 position-relative w-75" >
-                    <div className="position-absolute remove-btn-wrapper">
-                      <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
-                    </div>
+                    {!isTranslating &&
+                      <div className="position-absolute remove-btn-wrapper">
+                        <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
+                      </div>
+                    }
 
                     { mediaUpload.fileType === 'audio/mpeg' &&
                       <div className="img-thumbnail w-100 pt-2">
@@ -385,10 +489,12 @@ const CreateExercise = ({ translate }) => {
                     <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
                   </div>
                 ))}
-                <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
-                  <BsUpload size={15}/> {translate('exercise.media_upload')}
-                  <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload"/>
-                </div>
+                {!isTranslating &&
+                  <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
+                    <BsUpload size={15}/> {translate('exercise.media_upload')}
+                    <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload"/>
+                  </div>
+                }
                 { mediaUploadsError &&
                   <div className="text-danger">{translate('exercise.media_upload.required')}</div>
                 }
@@ -397,21 +503,36 @@ const CreateExercise = ({ translate }) => {
             <Col sm={7} xl={8} className="mb-5">
               <Form.Group controlId="formLanguage">
                 <Form.Label>{translate('common.show_language.version')}</Form.Label>
-                <Select
-                  isDisabled={!id}
-                  classNamePrefix="filter"
-                  value={languages.filter(option => option.id === language)}
-                  getOptionLabel={option => option.name}
-                  options={languages}
-                  onChange={(e) => setLanguage(e.id)}
-                  styles={customSelectStyles}
-                  aria-label="Language"
-                />
+                {!isTranslating ? (
+                  <Select
+                    isDisabled={!id}
+                    classNamePrefix="filter"
+                    value={languages.filter(option => option.id.toString() === language.toString())}
+                    getOptionLabel={option => option.name}
+                    options={languages}
+                    onChange={(e) => setLanguage(e.id)}
+                    styles={customSelectStyles}
+                    aria-label="Language"
+                  />
+                ) : (
+                  <SelectLanguage
+                    translate={translate}
+                    resource={exercise}
+                    setLanguage={setLanguage}
+                    language={language ? language.toString() : null}
+                    setEditTranslationIndex={setEditTranslationIndex}
+                    setEditTranslations={setEditTranslations}
+                    isDisabled={!id}
+                  />
+                )}
               </Form.Group>
               <h4>{translate('exercise.information')}</h4>
               <Form.Group controlId="formTitle">
                 <Form.Label>{translate('exercise.title')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
+                {showFallbackText && formFields.fallback &&
+                    <FallbackText translate={translate} text={formFields.fallback.title} />
+                }
                 <Form.Control
                   name="title"
                   onChange={handleChange}
@@ -430,6 +551,7 @@ const CreateExercise = ({ translate }) => {
                   value={true}
                   checked={formFields.show_sets_reps}
                   label={translate('exercise.set_efault_exercise_sets_and_reps')}
+                  disabled={isTranslating}
                 />
               </Form.Group>
               {formFields.show_sets_reps && (
@@ -445,6 +567,7 @@ const CreateExercise = ({ translate }) => {
                         value={formFields.sets}
                         onChange={handleChange}
                         isInvalid={setsError}
+                        disabled={isTranslating}
                       />
                       <Form.Control.Feedback type="invalid">
                         {translate('exercise.sets.required')}
@@ -460,6 +583,7 @@ const CreateExercise = ({ translate }) => {
                         value={formFields.reps}
                         onChange={handleChange}
                         isInvalid={repsError}
+                        disabled={isTranslating}
                       />
                       <Form.Control.Feedback type="invalid">
                         {translate('exercise.reps.required')}
@@ -473,6 +597,7 @@ const CreateExercise = ({ translate }) => {
                       value={true}
                       checked={formFields.include_feedback}
                       label={translate('exercise.include_collecting_feedback')}
+                      disabled={isTranslating}
                     />
                   </Form.Group>
                 </Card>
@@ -484,6 +609,7 @@ const CreateExercise = ({ translate }) => {
                   value={true}
                   checked={formFields.get_pain_level}
                   label={translate('exercise.get_pain_level_feedback')}
+                  disabled={isTranslating}
                 />
               </Form.Group>
 
@@ -491,16 +617,16 @@ const CreateExercise = ({ translate }) => {
                 {
                   categoryTreeData.map((category, index) => (
                     <Card key={index}>
-                      <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                      <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                         {category.label}
                         <div className="ml-auto">
                           <span className="mr-3">
                             {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
                           </span>
-                          <ContextAwareToggle eventKey={index + 1} />
+                          <ContextAwareToggle eventKey={(index + 1).toString()} />
                         </div>
                       </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index + 1}>
+                      <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
                         <Card.Body>
                           <CheckboxTree
                             nodes={category.children || []}
@@ -545,6 +671,9 @@ const CreateExercise = ({ translate }) => {
                       <Form.Group controlId={`formLabel${index}`}>
                         <Form.Label>{translate('exercise.additional_field.label')}</Form.Label>
                         <span className="text-dark ml-1">*</span>
+                        {showFallbackText && additionalField.fallback &&
+                            <FallbackText translate={translate} text={additionalField.fallback.field} />
+                        }
                         <Form.Control
                           name="field"
                           placeholder={translate('exercise.additional_field.placeholder.label')}
@@ -559,6 +688,9 @@ const CreateExercise = ({ translate }) => {
                       <Form.Group controlId={`formValue${index}`}>
                         <Form.Label>{translate('exercise.additional_field.value')}</Form.Label>
                         <span className="text-dark ml-1">*</span>
+                        {showFallbackText && additionalField.fallback &&
+                            <FallbackText translate={translate} text={additionalField.fallback.value} />
+                        }
                         <Form.Control
                           name="value"
                           as="textarea"
@@ -597,13 +729,33 @@ const CreateExercise = ({ translate }) => {
           <Col sm={12} xl={11} className="question-wrapper">
             <div className="sticky-btn d-flex justify-content-end">
               <div className="py-2 questionnaire-save-cancel-wrapper px-3">
-                <Button
-                  id="formSave"
-                  onClick={handleSave}
-                  disabled={isLoading}
-                >
-                  {translate('common.save')}
-                </Button>
+                {enableRejectApprove() &&
+                  <>
+                    <Button
+                      onClick={handleApprove}
+                      disabled={isLoading}
+                    >
+                      {translate('common.approve')}
+                    </Button>
+                    <Button
+                      onClick={handleReject}
+                      className="ml-2"
+                      variant="outline-primary"
+                      disabled={isLoading}
+                    >
+                      {translate('common.reject')}
+                    </Button>
+                  </>
+                }
+                {!enableRejectApprove() &&
+                  <Button
+                    id="formSave"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {translate('common.save')}
+                  </Button>
+                }
                 <Button
                   className="ml-2"
                   variant="outline-dark"

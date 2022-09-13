@@ -8,7 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import CustomTable from 'components/Table';
-import { EditAction, DeleteAction, ViewAction } from 'components/ActionIcons';
+import {
+  EditAction,
+  DeleteAction,
+  ViewAction,
+  TranslateAction
+} from 'components/ActionIcons';
 import SearchInput from 'components/Form/SearchInput';
 import { getQuestionnaires, deleteQuestionnaire } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
@@ -26,13 +31,15 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 let timer = null;
 const Questionnaire = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE);
 
   const [formFields, setFormFields] = useState({
     search_value: ''
@@ -155,6 +162,12 @@ const Questionnaire = ({ translate }) => {
     setCurrentPage(0);
   };
 
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(0);
+  };
+
   const customSelectStyles = {
     option: (provided) => ({
       ...provided,
@@ -182,6 +195,16 @@ const Questionnaire = ({ translate }) => {
             </Card.Header>
             <Card.Body>
               <Form.Group>
+                {isTranslating &&
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    name="suggestions"
+                    label={translate('exercise.show_suggestions')}
+                    id="showSuggestions"
+                    onChange={handleCheckBoxChange}
+                  />
+                }
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Select
                   classNamePrefix="filter"
@@ -244,10 +267,15 @@ const Questionnaire = ({ translate }) => {
             rows={questionnaires.map(questionnaire => {
               const action = (
                 <>
+                  { isTranslating && !!questionnaire.children.length &&
+                    <TranslateAction className="mr-1" onClick={() => {}} />
+                  }
                   <ViewAction onClick={() => handleView(questionnaire)} />
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || isTranslating) &&
+                    <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
+                  }
+                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&
                     <>
-                      <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
                       <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
                     </>
                   }

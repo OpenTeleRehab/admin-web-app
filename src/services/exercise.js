@@ -117,6 +117,35 @@ const uploadExercises = payload => {
     });
 };
 
+const approveTranslation = (id, payload) => {
+  const formData = new FormData();
+  _.forIn(payload, (value, key) => {
+    formData.append(key, value);
+  });
+
+  return axios.post(`/exercise/approve-translate/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(
+    res => {
+      return res.data;
+    }
+  ).catch((e) => {
+    return e.response.data;
+  });
+};
+
+const rejectTranslation = id => {
+  return axios.delete(`/exercise/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Exercise = {
   getExercises,
   getExercise,
@@ -124,5 +153,7 @@ export const Exercise = {
   updateExercise,
   deleteExercise,
   downloadExercises,
-  uploadExercises
+  uploadExercises,
+  approveTranslation,
+  rejectTranslation
 };

@@ -48,9 +48,22 @@ const deleteLanguage = id => {
     });
 };
 
+const autoTranslateLanguage = id => {
+  return axios.put(`/language/language_auto_translate/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Language = {
   getLanguage,
   createLanguage,
   updateLanguage,
-  deleteLanguage
+  deleteLanguage,
+  autoTranslateLanguage
 };

@@ -84,10 +84,40 @@ const deleteQuestionnaire = id => {
     });
 };
 
+const approveTranslation = (id, payload) => {
+  const formData = new FormData();
+  formData.append('lang', payload.lang);
+  formData.append('data', JSON.stringify(payload));
+
+  return axios.post(`/questionnaire/approve-translate/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(
+    res => {
+      return res.data;
+    }
+  ).catch((e) => {
+    return e.response.data;
+  });
+};
+
+const rejectTranslation = id => {
+  return axios.delete(`/questionnaire/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Questionnaire = {
   getQuestionnaire,
   getQuestionnaires,
   createQuestionnaire,
   updateQuestionnaire,
-  deleteQuestionnaire
+  deleteQuestionnaire,
+  approveTranslation,
+  rejectTranslation
 };

@@ -47,6 +47,18 @@ const deleteLanguageFail = () => ({
   type: 'DELETE_LANGUAGE_FAIL'
 });
 
+const autoTranslateLanguageRequest = () => ({
+  type: 'AUTO_TRANSLATE_LANGUAGE_REQUEST'
+});
+
+const autoTranslateLanguageSuccess = () => ({
+  type: 'AUTO_TRANSLATE_LANGUAGE_SUCCESS'
+});
+
+const autoTranslateLanguageFail = () => ({
+  type: 'AUTO_TRANSLATE_LANGUAGE_FAIL'
+});
+
 export const mutation = {
   getLanguagesRequest,
   getLanguagesSuccess,
@@ -59,5 +71,8 @@ export const mutation = {
   updateLanguageFail,
   deleteLanguageRequest,
   deleteLanguageSuccess,
-  deleteLanguageFail
+  deleteLanguageFail,
+  autoTranslateLanguageRequest,
+  autoTranslateLanguageSuccess,
+  autoTranslateLanguageFail
 };

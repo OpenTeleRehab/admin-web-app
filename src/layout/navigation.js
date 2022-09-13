@@ -26,6 +26,12 @@ const navItems = [
     ]
   },
   {
+    label: 'translator',
+    to: ROUTES.TRANSLATOR,
+    exact: true,
+    roles: [USER_ROLES.MANAGE_TRANSLATOR]
+  },
+  {
     label: 'therapist',
     to: ROUTES.THERAPIST,
     exact: true,
@@ -41,13 +47,13 @@ const navItems = [
     label: 'service_setup',
     to: ROUTES.SERVICE_SETUP,
     exact: false,
-    roles: [USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
+    roles: [USER_ROLES.MANAGE_ORGANIZATION_ADMIN, USER_ROLES.TRANSLATE_EXERCISE, USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL, USER_ROLES.TRANSLATE_QUESTIONNAIRE]
   },
   {
     label: 'category',
     to: ROUTES.CATEGORY,
     exact: true,
-    roles: [USER_ROLES.SETUP_CATEGORY]
+    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
   },
   {
     label: 'setting',

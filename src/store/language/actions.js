@@ -67,3 +67,18 @@ export const deleteLanguage = id => async (dispatch) => {
     return false;
   }
 };
+
+export const autoTranslateLanguage = id => async (dispatch) => {
+  dispatch(mutation.autoTranslateLanguageRequest());
+  const data = await Language.autoTranslateLanguage(id);
+  if (data.success) {
+    dispatch(mutation.autoTranslateLanguageSuccess());
+    dispatch(getLanguages());
+    dispatch(showSuccessNotification('toast_title.auto_translate_language', data.message));
+    return true;
+  } else {
+    dispatch(mutation.autoTranslateLanguageFail());
+    dispatch(showErrorNotification('toast_title.auto_translate_language', data.message));
+    return false;
+  }
+};

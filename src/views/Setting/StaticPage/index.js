@@ -14,8 +14,9 @@ import { BsUpload, BsXCircle } from 'react-icons/bs';
 import settings from '../../../settings';
 import { toMB } from '../../../utils/file';
 import _ from 'lodash';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
+import keycloak from '../../../utils/keycloak';
 
 let timer = null;
 const StaticPage = ({ translate, handleRowEdit }) => {
@@ -117,20 +118,26 @@ const StaticPage = ({ translate, handleRowEdit }) => {
             {!_.isEmpty(partnerLogo) && (
               <div className="exercise-media">
                 <div className="mb-2 position-relative w-50">
-                  <div className="position-absolute remove-btn-wrapper">
-                    <BsXCircle size={20} onClick={handleFileRemove}/>
-                  </div>
+                  {keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) && (
+                    <div className="position-absolute remove-btn-wrapper">
+                      <BsXCircle size={20} onClick={handleFileRemove}/>
+                    </div>
+                  )}
                   <img src={partnerLogo.url || `${process.env.REACT_APP_API_BASE_URL}/file/${partnerLogo.id}`} alt="..." className="w-100 img-thumbnail"/>
                 </div>
               </div>
             )}
-            <div className="btn bg-white btn-outline-primary text-primary position-relative overflow-hidden mr-3 mt-2 up-load-button-wrapper" role="button" tabIndex="0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
-              <BsUpload size={15}/> {translate('static_page.media_upload')}
-              <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
-            </div>
-            <Button variant="primary" className="mt-2" disabled={!formFields.file} onClick={handleConfirm} tabIndex="0">
-              {translate('common.save')}
-            </Button>
+            {keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) && (
+              <>
+                <div className="btn bg-white btn-outline-primary text-primary position-relative overflow-hidden mr-3 mt-2 up-load-button-wrapper" role="button" tabIndex="0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
+                  <BsUpload size={15}/> {translate('static_page.media_upload')}
+                  <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
+                </div>
+                <Button variant="primary" className="mt-2" disabled={!formFields.file} onClick={handleConfirm} tabIndex="0">
+                  {translate('common.save')}
+                </Button>
+              </>
+            )}
           </div>
         </Form.Group>
       </div>
@@ -139,7 +146,9 @@ const StaticPage = ({ translate, handleRowEdit }) => {
           rows={pages.map(staticPage => {
             const action = (
               <>
-                <EditAction className="ml-1" onClick={() => handleRowEdit(staticPage.id)} />
+                {(keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && (
+                  <EditAction className="ml-1" onClick={() => handleRowEdit(staticPage.id)} />
+                )}
               </>
             );
 

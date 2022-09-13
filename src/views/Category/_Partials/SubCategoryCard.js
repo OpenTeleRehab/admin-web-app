@@ -7,7 +7,8 @@ import SubCategoryList from './subCategoryList';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import SearchInput from 'components/Form/SearchInput';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
+import keycloak from '../../../utils/keycloak';
 
 const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, handleCreate, handleEdit }) => {
   const localize = useSelector((state) => state.localize);
@@ -49,7 +50,7 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
     <Card>
       <Card.Header className="pl-4 d-flex justify-content-between align-items-start">
         <h5 className="m-0 text-truncate">{activeCategory.title}</h5>
-        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN &&
+        { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_CATEGORY) &&
           <Button
             aria-label="Create category"
             variant="outline-primary"

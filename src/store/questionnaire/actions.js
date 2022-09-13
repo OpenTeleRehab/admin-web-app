@@ -79,3 +79,31 @@ export const deleteQuestionnaire = id => async (dispatch, getState) => {
 export const clearFilterQuestionnaires = () => async dispatch => {
   dispatch(mutation.clearFilterQuestionnairesRequest());
 };
+
+export const approveTranslation = (id, payload) => async (dispatch) => {
+  dispatch(mutation.approveTranslationRequest());
+  const data = await Questionnaire.approveTranslation(id, payload);
+  if (data.success) {
+    dispatch(mutation.approveTranslationSuccess());
+    dispatch(showSuccessNotification('toast_title.translation.approve', 'success_message.translation.approve'));
+    return true;
+  } else {
+    dispatch(mutation.approveTranslationFail());
+    dispatch(showSuccessNotification('toast_title.translation.approve', 'error_message.translation.approve'));
+    return false;
+  }
+};
+
+export const rejectTranslation = (id) => async dispatch => {
+  dispatch(mutation.rejectTranslationRequest());
+  const data = await Questionnaire.rejectTranslation(id);
+  if (data.success) {
+    dispatch(mutation.rejectTranslationSuccess());
+    dispatch(showSuccessNotification('toast_title.translation.reject', 'success_message.translation.reject'));
+    return true;
+  } else {
+    dispatch(mutation.rejectTranslationFail());
+    dispatch(showErrorNotification('toast_title.translation.reject', 'error_message.translation.reject'));
+    return false;
+  }
+};
