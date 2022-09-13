@@ -48,16 +48,16 @@ const CreateTranslator = ({ show, handleClose, editId }) => {
     setErrorLastName(false);
 
     if (!editId) {
-      setFormFields({
-        ...formFields,
+      setFormFields(f => ({
+        ...f,
         email: '',
         first_name: '',
         last_name: '',
         country_id: profile.country_id,
         clinic_id: ''
-      });
+      }));
     }
-  }, [profile]);
+  }, [profile, editId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
