@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Nav } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { BsPlus, BsUpload } from 'react-icons/bs';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
@@ -55,6 +55,7 @@ const VIEW_COLOR_SCHEME = 'color_scheme';
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const { hash } = useLocation();
+  const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
   const [view, setView] = useState(undefined);
   const [show, setShow] = useState(false);
@@ -88,6 +89,9 @@ const Setting = ({ translate }) => {
     } else if (hash.includes('#' + VIEW_COLOR_SCHEME)) {
       setView(VIEW_COLOR_SCHEME);
     } else {
+      if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
+        history.push(ROUTES.SETTING_TRANSLATIONS);
+      }
       for (const role of SETTING_ROLES) {
         if (keycloak.hasRealmRole(role)) {
           setView(role.replace('manage_', ''));
