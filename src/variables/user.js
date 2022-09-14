@@ -59,7 +59,8 @@ export const USER_ROLES = {
   TRANSLATE_PRIVACY_POLICY: 'translate_privacy_policy',
   TRANSLATE_STATIC_PAGE: 'translate_static_page',
   TRANSLATE_TERM_CONDITION: 'translate_term_condition',
-  TRANSLATE_CATEGORY: 'translate_category'
+  TRANSLATE_CATEGORY: 'translate_category',
+  TRANSLATOR: 'translator'
 };
 
 export const SETTING_ROLES = [
