@@ -411,16 +411,16 @@ const CreateQuestionnaire = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
+                    <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
                           {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
                         </span>
-                        <ContextAwareToggle eventKey={index + 1} />
+                        <ContextAwareToggle eventKey={(index + 1).toString()} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={!isTranslating ? index + 1 : ''}>
+                    <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}
