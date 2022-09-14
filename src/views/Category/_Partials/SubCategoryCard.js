@@ -8,13 +8,15 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import SearchInput from 'components/Form/SearchInput';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
-import keycloak from '../../../utils/keycloak';
+import { useKeycloak } from '@react-keycloak/web';
 
 const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, handleCreate, handleEdit }) => {
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector((state) => state.auth);
   const translate = getTranslate(localize);
   const [searchValue, setSearchValue] = useState('');
+  const { keycloak } = useKeycloak();
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const [subCategories, setSubCategories] = useState([]);
   const [searchCategories, setSearchCategories] = useState([]);
@@ -22,7 +24,10 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
   // Set the current sub-categories
   useEffect(() => {
     if (activeCategory && categories.length) {
-      setSubCategories(_.filter(categories, { parent: activeCategory.id }));
+      setSubCategories(_.filter(categories, c => {
+        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
+        return c.parent === activeCategory.id && showHiOnly;
+      }));
     }
   }, [activeCategory, categories]);
 

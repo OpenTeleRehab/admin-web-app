@@ -8,13 +8,15 @@ import Dialog from '../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCategory } from '../../../store/category/actions';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
-import keycloak from '../../../utils/keycloak';
+import { useKeycloak } from '@react-keycloak/web';
 
 const SubCategoryList = ({ type, subCategories, categories, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector((state) => state.auth);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -41,7 +43,10 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
     <>
       <ListGroup variant="flush" className="border-top border-bottom" {...rest}>
         {subCategories.map(sub => {
-          const childSubCategories = _.filter(categories, { parent: sub.id });
+          const childSubCategories = _.filter(categories, c => {
+            const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
+            return c.parent === sub.id && showHiOnly;
+          });
           return (
             <ListGroup.Item
               action
@@ -55,6 +60,11 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
                 {!sub.is_used && (
                   <Badge pill variant="light" className="ml-2">
                     {translate('category.not_inused')}
+                  </Badge>
+                )}
+                {sub.hi_only && (
+                  <Badge pill variant="light" className="ml-2">
+                    {translate('category.hi_only')}
                   </Badge>
                 )}
               </div>

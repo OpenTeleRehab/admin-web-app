@@ -27,17 +27,20 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
-import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
+import { useKeycloak } from '@react-keycloak/web';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const { keycloak } = useKeycloak();
   const { maxFileSize } = settings.educationMaterial;
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL);
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { languages } = useSelector(state => state.language);
   const { educationMaterial, filters } = useSelector(state => state.educationMaterial);
@@ -60,6 +63,7 @@ const CreateEducationMaterial = ({ translate }) => {
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
   const [showFallbackText, setShowFallbackText] = useState(false);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -88,6 +92,12 @@ const CreateEducationMaterial = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+
+      let processedTree = categoryTreeData;
+      if (!isSuperAdmin) {
+        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
+      }
+      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData]);
 
@@ -355,7 +365,7 @@ const CreateEducationMaterial = ({ translate }) => {
 
             <Accordion className="material-category-wrapper" defaultActiveKey={1}>
               {
-                categoryTreeData.map((category, index) => (
+                processedCategoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}

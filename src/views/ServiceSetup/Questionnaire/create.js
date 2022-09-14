@@ -28,16 +28,19 @@ import scssColors from '../../../scss/custom.scss';
 import Select from 'react-select';
 import customColorScheme from '../../../utils/customColorScheme';
 import Dialog from '../../../components/Dialog';
-import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
+import { useKeycloak } from '@react-keycloak/web';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { keycloak } = useKeycloak();
   const { id } = useParams();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
@@ -62,6 +65,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
   const [showFallbackText, setShowFallbackText] = useState(false);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -90,6 +94,12 @@ const CreateQuestionnaire = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+
+      let processedTree = categoryTreeData;
+      if (!isSuperAdmin) {
+        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
+      }
+      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData]);
 
@@ -409,7 +419,7 @@ const CreateQuestionnaire = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Accordion className="mb-3" defaultActiveKey={1}>
               {
-                categoryTreeData.map((category, index) => (
+                processedCategoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}

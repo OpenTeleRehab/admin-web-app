@@ -8,9 +8,12 @@ import PropTypes from 'prop-types';
 import settings from 'settings';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { USER_ROLES } from '../../../variables/user';
+import { useKeycloak } from '@react-keycloak/web';
 
 const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) => {
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
   const localize = useSelector((state) => state.localize);
   const { categories, category } = useSelector((state) => state.category);
   const { languages } = useSelector(state => state.language);
@@ -46,7 +49,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
 
   useEffect(() => {
     if (editId && category) {
-      setFormFields({ ...formFields, category: category.title });
+      setFormFields({ ...formFields, category: category.title, hi_only: !!category.hi_only });
     }
     // eslint-disable-next-line
   }, [editId, category]);
@@ -71,6 +74,11 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
   };
 
   const handleSingleSelectChange = (key, value) => {
@@ -218,6 +226,17 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
               {translate('error.category_value')}
             </Form.Control.Feedback>
           </Form.Group>
+        }
+        {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+          <Form.Check
+            custom
+            type="checkbox"
+            name="hi_only"
+            label={translate('category.hi_only')}
+            id="hiOnly"
+            checked={!!formFields.hi_only}
+            onChange={handleCheckBoxChange}
+          />
         }
       </Form>
     </Dialog>
