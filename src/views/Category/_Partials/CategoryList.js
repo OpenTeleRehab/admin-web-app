@@ -13,13 +13,14 @@ import SearchInput from 'components/Form/SearchInput';
 import { getCategories } from 'store/category/actions';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
-import keycloak from '../../../utils/keycloak';
+import { useKeycloak } from '@react-keycloak/web';
 
 const CategoryList = ({ type, translate }) => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { keycloak } = useKeycloak();
 
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
@@ -29,6 +30,7 @@ const CategoryList = ({ type, translate }) => {
   const [allowNew, setAllowNew] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [mainCategories, setMainCategories] = useState([]);
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   // Fetch category data
   useEffect(() => {
@@ -45,11 +47,15 @@ const CategoryList = ({ type, translate }) => {
     const value = searchValue.trim();
     if (value !== '') {
       const mainCats = _.filter(categories, c => {
-        return c.parent === null && c.title.toLowerCase().search(value.toLowerCase()) !== -1;
+        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
+        return c.parent === null && c.title.toLowerCase().search(value.toLowerCase()) !== -1 && showHiOnly;
       });
       setMainCategories(mainCats);
     } else {
-      const mainCats = _.filter(categories, { parent: null });
+      const mainCats = _.filter(categories, c => {
+        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
+        return c.parent === null && showHiOnly;
+      });
       setMainCategories(mainCats);
     }
   }, [categories, searchValue]);

@@ -45,13 +45,16 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
-import keycloak from '../../../utils/keycloak';
+import { useKeycloak } from '@react-keycloak/web';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 let timer = null;
 const Exercise = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
+  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
@@ -72,6 +75,7 @@ const Exercise = ({ translate }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
   const [downloading, setDownloading] = useState(false);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -97,6 +101,12 @@ const Exercise = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+
+      let processedTree = categoryTreeData;
+      if (!isSuperAdmin) {
+        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
+      }
+      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData]);
 
@@ -232,7 +242,7 @@ const Exercise = ({ translate }) => {
               </Form.Group>
               <Accordion>
                 {
-                  categoryTreeData.map(category => (
+                  processedCategoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         <span className="text-truncate pr-2">{category.label}</span>
@@ -285,7 +295,7 @@ const Exercise = ({ translate }) => {
                   <Col key={exercise.id} md={6} lg={3}>
                     {!!exercise.children.length && isTranslating &&
                       <div className="position-absolute delete-btn">
-                        <TranslateAction onClick={() => {}} />
+                        <TranslateAction onClick={() => {}} tooltip={'common.translation_suggested'} />
                       </div>
                     }
                     { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&

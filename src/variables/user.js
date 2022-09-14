@@ -60,7 +60,8 @@ export const USER_ROLES = {
   TRANSLATE_STATIC_PAGE: 'translate_static_page',
   TRANSLATE_TERM_CONDITION: 'translate_term_condition',
   TRANSLATE_CATEGORY: 'translate_category',
-  TRANSLATOR: 'translator'
+  TRANSLATOR: 'translator',
+  SUPER_ADMIN: 'super_admin'
 };
 
 export const SETTING_ROLES = [
