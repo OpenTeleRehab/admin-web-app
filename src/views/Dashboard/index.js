@@ -28,7 +28,7 @@ const Dashboard = ({ translate }) => {
         setViewGlobalDashboard(true);
       }
     }
-  }, [profile]);
+  }, [profile, keycloak]);
 
   return (
     <>

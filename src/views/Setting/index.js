@@ -99,7 +99,7 @@ const Setting = ({ translate }) => {
         }
       }
     }
-  }, [hash, keycloak]);
+  }, [hash, keycloak, history]);
 
   const handleShow = () => {
     setShow(true);
