@@ -25,8 +25,8 @@ const getPrivacyPolicy = (id, language) => {
     });
 };
 
-const getPublishPrivacyPolicy = () => {
-  return axios.get('/user-privacy-policy')
+const getPublishPrivacyPolicy = payload => {
+  return axios.get('/user-privacy-policy', { params: payload })
     .then(
       res => {
         return res.data;

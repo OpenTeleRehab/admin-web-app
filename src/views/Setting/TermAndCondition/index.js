@@ -21,6 +21,7 @@ import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import keycloak from '../../../utils/keycloak';
 import customColorScheme from '../../../utils/customColorScheme';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const TermAndCondition = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
@@ -178,6 +179,9 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
           />
         </Form.Group>
         <div dangerouslySetInnerHTML={{ __html: termAndCondition.content }} />
+        { termAndCondition.auto_translated === true && (
+          <GoogleTranslationAttribute />
+        )}
       </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>

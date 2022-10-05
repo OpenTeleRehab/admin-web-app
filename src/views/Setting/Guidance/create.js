@@ -8,6 +8,7 @@ import settings from 'settings';
 import { createGuidancePage, getGuidancePage, updateGuidancePage } from 'store/guidancePage/actions';
 import { Editor } from '@tinymce/tinymce-react';
 import { File } from '../../../services/file';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const CreateGuidancePage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -199,6 +200,9 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
           }
         </Form.Group>
       </Form>
+      { editId && guidancePage.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

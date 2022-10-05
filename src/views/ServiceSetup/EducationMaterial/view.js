@@ -5,9 +5,11 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import Dialog from 'components/Dialog';
 import { getTranslate } from 'react-localize-redux/lib/index';
+import GoogleTranslationAttribute from 'components/GoogleTranslationAttribute/index';
 
 const ViewEducationMaterial = ({ showView, handleViewClose, id }) => {
   const { educationMaterials } = useSelector(state => state.educationMaterial);
+  const [educationMaterial, setEducationMaterial] = useState({});
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [title, setTitle] = useState('');
@@ -16,6 +18,7 @@ const ViewEducationMaterial = ({ showView, handleViewClose, id }) => {
   useEffect(() => {
     if (id && educationMaterials.length) {
       const data = educationMaterials.find(educationMaterial => educationMaterial.id === id);
+      setEducationMaterial(data);
       setTitle(data.title);
       setMaterialFile(data.file);
     }
@@ -83,6 +86,9 @@ const ViewEducationMaterial = ({ showView, handleViewClose, id }) => {
               </div>
             ) : (
               <div>{translate('common.no_file_translate')}</div>
+            )}
+            { educationMaterial.auto_translated === true && (
+              <GoogleTranslationAttribute />
             )}
           </Col>
         </Row>
