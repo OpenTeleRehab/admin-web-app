@@ -58,7 +58,7 @@ const CategoryList = ({ type, translate }) => {
       });
       setMainCategories(mainCats);
     }
-  }, [categories, searchValue]);
+  }, [categories, searchValue, isSuperAdmin]);
 
   // Clear the active sub2 if sub1 is changed
   useEffect(() => {

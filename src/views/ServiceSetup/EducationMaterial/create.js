@@ -99,7 +99,7 @@ const CreateEducationMaterial = ({ translate }) => {
       }
       setProcessedCategoryTreeData([...processedTree]);
     }
-  }, [categoryTreeData]);
+  }, [categoryTreeData, isSuperAdmin]);
 
   useEffect(() => {
     if (id && educationMaterial.id) {
