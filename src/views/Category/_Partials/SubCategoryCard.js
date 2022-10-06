@@ -29,7 +29,7 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
         return c.parent === activeCategory.id && showHiOnly;
       }));
     }
-  }, [activeCategory, categories]);
+  }, [activeCategory, categories, isSuperAdmin]);
 
   // Filter categories by search value
   useEffect(() => {

@@ -95,7 +95,7 @@ const Questionnaire = ({ translate }) => {
       }
       setProcessedCategoryTreeData([...processedTree]);
     }
-  }, [categoryTreeData]);
+  }, [categoryTreeData, isSuperAdmin]);
 
   useEffect(() => {
     let serializedSelectedCats = [];

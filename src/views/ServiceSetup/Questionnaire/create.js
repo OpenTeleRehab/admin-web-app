@@ -101,7 +101,7 @@ const CreateQuestionnaire = ({ translate }) => {
       }
       setProcessedCategoryTreeData([...processedTree]);
     }
-  }, [categoryTreeData]);
+  }, [categoryTreeData, isSuperAdmin]);
 
   useEffect(() => {
     if (id && questionnaire.id) {
