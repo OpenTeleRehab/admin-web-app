@@ -14,6 +14,7 @@ import {
 import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -219,6 +220,9 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
           <span className={errorClass}>{ errorContentMessage }</span>
         </Form.Group>
       </Form>
+      { editId & termAndCondition.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

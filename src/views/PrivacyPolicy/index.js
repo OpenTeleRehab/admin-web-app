@@ -4,15 +4,17 @@ import { getPublishPrivacyPolicy } from 'store/privacyPolicy/actions';
 import PropTypes from 'prop-types';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
+import GoogleTranslationAttribute from '../../components/GoogleTranslationAttribute';
 
 const PrivacyPolicyPage = ({ translate }) => {
   const dispatch = useDispatch();
   const { publishPrivacyPolicy } = useSelector(state => state.privacyPolicy);
+  const { profile } = useSelector(state => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   useEffect(() => {
-    dispatch(getPublishPrivacyPolicy());
-  }, [dispatch]);
+    dispatch(getPublishPrivacyPolicy({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   return (
     <>
@@ -23,6 +25,9 @@ const PrivacyPolicyPage = ({ translate }) => {
         </div>
       }
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+      { publishPrivacyPolicy.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </>
   );
 };

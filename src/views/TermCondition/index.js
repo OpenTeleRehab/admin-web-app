@@ -5,15 +5,17 @@ import { getPublishTermCondition } from 'store/termAndCondition/actions';
 import PropTypes from 'prop-types';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
+import GoogleTranslationAttribute from '../../components/GoogleTranslationAttribute';
 
 const TermConditionPage = ({ translate }) => {
   const dispatch = useDispatch();
   const { publishTermAndConditionPage } = useSelector(state => state.termAndCondition);
+  const { profile } = useSelector(state => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   useEffect(() => {
-    dispatch(getPublishTermCondition());
-  }, [dispatch]);
+    dispatch(getPublishTermCondition({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   return (
     <>
@@ -24,6 +26,9 @@ const TermConditionPage = ({ translate }) => {
         </div>
       }
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+      { publishTermAndConditionPage.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </>
   );
 };

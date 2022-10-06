@@ -19,6 +19,7 @@ import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS } from '../../../variables/user';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -408,6 +409,9 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             <div className="invalid-feedback d-block">{translate('error.term_and_condition.content')}</div>
           }
         </Form.Group>
+        { editId && staticPage.auto_translated === true && (
+          <GoogleTranslationAttribute />
+        )}
       </Form>
     </Dialog>
   );

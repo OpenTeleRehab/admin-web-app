@@ -78,9 +78,9 @@ export const publishPrivacyPolicy = id => async (dispatch) => {
   }
 };
 
-export const getPublishPrivacyPolicy = () => async dispatch => {
+export const getPublishPrivacyPolicy = payload => async dispatch => {
   dispatch(mutation.getPublishPrivacyPolicyRequest());
-  const res = await privacyPolicy.getPublishPrivacyPolicy();
+  const res = await privacyPolicy.getPublishPrivacyPolicy(payload);
   if (res) {
     dispatch(mutation.getPublishPrivacyPolicySuccess(res.data));
   } else {

@@ -25,8 +25,8 @@ const getTermAndConditions = () => {
     });
 };
 
-const getPublishTermConditionPage = id => {
-  return axios.get('/user-term-condition')
+const getPublishTermConditionPage = payload => {
+  return axios.get('/user-term-condition', { params: payload })
     .then(
       res => {
         return res.data;

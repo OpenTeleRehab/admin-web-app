@@ -10,6 +10,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_ROLES } from '../../../variables/user';
 import { useKeycloak } from '@react-keycloak/web';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) => {
   const dispatch = useDispatch();
@@ -239,6 +240,9 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
           />
         }
       </Form>
+      {editId && category.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

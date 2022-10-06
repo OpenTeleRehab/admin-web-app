@@ -78,10 +78,10 @@ export const publishTermAndCondition = id => async (dispatch) => {
   }
 };
 
-export const getPublishTermCondition = () => async dispatch => {
+export const getPublishTermCondition = payload => async dispatch => {
   dispatch(mutation.getPublishTermConditionRequest());
   dispatch(showSpinner(true));
-  const data = await termAndCondition.getPublishTermConditionPage();
+  const data = await termAndCondition.getPublishTermConditionPage(payload);
   if (data) {
     dispatch(mutation.getPublishTermConditionSuccess(data.data));
     dispatch(showSpinner(false));

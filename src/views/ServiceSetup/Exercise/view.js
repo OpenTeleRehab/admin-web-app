@@ -5,6 +5,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 import Carousel from 'react-bootstrap/Carousel';
 import { useSelector } from 'react-redux';
 import Dialog from 'components/Dialog';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const ViewExercise = ({ showView, handleViewClose, id }) => {
   const localize = useSelector((state) => state.localize);
@@ -80,6 +81,9 @@ const ViewExercise = ({ showView, handleViewClose, id }) => {
                 </div>
               ))}
             </div>
+            { exercise.auto_translated === true && (
+              <GoogleTranslationAttribute />
+            )}
           </Col>
         </Row>
       </Form>
