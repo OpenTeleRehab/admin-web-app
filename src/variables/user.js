@@ -1,6 +1,6 @@
 export const USER_GROUPS = {
+  SUPER_ADMIN: 'super_admin',
   ORGANIZATION_ADMIN: 'organization_admin',
-  GLOBAL_ADMIN: 'global_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
   TRANSLATOR: 'translator'
