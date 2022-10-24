@@ -34,7 +34,8 @@ const routes = [
     path: ROUTES.DASHBOARD,
     component: DashboardPage,
     exact: true,
-    type: PRIVATE
+    type: PRIVATE,
+    roles: [USER_ROLES.VIEW_DASHBOARD]
   },
   {
     title: 'admin',

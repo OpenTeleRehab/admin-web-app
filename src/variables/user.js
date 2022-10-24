@@ -1,6 +1,6 @@
 export const USER_GROUPS = {
+  SUPER_ADMIN: 'super_admin',
   ORGANIZATION_ADMIN: 'organization_admin',
-  GLOBAL_ADMIN: 'global_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
   TRANSLATOR: 'translator'
@@ -60,7 +60,7 @@ export const USER_ROLES = {
   TRANSLATE_STATIC_PAGE: 'translate_static_page',
   TRANSLATE_TERM_CONDITION: 'translate_term_condition',
   TRANSLATE_CATEGORY: 'translate_category',
-  TRANSLATOR: 'translator',
+  VIEW_DASHBOARD: 'view_dashboard',
   SUPER_ADMIN: 'super_admin'
 };
 
