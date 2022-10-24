@@ -13,7 +13,8 @@ const navItems = [
   {
     label: 'dashboard',
     to: ROUTES.DASHBOARD,
-    exact: true
+    exact: true,
+    roles: [USER_ROLES.VIEW_DASHBOARD]
   },
   {
     label: 'admin',
