@@ -130,6 +130,9 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
     }
   };
 
+  const isPublished = termAndCondition !== null && termAndCondition.published_date !== null;
+  const isAutoTranslated = termAndCondition !== null && termAndCondition.auto_translated;
+
   return (
     <Dialog
       enforceFocus={false}
@@ -139,6 +142,7 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={editId && isPublished && !isAutoTranslated}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -158,6 +162,7 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
           <Form.Label>{translate('term_and_condition.version')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Form.Control
+            aria-label="Version"
             name="version"
             onChange={handleChange}
             type="text"
@@ -165,7 +170,7 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
             isInvalid={errorVersion}
             value={formFields.version}
             maxLength={settings.textMaxLength}
-            aria-label="Version"
+            disabled={editId && isPublished}
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.term_and_condition.version')}
@@ -220,7 +225,7 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
           <span className={errorClass}>{ errorContentMessage }</span>
         </Form.Group>
       </Form>
-      { editId & termAndCondition.auto_translated === true && (
+      { editId && isAutoTranslated && (
         <GoogleTranslationAttribute />
       )}
     </Dialog>

@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import settings from 'settings';
 import BasicTable from 'components/Table/basic';
-import { DeleteAction, EditAction, PublishAction, ViewAction } from 'components/ActionIcons';
+import { EditAction, PublishAction, ViewAction } from 'components/ActionIcons';
 import {
   getTermAndCondition,
   getTermAndConditions,
@@ -122,14 +122,11 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
           const action = (
             <>
               <ViewAction onClick={() => handleViewContent(term.id)} />
-              { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && (
-                <>
-                  <PublishAction className="ml-1" onClick={() => handlePublish(term.id)} disabled={publishedDate} />
-                  <DeleteAction className="ml-1" disabled />
-                </>
-              )}
               { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TERM_CONDITION)) && (
-                <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} disabled={publishedDate} />
+                <EditAction className="ml-1" onClick={() => handleRowEdit(term.id)} />
+              )}
+              { keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) && (
+                <PublishAction className="ml-1" onClick={() => handlePublish(term.id)} disabled={publishedDate} />
               )}
             </>
           );

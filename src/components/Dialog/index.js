@@ -37,7 +37,7 @@ const Dialog = (props) => {
             {confirmLabel}
           </Button>
         }
-        <Button variant="outline-dark" onClick={onCancel} disabled={disabled}>
+        <Button variant="outline-dark" onClick={onCancel}>
           {cancelLabel}
         </Button>
       </Modal.Footer>
