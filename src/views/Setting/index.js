@@ -130,9 +130,9 @@ const Setting = ({ translate }) => {
         {[VIEW_COUNTRY, VIEW_LANGUAGE, VIEW_TERM_AND_CONDITION, VIEW_PRIVACY_POLICY, VIEW_CLINIC, VIEW_STATIC_PAGE, VIEW_PROFESSION, VIEW_GUIDANCE_PAGE, VIEW_DISEASE, VIEW_ORGANIZATION].map(v => {
           if (v === view) {
             return (
-              <div className="d-flex">
+              <div key={v} className="d-flex">
                 {view === VIEW_DISEASE && (
-                  <div key={v} className="btn-toolbar mb-2 mb-md-0 mr-2">
+                  <div className="btn-toolbar mb-2 mb-md-0 mr-2">
                     <Button variant="primary" onClick={handleShowUploadDialog}>
                       <BsUpload size={20} className="mr-1" />
                       { translate('disease.upload') }
@@ -140,7 +140,7 @@ const Setting = ({ translate }) => {
                   </div>
                 )}
 
-                <div key={v} className="btn-toolbar mb-2 mb-md-0">
+                <div className="btn-toolbar mb-2 mb-md-0">
                   {((view === VIEW_TERM_AND_CONDITION && keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) ||
                     (view === VIEW_PRIVACY_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) && (

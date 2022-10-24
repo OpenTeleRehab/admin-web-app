@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import settings from 'settings';
 import BasicTable from 'components/Table/basic';
-import { DeleteAction, EditAction, PublishAction, ViewAction } from 'components/ActionIcons';
+import { EditAction, PublishAction, ViewAction } from 'components/ActionIcons';
 import {
   getPrivacyPolicies,
   getPrivacyPolicy,
@@ -122,14 +122,11 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
           const action = (
             <>
               <ViewAction onClick={() => handleViewContent(privacyPolicy.id)}/>
-              { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && (
-                <>
-                  <PublishAction className="ml-1" onClick={() => handlePublish(privacyPolicy.id)} disabled={publishedDate} />
-                  <DeleteAction className="ml-1" disabled />
-                </>
-              )}
               { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PRIVACY_POLICY)) && (
-                <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} disabled={publishedDate} />
+                <EditAction className="ml-1" onClick={() => handleRowEdit(privacyPolicy.id)} />
+              )}
+              { keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) && (
+                <PublishAction className="ml-1" onClick={() => handlePublish(privacyPolicy.id)} disabled={publishedDate} />
               )}
             </>
           );

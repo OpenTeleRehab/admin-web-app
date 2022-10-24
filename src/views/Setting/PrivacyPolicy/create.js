@@ -27,7 +27,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
   const [errorVersion, setVersion] = useState(false);
   const { languages } = useSelector(state => state.language);
   const { privacyPolicy } = useSelector(state => state.privacyPolicy);
-  const { profile } = useSelector((state) => state.auth);
+  const { profile } = useSelector(state => state.auth);
 
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
@@ -130,6 +130,9 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
     }
   };
 
+  const isPublished = privacyPolicy !== null && privacyPolicy.published_date !== null;
+  const isAutoTranslated = privacyPolicy !== null && privacyPolicy.auto_translated;
+
   return (
     <Dialog
       enforceFocus={false}
@@ -139,6 +142,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={editId && isPublished && !isAutoTranslated}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -166,6 +170,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
             isInvalid={errorVersion}
             value={formFields.version}
             maxLength={settings.textMaxLength}
+            disabled={editId && isPublished}
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.privacy_policy.version')}
@@ -220,7 +225,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
           <span className={errorClass}>{ errorContentMessage }</span>
         </Form.Group>
       </Form>
-      { editId & privacyPolicy.auto_translated === true && (
+      { editId && isAutoTranslated && (
         <GoogleTranslationAttribute />
       )}
     </Dialog>
