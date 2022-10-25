@@ -1,11 +1,11 @@
-import customAxios from 'utils/axios';
+import adminAxios from 'utils/axios';
 import axios from 'axios';
 
 window.getUserAxiosCancel = undefined;
 const CancelToken = axios.CancelToken;
 
 const createUser = payload => {
-  return customAxios.post('/admin', payload)
+  return adminAxios.post('/admin', payload)
     .then(
       res => {
         return res.data;
@@ -20,7 +20,7 @@ const getUsers = payload => {
   if (window.getUserAxiosCancel !== undefined) {
     window.getUserAxiosCancel();
   }
-  return customAxios.get('/admin', {
+  return adminAxios.get('/admin', {
     params: payload,
     cancelToken: new CancelToken(function executor (c) {
       window.getUserAxiosCancel = c;
@@ -39,7 +39,7 @@ const getUsers = payload => {
 };
 
 const updateUser = (id, payload) => {
-  return customAxios.put(`/admin/${id}`, payload)
+  return adminAxios.put(`/admin/${id}`, payload)
     .then(
       res => {
         return res.data;
@@ -51,7 +51,7 @@ const updateUser = (id, payload) => {
 };
 
 const updateUserStatus = (id, payload) => {
-  return customAxios.post(`/admin/updateStatus/${id}`, payload)
+  return adminAxios.post(`/admin/updateStatus/${id}`, payload)
     .then(
       res => {
         return res.data;
@@ -63,7 +63,7 @@ const updateUserStatus = (id, payload) => {
 };
 
 const deleteUser = (id, payload) => {
-  return customAxios.delete(`/admin/${id}`)
+  return adminAxios.delete(`/admin/${id}`)
     .then(
       res => {
         return res.data;
@@ -75,7 +75,7 @@ const deleteUser = (id, payload) => {
 };
 
 const resendEmail = (id) => {
-  return customAxios.post(`/admin/resend-email/${id}`)
+  return adminAxios.post(`/admin/resend-email/${id}`)
     .then(
       res => {
         return res.data;
