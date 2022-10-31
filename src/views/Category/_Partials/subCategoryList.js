@@ -16,7 +16,6 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
   const { keycloak } = useKeycloak();
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -43,10 +42,7 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
     <>
       <ListGroup variant="flush" className="border-top border-bottom" {...rest}>
         {subCategories.map(sub => {
-          const childSubCategories = _.filter(categories, c => {
-            const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
-            return c.parent === sub.id && showHiOnly;
-          });
+          const childSubCategories = _.filter(categories, { parent: sub.id });
           return (
             <ListGroup.Item
               action
@@ -60,11 +56,6 @@ const SubCategoryList = ({ type, subCategories, categories, active, setActive, h
                 {!sub.is_used && (
                   <Badge pill variant="light" className="ml-2">
                     {translate('category.not_inused')}
-                  </Badge>
-                )}
-                {sub.hi_only && (
-                  <Badge pill variant="light" className="ml-2">
-                    {translate('category.hi_only')}
                   </Badge>
                 )}
               </div>

@@ -27,14 +27,13 @@ import {
   BsDashSquare
 } from 'react-icons/bs';
 import { FaRegCheckSquare } from 'react-icons/fa';
+import { useKeycloak } from '@react-keycloak/web';
 import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
-import { useKeycloak } from '@react-keycloak/web';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 let timer = null;
 const Questionnaire = ({ translate }) => {
@@ -62,7 +61,6 @@ const Questionnaire = ({ translate }) => {
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -88,12 +86,6 @@ const Questionnaire = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-
-      let processedTree = categoryTreeData;
-      if (!isSuperAdmin) {
-        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
-      }
-      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData, isSuperAdmin]);
 
@@ -228,7 +220,7 @@ const Questionnaire = ({ translate }) => {
               </Form.Group>
               <Accordion>
                 {
-                  processedCategoryTreeData.map(category => (
+                  categoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         <span className="text-truncate pr-2">{category.label}</span>

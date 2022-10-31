@@ -16,7 +16,6 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
   const translate = getTranslate(localize);
   const [searchValue, setSearchValue] = useState('');
   const { keycloak } = useKeycloak();
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const [subCategories, setSubCategories] = useState([]);
   const [searchCategories, setSearchCategories] = useState([]);
@@ -24,12 +23,9 @@ const SubCategoryCard = ({ type, activeCategory, categories, active, setActive, 
   // Set the current sub-categories
   useEffect(() => {
     if (activeCategory && categories.length) {
-      setSubCategories(_.filter(categories, c => {
-        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
-        return c.parent === activeCategory.id && showHiOnly;
-      }));
+      setSubCategories(_.filter(categories, c => c.parent === activeCategory.id));
     }
-  }, [activeCategory, categories, isSuperAdmin]);
+  }, [activeCategory, categories]);
 
   // Filter categories by search value
   useEffect(() => {
