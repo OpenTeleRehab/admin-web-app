@@ -51,15 +51,26 @@ const createExercise = (payload, mediaUploads) => {
 
 const updateExercise = (id, payload, mediaUploads) => {
   const formData = new FormData();
+
   _.forIn(payload, (value, key) => {
     formData.append(key, value);
   });
 
+  const oldMediaFiles = _.filter(mediaUploads, item => {
+    return item.id !== undefined;
+  });
+
+  if (oldMediaFiles.length) {
+    const oldMediaFileIds = _.map(oldMediaFiles, item => {
+      return item.id !== undefined && item.id;
+    });
+
+    formData.append('media_files', oldMediaFileIds.toString());
+  }
+
   _.forIn(mediaUploads, (value, key) => {
     if (value.file) {
       formData.append(key, value.file);
-    } else {
-      formData.append('media_files[]', value.id);
     }
   });
 
