@@ -1,7 +1,7 @@
-import axiosInstance from '../utils/axios';
+import axios from 'utils/axios';
 
 const getGlobalPatients = payload => {
-  return axiosInstance.get('/global-patients', {
+  return axios.get('/global-patients', {
     params: payload
   })
     .then(

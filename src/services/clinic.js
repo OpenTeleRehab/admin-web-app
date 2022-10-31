@@ -50,7 +50,7 @@ const deleteClinic = id => {
 
 const countTherapistLimitByCountry = (countryId) => {
   const params = { country_id: countryId };
-  return axios.get('clinic/therapist-limit/count/by-contry', { params })
+  return axios.get('clinic/therapist-limit/count/by-country', { params })
     .then(
       res => {
         return res.data;

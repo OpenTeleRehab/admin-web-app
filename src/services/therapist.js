@@ -1,12 +1,11 @@
-import customAxios from 'utils/therapist-axios';
-import patientAxios from 'utils/patient-axios';
+import adminAxios from 'utils/axios';
 import axios from 'axios';
 
 window.getUserAxiosCancel = undefined;
 const CancelToken = axios.CancelToken;
 
 const createTherapist = payload => {
-  return customAxios.post('/therapist', payload)
+  return adminAxios.post('/therapist', payload)
     .then(
       res => {
         return res.data;
@@ -18,7 +17,7 @@ const createTherapist = payload => {
 };
 
 const updateTherapist = (id, payload) => {
-  return customAxios.put(`/therapist/${id}`, payload)
+  return adminAxios.put(`/therapist/${id}`, payload)
     .then(
       res => {
         return res.data;
@@ -30,7 +29,7 @@ const updateTherapist = (id, payload) => {
 };
 
 const updateTherapistStatus = (id, payload) => {
-  return customAxios.post(`/therapist/updateStatus/${id}`, payload)
+  return adminAxios.post(`/therapist/updateStatus/${id}`, payload)
     .then(
       res => {
         return res.data;
@@ -45,7 +44,7 @@ const getTherapists = payload => {
   if (window.getUserAxiosCancel !== undefined) {
     window.getUserAxiosCancel();
   }
-  return customAxios.get('/therapist', {
+  return adminAxios.get('/therapist', {
     params: payload,
     cancelToken: new CancelToken(function executor (c) {
       window.getUserAxiosCancel = c;
@@ -66,7 +65,7 @@ const getTherapists = payload => {
 };
 
 const deleteTherapistUser = (id, payload) => {
-  return customAxios.post(`/therapist/delete/by-id/${id}`, { country_code: payload.country_code })
+  return adminAxios.post(`/therapist/delete/by-id/${id}`, { country_code: payload.country_code })
     .then(
       res => {
         return res.data;
@@ -78,7 +77,7 @@ const deleteTherapistUser = (id, payload) => {
 };
 
 const getPatients = payload => {
-  return patientAxios.get('/patient', {
+  return adminAxios.get('/patient', {
     params: payload
   })
     .then(
@@ -93,7 +92,7 @@ const getPatients = payload => {
 
 const getPatientByTherapistIds = (therapistIds, payload) => {
   const params = { therapist_ids: therapistIds };
-  return patientAxios.get('patient/list/by-therapist-ids', { params, headers: { country: payload.country_code } })
+  return adminAxios.get('patient/list/by-therapist-ids', { params, headers: { country: payload.country_code } })
     .then(
       res => {
         return res.data;
@@ -106,7 +105,7 @@ const getPatientByTherapistIds = (therapistIds, payload) => {
 
 const getPatientByTherapistId = (therapistId, isTherapistRemove = false) => {
   const params = { therapist_id: therapistId, is_therapist_remove: isTherapistRemove };
-  return patientAxios.get('patient/list/by-therapist-id', { params })
+  return adminAxios.get('patient/list/by-therapist-id', { params })
     .then(
       res => {
         return res.data;
@@ -117,9 +116,9 @@ const getPatientByTherapistId = (therapistId, isTherapistRemove = false) => {
     });
 };
 
-const getPatientForTherapistRemove = (therapistId) => {
+const getPatientForTherapistRemove = (therapistId, payload) => {
   const params = { therapist_id: therapistId };
-  return patientAxios.get('patient/list/for-therapist-remove', { params })
+  return adminAxios.get('patient/list/for-therapist-remove', { params, headers: { country: payload.country_code } })
     .then(
       res => {
         return res.data;
@@ -132,7 +131,7 @@ const getPatientForTherapistRemove = (therapistId) => {
 
 const getTherapistsByClinic = (clinicId) => {
   const params = { clinic_id: clinicId };
-  return customAxios.get('therapist/list/by-clinic-id', { params })
+  return adminAxios.get('therapist/list/by-clinic-id', { params })
     .then(
       res => {
         return res.data;
@@ -144,7 +143,7 @@ const getTherapistsByClinic = (clinicId) => {
 };
 
 const resendEmail = (id) => {
-  return customAxios.post(`/therapist/resend-email/${id}`)
+  return adminAxios.post(`/therapist/resend-email/${id}`)
     .then(
       res => {
         return res.data;
@@ -156,7 +155,7 @@ const resendEmail = (id) => {
 };
 
 const transferPatientToTherapist = (patientId, payload) => {
-  return patientAxios.post(`/patient/transfer-to-therapist/${patientId}`, { therapist_id: payload.therapist_id, therapist_identity: payload.therapist_identity, chat_rooms: payload.chat_rooms, new_chat_rooms: payload.new_chat_rooms })
+  return adminAxios.post(`/patient/transfer-to-therapist/${patientId}`, { payload })
     .then(
       res => {
         return res.data;

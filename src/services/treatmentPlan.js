@@ -1,8 +1,8 @@
-import axiosPatient from 'utils/patient-axios';
+import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
 const getTreatmentPlans = payload => {
-  return axiosPatient.get('/treatment-plan', { params: payload, headers: { country: getCountryIsoCode(payload.country_id) } })
+  return axios.get('/treatment-plan', { params: payload, headers: { country: getCountryIsoCode(payload.country_id) } })
     .then(
       res => {
         return res.data;
@@ -14,7 +14,7 @@ const getTreatmentPlans = payload => {
 };
 
 const getTreatmentPlansDetail = payload => {
-  return axiosPatient.get('/treatment-plan/get-treatment-plan-detail', { params: payload, headers: { country: getCountryIsoCode(payload.country_id) } })
+  return axios.get('/treatment-plan/get-treatment-plan-detail', { params: payload, headers: { country: getCountryIsoCode(payload.country_id) } })
     .then(
       res => {
         return res.data;

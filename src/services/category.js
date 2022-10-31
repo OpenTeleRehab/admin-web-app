@@ -1,4 +1,4 @@
-import axios from 'utils/gAdminAxios';
+import axios from 'utils/axios';
 
 const getCategories = payload => {
   return axios.get('/category',
@@ -32,6 +32,7 @@ const getCategoryTreeData = payload => {
 
 const getCategory = (id, language) => {
   const langParam = language ? `?lang=${language}` : '';
+
   return axios.get(`/category/${id}` + langParam)
     .then(
       res => {

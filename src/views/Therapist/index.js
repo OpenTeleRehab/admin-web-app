@@ -168,7 +168,7 @@ const Therapist = ({ translate }) => {
   };
 
   const handleDelete = (id) => {
-    therapistService.getPatientForTherapistRemove(id, true).then(res => {
+    therapistService.getPatientForTherapistRemove(id, { country_code: getCountryIsoCode(profile.country_id) }).then(res => {
       if (res.data) {
         setPatientTherapists(res.data);
       }
