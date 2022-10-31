@@ -34,6 +34,7 @@ import {
 } from 'store/exercise/actions';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
+import { useKeycloak } from '@react-keycloak/web';
 import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { TABS } from 'variables/exercises';
@@ -44,8 +45,6 @@ import customColorScheme from '../../../utils/customColorScheme';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
-import { useKeycloak } from '@react-keycloak/web';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -86,7 +85,6 @@ const CreateExercise = ({ translate }) => {
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
   const [showFallbackText, setShowFallbackText] = useState(false);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -109,12 +107,6 @@ const CreateExercise = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-
-      let processedTree = categoryTreeData;
-      if (!isSuperAdmin) {
-        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
-      }
-      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData, isSuperAdmin]);
 
@@ -133,7 +125,8 @@ const CreateExercise = ({ translate }) => {
         get_pain_level: exercise.get_pain_level,
         show_sets_reps: showSetsReps,
         sets: exercise.sets,
-        reps: exercise.reps
+        reps: exercise.reps,
+        share_to_hi_library: exercise.share_to_hi_library
       };
       if (_.isEmpty(editTranslation)) {
         setAdditionalFields(exercise.additional_fields);
@@ -625,7 +618,7 @@ const CreateExercise = ({ translate }) => {
 
               <Accordion className="mb-3" defaultActiveKey={1}>
                 {
-                  processedCategoryTreeData.map((category, index) => (
+                  categoryTreeData.map((category, index) => (
                     <Card key={index}>
                       <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                         {category.label}
@@ -738,7 +731,19 @@ const CreateExercise = ({ translate }) => {
         <Row>
           <Col sm={12} xl={11} className="question-wrapper">
             <div className="sticky-btn d-flex justify-content-end">
-              <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+              <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
+                {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                    <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
+                      <Form.Check
+                        name="share_to_hi_library"
+                        label={translate('common.share_to_hi_library')}
+                        value={true}
+                        checked={formFields.share_to_hi_library}
+                        onChange={handleCheck}
+                        disabled={isTranslating}
+                      />
+                    </Form.Group>
+                }
                 {enableRejectApprove() &&
                   <>
                     <Button

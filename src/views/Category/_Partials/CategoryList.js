@@ -30,7 +30,6 @@ const CategoryList = ({ type, translate }) => {
   const [allowNew, setAllowNew] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [mainCategories, setMainCategories] = useState([]);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   // Fetch category data
   useEffect(() => {
@@ -47,18 +46,14 @@ const CategoryList = ({ type, translate }) => {
     const value = searchValue.trim();
     if (value !== '') {
       const mainCats = _.filter(categories, c => {
-        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
-        return c.parent === null && c.title.toLowerCase().search(value.toLowerCase()) !== -1 && showHiOnly;
+        return c.parent === null && c.title.toLowerCase().search(value.toLowerCase()) !== -1;
       });
       setMainCategories(mainCats);
     } else {
-      const mainCats = _.filter(categories, c => {
-        const showHiOnly = (c.hi_only && isSuperAdmin) || !c.hi_only;
-        return c.parent === null && showHiOnly;
-      });
+      const mainCats = _.filter(categories, c => c.parent === null);
       setMainCategories(mainCats);
     }
-  }, [categories, searchValue, isSuperAdmin]);
+  }, [categories, searchValue]);
 
   // Clear the active sub2 if sub1 is changed
   useEffect(() => {

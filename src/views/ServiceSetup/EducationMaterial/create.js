@@ -22,6 +22,7 @@ import {
 } from 'react-icons/bs';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import CheckboxTree from 'react-checkbox-tree';
+import { useKeycloak } from '@react-keycloak/web';
 import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
@@ -30,8 +31,6 @@ import customColorScheme from '../../../utils/customColorScheme';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
-import { useKeycloak } from '@react-keycloak/web';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -63,7 +62,6 @@ const CreateEducationMaterial = ({ translate }) => {
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
   const [showFallbackText, setShowFallbackText] = useState(false);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -92,19 +90,14 @@ const CreateEducationMaterial = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-
-      let processedTree = categoryTreeData;
-      if (!isSuperAdmin) {
-        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
-      }
-      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData, isSuperAdmin]);
 
   useEffect(() => {
     if (id && educationMaterial.id) {
       setFormFields({
-        title: _.isEmpty(editTranslation) ? educationMaterial.title : editTranslation.title
+        title: _.isEmpty(editTranslation) ? educationMaterial.title : editTranslation.title,
+        share_to_hi_library: educationMaterial.share_to_hi_library
       });
       setShowFallbackText(!_.isEmpty(editTranslation));
       setMaterialFile(educationMaterial.file);
@@ -135,6 +128,11 @@ const CreateEducationMaterial = ({ translate }) => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleCheck = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
   };
 
   const handleFileChange = (e) => {
@@ -365,7 +363,7 @@ const CreateEducationMaterial = ({ translate }) => {
 
             <Accordion className="material-category-wrapper" defaultActiveKey={1}>
               {
-                processedCategoryTreeData.map((category, index) => (
+                categoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}
@@ -404,7 +402,19 @@ const CreateEducationMaterial = ({ translate }) => {
         <Row>
           <Col sm={12} xl={11} className="question-wrapper">
             <div className="sticky-btn d-flex justify-content-end">
-              <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+              <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
+                {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                    <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
+                      <Form.Check
+                        name="share_to_hi_library"
+                        label={translate('common.share_to_hi_library')}
+                        value={true}
+                        checked={formFields.share_to_hi_library}
+                        onChange={handleCheck}
+                        disabled={isTranslating}
+                      />
+                    </Form.Group>
+                }
                 {enableRejectApprove() &&
                   <>
                     <Button

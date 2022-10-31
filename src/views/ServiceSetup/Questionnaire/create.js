@@ -14,6 +14,7 @@ import {
 import Question from './Question/question';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
+import { useKeycloak } from '@react-keycloak/web';
 import _ from 'lodash';
 import CheckboxTree from 'react-checkbox-tree';
 import {
@@ -31,8 +32,6 @@ import Dialog from '../../../components/Dialog';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
-import { useKeycloak } from '@react-keycloak/web';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -65,7 +64,6 @@ const CreateQuestionnaire = ({ translate }) => {
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
   const [showFallbackText, setShowFallbackText] = useState(false);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -94,12 +92,6 @@ const CreateQuestionnaire = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-
-      let processedTree = categoryTreeData;
-      if (!isSuperAdmin) {
-        processedTree = filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false);
-      }
-      setProcessedCategoryTreeData([...processedTree]);
     }
   }, [categoryTreeData, isSuperAdmin]);
 
@@ -109,6 +101,7 @@ const CreateQuestionnaire = ({ translate }) => {
         setFormFields({
           title: questionnaire.title,
           description: questionnaire.description
+          // share_to_hi_library: questionnaire.share_to_hi_library
         });
         setQuestions(questionnaire.questions);
         setShowFallbackText(false);
@@ -116,6 +109,7 @@ const CreateQuestionnaire = ({ translate }) => {
         setFormFields({
           title: editTranslation.title,
           description: editTranslation.description
+          // share_to_hi_library: editTranslation.share_to_hi_library
         });
         setQuestions(editTranslation.questions);
         setShowFallbackText(true);
@@ -153,6 +147,11 @@ const CreateQuestionnaire = ({ translate }) => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleCheck = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
   };
 
   const handleSave = () => {
@@ -419,7 +418,7 @@ const CreateQuestionnaire = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Accordion className="mb-3" defaultActiveKey={1}>
               {
-                processedCategoryTreeData.map((category, index) => (
+                categoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
                       {category.label}
@@ -480,7 +479,19 @@ const CreateQuestionnaire = ({ translate }) => {
                     <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
                   </Button>
                 </div>
-                <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+                <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
+                  {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                      <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
+                        <Form.Check
+                          name="share_to_hi_library"
+                          label={translate('common.share_to_hi_library')}
+                          value={true}
+                          checked={formFields.share_to_hi_library}
+                          onChange={handleCheck}
+                          disabled={isTranslating}
+                        />
+                      </Form.Group>
+                  }
                   <Button
                     aria-label="Save"
                     onClick={isUsed ? handleShowConfirm : handleSave}
