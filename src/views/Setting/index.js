@@ -131,7 +131,7 @@ const Setting = ({ translate }) => {
           if (v === view) {
             return (
               <div key={v} className="d-flex">
-                {view === VIEW_DISEASE && (
+                {view === VIEW_DISEASE && keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && (
                   <div className="btn-toolbar mb-2 mb-md-0 mr-2">
                     <Button variant="primary" onClick={handleShowUploadDialog}>
                       <BsUpload size={20} className="mr-1" />
@@ -143,6 +143,9 @@ const Setting = ({ translate }) => {
                 <div className="btn-toolbar mb-2 mb-md-0">
                   {((view === VIEW_TERM_AND_CONDITION && keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) ||
                     (view === VIEW_PRIVACY_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
+                    (view === VIEW_COUNTRY && keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY)) ||
+                    (view === VIEW_CLINIC && keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC)) ||
+                    (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) && (
                     <Button variant="primary" onClick={handleShow}>
                       <BsPlus size={20} className="mr-1" />

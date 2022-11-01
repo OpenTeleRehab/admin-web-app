@@ -39,7 +39,6 @@ const CreateQuestionnaire = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const { id } = useParams();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
@@ -93,7 +92,7 @@ const CreateQuestionnaire = ({ translate }) => {
       });
       setSelectedCategories(rootCategoryStructure);
     }
-  }, [categoryTreeData, isSuperAdmin]);
+  }, [categoryTreeData]);
 
   useEffect(() => {
     if (id && questionnaire.id) {

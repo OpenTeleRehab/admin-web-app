@@ -53,7 +53,6 @@ const Exercise = ({ translate }) => {
   const history = useHistory();
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
@@ -81,7 +80,7 @@ const Exercise = ({ translate }) => {
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
     } else {
-      setLanguage('');
+      setLanguage(undefined);
     }
   }, [filters, profile]);
 
@@ -100,7 +99,7 @@ const Exercise = ({ translate }) => {
       });
       setSelectedCategories(rootCategoryStructure);
     }
-  }, [categoryTreeData, isSuperAdmin]);
+  }, [categoryTreeData]);
 
   useEffect(() => {
     let serializedSelectedCats = [];

@@ -52,7 +52,6 @@ const CreateExercise = ({ translate }) => {
   const { id } = useParams();
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
@@ -108,7 +107,7 @@ const CreateExercise = ({ translate }) => {
       });
       setSelectedCategories(rootCategoryStructure);
     }
-  }, [categoryTreeData, isSuperAdmin]);
+  }, [categoryTreeData]);
 
   useEffect(() => {
     if (id) {
