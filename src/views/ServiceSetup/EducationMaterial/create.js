@@ -39,7 +39,6 @@ const CreateEducationMaterial = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const { maxFileSize } = settings.educationMaterial;
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const { languages } = useSelector(state => state.language);
   const { educationMaterial, filters } = useSelector(state => state.educationMaterial);
@@ -91,7 +90,7 @@ const CreateEducationMaterial = ({ translate }) => {
       });
       setSelectedCategories(rootCategoryStructure);
     }
-  }, [categoryTreeData, isSuperAdmin]);
+  }, [categoryTreeData]);
 
   useEffect(() => {
     if (id && educationMaterial.id) {

@@ -41,7 +41,6 @@ const Questionnaire = ({ translate }) => {
   const history = useHistory();
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE);
-  const isSuperAdmin = keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN);
 
   const [formFields, setFormFields] = useState({
     search_value: ''
@@ -68,7 +67,7 @@ const Questionnaire = ({ translate }) => {
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
     } else {
-      setLanguage('');
+      setLanguage(undefined);
     }
   }, [filters, profile]);
 
@@ -87,7 +86,7 @@ const Questionnaire = ({ translate }) => {
       });
       setSelectedCategories(rootCategoryStructure);
     }
-  }, [categoryTreeData, isSuperAdmin]);
+  }, [categoryTreeData]);
 
   useEffect(() => {
     let serializedSelectedCats = [];
