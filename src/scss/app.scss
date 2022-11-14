@@ -1,4 +1,5 @@
 @import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-v4-rtl/scss/bootstrap-rtl';
 @import './custom';
 @import '~react-checkbox-tree/src/scss/react-checkbox-tree.scss';
 
@@ -17,4 +18,5 @@
 		'./components/select',
 		'/components/pagination',
 		'./components/map_chart',
-		'./components/modal';
+		'./components/modal',
+		'./components/rtl';

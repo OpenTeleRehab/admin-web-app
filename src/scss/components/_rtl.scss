@@ -1,0 +1,50 @@
+.rtl,
+[dir="rtl"] {
+	.float {
+		&-right {
+			float: left !important;
+		}
+		&-left {
+			float: right !important;
+		}
+	}
+	.form {
+		&-check {
+			padding-left: 0;
+			padding-right: 1.25rem;
+			&-label {
+				padding-right: 0;
+			}
+		}
+	}
+	.category {
+		&-container {
+			& > .card {
+				&:not(:first-child) {
+					& > .card-header {
+						&::before,
+						&::after {
+							left: auto;
+							right: -15px;
+						}
+						&::before {
+							transform: skew(-35deg);
+						}
+						&::after {
+							transform: skew(35deg);
+						}
+					}
+				}
+			}
+		}
+	}
+	.react {
+		&-checkbox {
+			&-tree {
+				ol {
+					padding: 0;
+				}
+			}
+		}
+	}
+}
