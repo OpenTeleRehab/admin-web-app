@@ -86,7 +86,7 @@ const CategoryList = ({ type, translate }) => {
     <>
       <CardGroup className="category-container">
         <Card>
-          <Card.Header className="pl-2 d-flex justify-content-between align-items-start">
+          <Card.Header className="px-2 d-flex justify-content-between align-items-start">
             <h5 className="m-0 text-truncate">{translate('category')}</h5>
             { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !keycloak.hasRealmRole(USER_ROLES.TRANSLATE_CATEGORY)) &&
               <Button

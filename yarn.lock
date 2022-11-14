@@ -2778,6 +2778,11 @@ bootstrap-daterangepicker@^3.1.0:
     jquery ">=1.10"
     moment "^2.9.0"
 
+bootstrap-v4-rtl@^4.6.2-1:
+  version "4.6.2-1"
+  resolved "https://registry.yarnpkg.com/bootstrap-v4-rtl/-/bootstrap-v4-rtl-4.6.2-1.tgz#ad8eb278d68149b68cbafa30c04776347845aa29"
+  integrity sha512-lTVWfloSHGIDKfb/vm6PBDqBqBTNBtW2/V89Jv6W8cosJHtGJHX4PBwvPjvtajEwhIBzlIFIbbq703sMdRcrTQ==
+
 bootstrap@^4.5.3:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.5.3.tgz#c6a72b355aaf323920be800246a6e4ef30997fe6"
