@@ -6,7 +6,6 @@ import { clearFilterExercises } from 'store/exercise/actions';
 import { clearFilterEducationMaterials } from 'store/educationMaterial/actions';
 import { clearFilterQuestionnaires } from 'store/questionnaire/actions';
 
-// Actions
 export const getProfile = () => async dispatch => {
   dispatch(mutation.getProfileRequest());
   const data = await Auth.getProfile();
@@ -38,7 +37,7 @@ export const updateUserProfile = payload => async dispatch => {
   const data = await Auth.updateUserProfile(payload);
   if (data.success) {
     dispatch(mutation.updateUserProfileSuccess());
-    dispatch(getTranslations());
+    dispatch(getTranslations(payload.language_id));
     dispatch(getProfile());
     dispatch(clearFilterExercises());
     dispatch(clearFilterEducationMaterials());
