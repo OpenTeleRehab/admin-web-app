@@ -348,10 +348,10 @@ const CreateEducationMaterial = ({ translate }) => {
                   <Form.Text className="text-muted">
                     {translate(materialFile.fileGroupType)}:
                     <a
+                      className="pl-2"
                       href={`${process.env.REACT_APP_API_BASE_URL}/file/${materialFile.id}`}
-                      /* eslint-disable-next-line react/jsx-no-target-blank */
                       target="_blank"
-                      className="pl-2" rel="noreferrer"
+                      rel="noreferrer"
                     >
                       {materialFile.fileName}
                     </a>

@@ -32,36 +32,38 @@ import { disease } from 'store/disease/reducers';
 import { organization } from 'store/organization/reducers';
 import { colorScheme } from 'store/colorScheme/reducers';
 import { translator } from 'store/translator/reducers';
+import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
 
 export const rootReducer = {
-  localize: localizeReducer,
-  user,
-  therapist,
-  notification,
-  spinnerOverlay,
-  country,
-  clinic,
-  profession,
-  language,
-  defaultLimitedPatient,
   auth,
-  exercise,
-  localization,
-  termAndCondition,
-  patient,
-  educationMaterial,
-  questionnaire,
+  assistiveTechnology,
   category,
-  staticPage,
-  dashboard,
-  systemLimit,
-  privacyPolicy,
-  treatmentPlan,
-  guidancePage,
-  disease,
-  organization,
+  clinic,
   colorScheme,
-  translator
+  country,
+  dashboard,
+  defaultLimitedPatient,
+  disease,
+  educationMaterial,
+  exercise,
+  guidancePage,
+  language,
+  localization,
+  localize: localizeReducer,
+  notification,
+  organization,
+  patient,
+  privacyPolicy,
+  profession,
+  questionnaire,
+  spinnerOverlay,
+  staticPage,
+  systemLimit,
+  termAndCondition,
+  therapist,
+  translator,
+  treatmentPlan,
+  user
 };
 
 const devTool =

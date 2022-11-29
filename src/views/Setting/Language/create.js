@@ -144,7 +144,7 @@ const CreateLanguage = ({ show, editId, handleClose }) => {
 
 CreateLanguage.propTypes = {
   show: PropTypes.bool,
-  editId: PropTypes.string,
+  editId: PropTypes.number,
   handleClose: PropTypes.func
 };
 

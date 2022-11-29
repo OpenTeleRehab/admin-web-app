@@ -263,7 +263,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
 
 CreateCountry.propTypes = {
   show: PropTypes.bool,
-  editId: PropTypes.string,
+  editId: PropTypes.number,
   handleClose: PropTypes.func
 };
 

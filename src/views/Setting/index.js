@@ -17,8 +17,9 @@ import Language from 'views/Setting/Language';
 import StaticPage from 'views/Setting/StaticPage';
 import GuidancePage from 'views/Setting/Guidance';
 import Disease from 'views/Setting/Disease';
-import Organization from './Organization';
 import ColorScheme from 'views/Setting/ColorScheme';
+import Organization from './Organization';
+import AssistiveTechnology from './AssistiveTechnology';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -26,6 +27,23 @@ import {
   SETTING_ROLES,
   USER_GROUPS
 } from 'variables/user';
+import {
+  SETTINGS,
+  VIEW_COUNTRY,
+  VIEW_TRANSLATION,
+  VIEW_TERM_AND_CONDITION,
+  VIEW_PRIVACY_POLICY,
+  VIEW_SYSTEM_LIMIT,
+  VIEW_CLINIC,
+  VIEW_PROFESSION,
+  VIEW_LANGUAGE,
+  VIEW_STATIC_PAGE,
+  VIEW_GUIDANCE_PAGE,
+  VIEW_DISEASE,
+  VIEW_ORGANIZATION,
+  VIEW_ASSISTIVE_TECHNOLOGY,
+  VIEW_COLOR_SCHEME
+} from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
 import CreateLanguage from 'views/Setting/Language/create';
@@ -37,20 +55,7 @@ import CreateGuidancePage from 'views/Setting/Guidance/create';
 import CreateDisease from 'views/Setting/Disease/create';
 import UploadDisease from './Disease/upload';
 import CreateOrganization from './Organization/create';
-
-const VIEW_COUNTRY = 'country';
-const VIEW_TRANSLATION = 'translation';
-const VIEW_TERM_AND_CONDITION = 'term_and_condition';
-const VIEW_PRIVACY_POLICY = 'privacy_policy';
-const VIEW_SYSTEM_LIMIT = 'system_limit';
-const VIEW_CLINIC = 'clinic';
-const VIEW_PROFESSION = 'profession';
-const VIEW_LANGUAGE = 'language';
-const VIEW_STATIC_PAGE = 'static_page';
-const VIEW_GUIDANCE_PAGE = 'guidance_page';
-const VIEW_DISEASE = 'disease';
-const VIEW_ORGANIZATION = 'organization';
-const VIEW_COLOR_SCHEME = 'color_scheme';
+import CreateAssistiveTechnology from './AssistiveTechnology/create';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -60,7 +65,6 @@ const Setting = ({ translate }) => {
   const [view, setView] = useState(undefined);
   const [show, setShow] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-
   const [editId, setEditId] = useState();
 
   useEffect(() => {
@@ -86,6 +90,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_DISEASE);
     } else if (hash.includes('#' + VIEW_ORGANIZATION)) {
       setView(VIEW_ORGANIZATION);
+    } else if (hash.includes('#' + VIEW_ASSISTIVE_TECHNOLOGY)) {
+      setView(VIEW_ASSISTIVE_TECHNOLOGY);
     } else if (hash.includes('#' + VIEW_COLOR_SCHEME)) {
       setView(VIEW_COLOR_SCHEME);
     } else {
@@ -127,7 +133,8 @@ const Setting = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('setting')}</h1>
-        {[VIEW_COUNTRY, VIEW_LANGUAGE, VIEW_TERM_AND_CONDITION, VIEW_PRIVACY_POLICY, VIEW_CLINIC, VIEW_STATIC_PAGE, VIEW_PROFESSION, VIEW_GUIDANCE_PAGE, VIEW_DISEASE, VIEW_ORGANIZATION].map(v => {
+
+        {SETTINGS.map(v => {
           if (v === view) {
             return (
               <div key={v} className="d-flex">
@@ -170,6 +177,7 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_PROFESSION && <CreateProfession show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_DISEASE && <CreateDisease show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_ORGANIZATION && <CreateOrganization show={show} editId={editId} handleClose={handleClose} />}
+      {show && view === VIEW_ASSISTIVE_TECHNOLOGY && <CreateAssistiveTechnology show={show} editId={editId} handleClose={handleClose} />}
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
       <Nav variant="tabs" activeKey={view} className="mb-3">
@@ -257,6 +265,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_ASSISTIVE_TECHNOLOGY} eventKey={VIEW_ASSISTIVE_TECHNOLOGY}>
+              {translate('setting.assistive_technology')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_COLOR_SCHEME} eventKey={VIEW_COLOR_SCHEME}>
@@ -278,6 +293,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
     </>
   );

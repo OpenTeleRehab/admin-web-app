@@ -145,7 +145,7 @@ const CreateDisease = ({ show, editId, handleClose }) => {
 
 CreateDisease.propTypes = {
   show: PropTypes.bool,
-  editId: PropTypes.string,
+  editId: PropTypes.number,
   handleClose: PropTypes.func
 };
 
