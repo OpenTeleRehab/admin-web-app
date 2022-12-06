@@ -244,7 +244,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
 
 CreateOrganization.propTypes = {
   show: PropTypes.bool,
-  editId: PropTypes.string,
+  editId: PropTypes.number,
   handleClose: PropTypes.func
 };
 
