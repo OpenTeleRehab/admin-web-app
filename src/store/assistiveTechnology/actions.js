@@ -29,7 +29,7 @@ export const getAssistiveTechnology = (id, language) => async (dispatch) => {
 };
 
 export const createAssistiveTechnology = payload => async (dispatch) => {
-  dispatch(mutation.getAssistiveTechnologyRequest());
+  dispatch(mutation.createAssistiveTechnologyRequest());
   dispatch(showSpinner(true));
   const data = await AssistiveTechnology.createAssistiveTechnology(payload);
   if (data.success) {

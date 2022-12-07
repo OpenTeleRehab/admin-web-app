@@ -65,7 +65,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
         ...formFields
       });
     }
-  }, [editId, assistiveTechnology]);
+  }, [editId, assistiveTechnology, formFields]);
 
   const renderUploadFileName = () => {
     const file = formFields.file;
@@ -226,7 +226,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
                     className="pl-2"
                     href={`${process.env.REACT_APP_API_BASE_URL}/file/${file.id}`}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                   >
                     {file.fileName}
                   </a>
