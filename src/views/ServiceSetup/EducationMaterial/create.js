@@ -351,7 +351,7 @@ const CreateEducationMaterial = ({ translate }) => {
                       className="pl-2"
                       href={`${process.env.REACT_APP_API_BASE_URL}/file/${materialFile.id}`}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       {materialFile.fileName}
                     </a>
