@@ -20,6 +20,7 @@ import ProfilePage from 'views/Profile';
 import FaqPage from 'views/Faq';
 import TermConditionPage from 'views/TermCondition';
 import PrivacyPolicyPage from 'views/PrivacyPolicy';
+import AssistiveTechnologyPatientPage from 'views/AssistiveTechnologyPatient';
 
 import * as ROUTES from 'variables/routes';
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
@@ -188,6 +189,14 @@ const routes = [
     component: PrivacyPolicyPage,
     exact: true,
     type: PRIVATE
+  },
+  {
+    title: 'assistive_technology',
+    path: ROUTES.ASSISTIVE_TECHNOLOGY,
+    component: AssistiveTechnologyPatientPage,
+    exact: true,
+    type: PRIVATE,
+    roles: [USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
   },
   {
     title: 'not_found_page',

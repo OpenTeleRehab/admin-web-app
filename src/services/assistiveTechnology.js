@@ -74,9 +74,22 @@ const deleteAssistiveTechnology = id => {
     });
 };
 
+const getAssistiveTechnologyPatients = payload => {
+  return axios.get('global-at-patients', { params: payload })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const AssistiveTechnology = {
   getAssistiveTechnologies,
   getAssistiveTechnology,
+  getAssistiveTechnologyPatients,
   createAssistiveTechnology,
   updateAssistiveTechnology,
   deleteAssistiveTechnology

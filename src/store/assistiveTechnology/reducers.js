@@ -12,6 +12,11 @@ export const assistiveTechnology = (state = initialState, action) => {
         assistiveTechnology: action.data
       });
     }
+    case 'GET_ASSISTIVE_TECHNOLOGY_PATIENTS_SUCCESS': {
+      return Object.assign({}, state, {
+        assistiveTechnologyPatients: action.data
+      });
+    }
     default:
       return state;
   }
