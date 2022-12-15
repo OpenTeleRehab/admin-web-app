@@ -31,11 +31,15 @@ import FilterCells from 'components/Table/FilterCells';
 import '@icon/open-iconic/open-iconic.css';
 import '@devexpress/dx-react-grid-bootstrap4/dist/dx-react-grid-bootstrap4.css';
 import { useSelector } from 'react-redux';
+import DateFilterPanel from './DateFilterPanel';
+import TotalPatientPanel from './TotalPatientPanel';
+import CountryFilterPanel from './CountryFilterPanel';
+import ClinicFilterPanel from './ClinicFilterPanel';
 
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover }) => {
+const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover, showCountryFilter, showDateFilter, showTotalPatient, showClinicFilter, fromDate, setFromDate, setCountry, country, toDate, setToDate, clinic, setClinic }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -80,7 +84,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
         onEditingRowIdsChange={setEditingRowIds}
       />
       {onRowClick
-        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabindex={0} />} />
+        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabIndex={0} />} />
         : <Table columnExtensions={tableColumnExtensions} />
       }
       <TableHeaderRow />
@@ -94,6 +98,10 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
       {!hideSearchFilter && <SearchPanel inputComponent={SearchInput} /> }
       {!hideSearchFilter && <FilterToggle onToggle={toggleFilter} showFilter={showFilter} /> }
       {!hideSearchFilter && <ColumnChooser toggleButtonComponent={ToggleButton} /> }
+      {showCountryFilter && <CountryFilterPanel country={country} setCountry={setCountry}/>}
+      {showClinicFilter && <ClinicFilterPanel clinic={clinic} setClinic={setClinic} />}
+      {showDateFilter && <DateFilterPanel fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate}/>}
+      {showTotalPatient && <TotalPatientPanel translate={translate} totalCount={totalCount}/>}
       {!hidePagination && <PagingPanel pageSizes={pageSizes} /> }
     </Grid>
   );
@@ -119,7 +127,19 @@ CustomTable.propTypes = {
   hideSearchFilter: PropTypes.bool,
   hidePagination: PropTypes.bool,
   onRowClick: PropTypes.func,
-  hover: PropTypes.string
+  hover: PropTypes.string,
+  setFromDate: PropTypes.func,
+  fromDate: PropTypes.string,
+  setToDate: PropTypes.func,
+  toDate: PropTypes.string,
+  setCountry: PropTypes.func,
+  country: PropTypes.string,
+  showCountryFilter: PropTypes.bool,
+  showDateFilter: PropTypes.bool,
+  showTotalPatient: PropTypes.bool,
+  showClinicFilter: PropTypes.bool,
+  clinic: PropTypes.string,
+  setClinic: PropTypes.func
 };
 
 CustomTable.defaultProps = {

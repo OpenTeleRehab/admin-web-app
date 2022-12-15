@@ -9,6 +9,9 @@ import ClinicFilterCell from 'components/Table/FilterCells/ClinicFilterCell';
 import ProfessionFilterCell from 'components/Table/FilterCells/ProfessionFilterCell';
 import TreatmentStatusFilterCell from 'components/Table/FilterCells/TreatmentStatusFilterCell';
 import NumberFilterCell from './NumberFilterCell';
+import GenderFilterCell from './GenderFilterCell';
+import ProvisionDateFilterCell from './ProvisionDateFilterCell';
+import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -38,6 +41,12 @@ const FilterCell = (props) => {
     return <ProfessionFilterCell {...props} />;
   } else if (column.name === 'age' || column.name === 'limit_patient') {
     return <NumberFilterCell {...props} />;
+  } else if (column.name === 'gender') {
+    return <GenderFilterCell {...props} />;
+  } else if (column.name === 'provision_date') {
+    return <ProvisionDateFilterCell {...props} />;
+  } else if (column.name === 'assistive_technology') {
+    return <AssistiveTechnologyFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

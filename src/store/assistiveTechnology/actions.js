@@ -75,3 +75,15 @@ export const deleteAssistiveTechnology = id => async (dispatch) => {
     return false;
   }
 };
+
+export const getAssistiveTechnologyPatients = payload => async dispatch => {
+  dispatch(mutation.getAssistiveTechnologyPatientsRequest());
+  const data = await AssistiveTechnology.getAssistiveTechnologyPatients(payload);
+  if (data.success) {
+    dispatch(mutation.getAssistiveTechnologyPatientsSuccess(data.data));
+    return data.info;
+  } else {
+    dispatch(mutation.getAssistiveTechnologyPatientsFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};

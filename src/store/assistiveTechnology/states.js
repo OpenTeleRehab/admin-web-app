@@ -1,4 +1,6 @@
 export const initialState = {
   assistiveTechnologies: [],
-  assistiveTechnology: {}
+  assistiveTechnology: {},
+  assistiveTechnologyPatients: [],
+  filters: {}
 };

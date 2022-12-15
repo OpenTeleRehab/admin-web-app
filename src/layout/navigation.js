@@ -57,6 +57,12 @@ const navItems = [
     roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
   },
   {
+    label: 'assistive_technology',
+    to: ROUTES.ASSISTIVE_TECHNOLOGY,
+    exact: true,
+    roles: [USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
+  },
+  {
     label: 'setting',
     to: ROUTES.SETTING,
     exact: true,

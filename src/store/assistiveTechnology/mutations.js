@@ -61,6 +61,19 @@ const deleteAssistiveTechnologyFail = () => ({
   type: 'DELETE_DISEASE_FAIL'
 });
 
+const getAssistiveTechnologyPatientsRequest = () => ({
+  type: 'GET_ASSISTIVE_TECHNOLOGY_PATIENTS_REQUEST'
+});
+
+const getAssistiveTechnologyPatientsSuccess = (data) => ({
+  type: 'GET_ASSISTIVE_TECHNOLOGY_PATIENTS_SUCCESS',
+  data
+});
+
+const getAssistiveTechnologyPatientsFail = () => ({
+  type: 'GET_ASSISTIVE_TECHNOLOGY_PATIENTS_FAIL'
+});
+
 export const mutation = {
   getAssistiveTechnologiesRequest,
   getAssistiveTechnologiesSuccess,
@@ -68,6 +81,9 @@ export const mutation = {
   getAssistiveTechnologyRequest,
   getAssistiveTechnologySuccess,
   getAssistiveTechnologyFail,
+  getAssistiveTechnologyPatientsRequest,
+  getAssistiveTechnologyPatientsSuccess,
+  getAssistiveTechnologyPatientsFail,
   createAssistiveTechnologyRequest,
   createAssistiveTechnologySuccess,
   createAssistiveTechnologyFail,

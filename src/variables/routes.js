@@ -3,6 +3,7 @@ export const ADMIN = '/admin';
 export const TRANSLATOR = '/translator';
 
 export const SERVICE_SETUP = '/service-setup';
+export const ASSISTIVE_TECHNOLOGY = '/assistive-technology';
 export const SERVICE_SETUP_EDUCATION = SERVICE_SETUP + '#education';
 export const SERVICE_SETUP_QUESTIONNAIRE = SERVICE_SETUP + '#questionnaire';
 

@@ -35,6 +35,7 @@
     "react-chartjs-2": "^2.11.1",
     "react-checkbox-tree": "^1.6.0",
     "react-color": "^2.19.3",
+    "react-datetime": "3.0.4",
     "react-dom": "^16.13.1",
     "react-ellipsis-text": "^1.2.1",
     "react-google-charts": "2",
