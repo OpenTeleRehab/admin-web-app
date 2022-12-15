@@ -60,12 +60,8 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
         description: assistiveTechnology.description
       });
       setFile(assistiveTechnology.file);
-    } else {
-      setFormFields({
-        ...formFields
-      });
     }
-  }, [editId, assistiveTechnology, formFields]);
+  }, [editId, assistiveTechnology]);
 
   const renderUploadFileName = () => {
     const file = formFields.file;
