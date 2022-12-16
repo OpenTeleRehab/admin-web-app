@@ -21,12 +21,11 @@ const PatientList = ({ translate }) => {
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { profile } = useSelector(state => state.auth);
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
     { name: 'age', title: translate('common.age') },
-    { name: 'country', title: translate('common.country') },
-    { name: 'clinic', title: translate('common.clinic') },
     { name: 'region', title: translate('common.region') },
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') }
   ];
@@ -37,12 +36,29 @@ const PatientList = ({ translate }) => {
     { columnName: 'treatment_status', wordWrapEnabled: true }
   ];
 
+  if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) {
+    columns.splice(2, 0, { name: 'country', title: translate('common.country') });
+  }
+
+  if (profile.type !== USER_GROUPS.CLINIC_ADMIN) {
+    columns.splice(3, 0, { name: 'clinic', title: translate('common.clinic') });
+  }
+
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [orderBy] = useState('identity');
+  const [country, setCountry] = useState('');
+  const [clinic, setClinic] = useState('');
+
+  useEffect(() => {
+    if (profile) {
+      setCountry(profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '');
+      setClinic(profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '');
+    }
+  }, [profile]);
 
   useEffect(() => {
     setCurrentPage(0);
@@ -55,13 +71,15 @@ const PatientList = ({ translate }) => {
       search_value: searchValue,
       order_by: orderBy,
       type: USER_GROUPS.ORGANIZATION_ADMIN,
+      country,
+      clinic,
       filters
     })).then(result => {
       if (result) {
         setTotalCount(result.total_count);
       }
     });
-  }, [currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
+  }, [currentPage, pageSize, dispatch, filters, searchValue, orderBy, country, clinic]);
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id).replace(':countryId', row.country_id));

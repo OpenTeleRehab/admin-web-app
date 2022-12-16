@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 
 import PageLayout from 'layout/layout';
@@ -20,12 +20,12 @@ import ProfilePage from 'views/Profile';
 import FaqPage from 'views/Faq';
 import TermConditionPage from 'views/TermCondition';
 import PrivacyPolicyPage from 'views/PrivacyPolicy';
-import AssistiveTechnologyPatientPage from 'views/AssistiveTechnologyPatient';
 
 import * as ROUTES from 'variables/routes';
-import { USER_ROLES, SETTING_ROLES } from 'variables/user';
+import { USER_ROLES, SETTING_ROLES, USER_GROUPS } from 'variables/user';
 import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
+import { useSelector } from 'react-redux';
 const PRIVATE = 'private';
 const PUBLIC = 'public';
 
@@ -66,7 +66,7 @@ const routes = [
     component: Therapist,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
+    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_COUNTRY_ADMIN]
   },
   {
     title: 'patient',
@@ -74,7 +74,7 @@ const routes = [
     component: Patient,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
+    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
   },
   {
     title: 'patient.detail',
@@ -191,14 +191,6 @@ const routes = [
     type: PRIVATE
   },
   {
-    title: 'assistive_technology',
-    path: ROUTES.ASSISTIVE_TECHNOLOGY,
-    component: AssistiveTechnologyPatientPage,
-    exact: true,
-    type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
-  },
-  {
     title: 'not_found_page',
     path: '*',
     component: NotFoundPage,
@@ -207,6 +199,7 @@ const routes = [
 ];
 
 const RouteSwitch = () => {
+  const { profile } = useSelector(state => state.auth);
   const routeComponents = routes.map(({ path, component, exact, type, title, roles }, key) => {
     return type === PUBLIC ? (
       <Route exact={!!exact} path={path} key={key}>
@@ -222,6 +215,11 @@ const RouteSwitch = () => {
   return (
     <Suspense fallback={<Spinner animation="border" />}>
       <Switch>
+        {profile && profile.type === USER_GROUPS.SUPER_ADMIN && (
+          <PrivateRoute exact path="/" key="redirect-route">
+            <Redirect to={ROUTES.ADMIN} />
+          </PrivateRoute>
+        )}
         {routeComponents}
       </Switch>
     </Suspense>

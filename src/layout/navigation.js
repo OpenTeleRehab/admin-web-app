@@ -36,13 +36,13 @@ const navItems = [
     label: 'therapist',
     to: ROUTES.THERAPIST,
     exact: true,
-    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
+    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_COUNTRY_ADMIN]
   },
   {
     label: 'patient',
     to: ROUTES.PATIENT,
     exact: true,
-    roles: [USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
+    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
   },
   {
     label: 'service_setup',
@@ -55,12 +55,6 @@ const navItems = [
     to: ROUTES.CATEGORY,
     exact: true,
     roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
-  },
-  {
-    label: 'assistive_technology',
-    to: ROUTES.ASSISTIVE_TECHNOLOGY,
-    exact: true,
-    roles: [USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
   },
   {
     label: 'setting',

@@ -23,7 +23,6 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
   const [file, setFile] = useState(undefined);
   const [errorCode, setErrorCode] = useState(false);
   const [errorName, setErrorName] = useState(false);
-  const [errorFile, setErrorFile] = useState(false);
 
   const [formFields, setFormFields] = useState({
     code: '',
@@ -93,13 +92,6 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
       setErrorName(true);
     } else {
       setErrorName(false);
-    }
-
-    if (!file && formFields.file === undefined) {
-      canSave = false;
-      setErrorFile(true);
-    } else {
-      setErrorFile(false);
     }
 
     if (canSave) {
@@ -199,12 +191,10 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
         <Form.Row>
           <Form.Group as={Col}>
             <Form.Label>{translate('assistive_technology.upload_file')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
             <Form.File custom>
               <Form.File.Input
                 name="file"
                 onChange={handleFileChange}
-                isInvalid={errorFile}
                 accept="image/*"
                 aria-label="Upload File"
                 id="file"
