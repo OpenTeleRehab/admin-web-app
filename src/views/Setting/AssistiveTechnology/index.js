@@ -17,6 +17,7 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
   const { assistiveTechnologies } = useSelector((state) => state.assistiveTechnology);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [deleteId, setDeleteId] = useState('');
+  const [isUsed, setIsUsed] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const dispatch = useDispatch();
 
@@ -24,8 +25,9 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
     dispatch(getAssistiveTechnologies());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, isUsed) => {
     setDeleteId(id);
+    setIsUsed(isUsed);
     setShowDeleteDialog(true);
   };
 
@@ -58,7 +60,7 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
             const action = (
               <>
                 <EditAction onClick={() => handleRowEdit(item.id)} />
-                <DeleteAction className="ml-1" onClick={() => handleDelete(item.id)} disabled={item.isUsed} />
+                <DeleteAction className="ml-1" onClick={() => handleDelete(item.id, item.isUsed)} />
               </>
             );
             return {
@@ -80,7 +82,7 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
         confirmLabel={translate('common.yes')}
         onConfirm={handleDeleteDialogConfirm}
       >
-        <p>{translate('common.delete_confirmation_message')}</p>
+        <p>{isUsed ? translate('assistive_technology.delete_used_assistive_confirmation_message') : translate('common.delete_confirmation_message')}</p>
       </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>

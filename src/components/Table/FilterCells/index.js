@@ -10,7 +10,6 @@ import ProfessionFilterCell from 'components/Table/FilterCells/ProfessionFilterC
 import TreatmentStatusFilterCell from 'components/Table/FilterCells/TreatmentStatusFilterCell';
 import NumberFilterCell from './NumberFilterCell';
 import GenderFilterCell from './GenderFilterCell';
-import ProvisionDateFilterCell from './ProvisionDateFilterCell';
 import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 
 const FilterCell = (props) => {
@@ -31,7 +30,7 @@ const FilterCell = (props) => {
     return <CountryFilterCell {...props} />;
   } else if (column.name === 'therapist_clinic') {
     return <ClinicFilterCell {...props} />;
-  } else if (column.name === 'date_of_birth' || column.name === 'start_date' || column.name === 'end_date') {
+  } else if (column.name === 'date_of_birth' || column.name === 'start_date' || column.name === 'end_date' || column.name === 'provision_date') {
     return <DateRangeFilterCell {...props} />;
   } else if (column.name === 'country') {
     return <CountryFilterCell {...props} />;
@@ -43,8 +42,6 @@ const FilterCell = (props) => {
     return <NumberFilterCell {...props} />;
   } else if (column.name === 'gender') {
     return <GenderFilterCell {...props} />;
-  } else if (column.name === 'provision_date') {
-    return <ProvisionDateFilterCell {...props} />;
   } else if (column.name === 'assistive_technology') {
     return <AssistiveTechnologyFilterCell {...props} />;
   }
