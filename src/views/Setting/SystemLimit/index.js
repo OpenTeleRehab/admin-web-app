@@ -12,7 +12,7 @@ import _ from 'lodash';
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
   const { systemLimits } = useSelector(state => state.systemLimit);
-  const { orgTherapistLimit } = useSelector(state => state.organization);
+  const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
@@ -35,12 +35,12 @@ const SystemLimit = ({ translate }) => {
       if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
         data.push({
           content_type: translate('number_of_ongoing_treatment_per_therapist'),
-          value: orgTherapistLimit
+          value: orgOngoingTreatmentLimit
         });
       }
       setRows(data);
     }
-  }, [systemLimits, orgTherapistLimit, profile.type, translate]);
+  }, [systemLimits, orgOngoingTreatmentLimit, profile.type, translate]);
 
   const commitChanges = ({ changed }) => {
     if (changed && editingRowIds) {
