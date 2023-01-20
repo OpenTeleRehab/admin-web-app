@@ -1,3 +1,5 @@
+const acceptImageTypes = 'image/gif, image/jpeg, image/jpg, image/png';
+
 const settings = {
   date_format: 'DD/MM/YYYY',
   datetime_format: 'DD/MM/YYYY HH:mm:ss',
@@ -25,7 +27,14 @@ const settings = {
     ]
   },
   educationMaterial: {
-    maxFileSize: 100 // MB
+    maxFileSize: 100, // MB
+    acceptFileTypes: `audio/*, video/*, .pdf, ${acceptImageTypes}`
+  },
+  exercise: {
+    acceptFileTypes: `audio/*, video/*, ${acceptImageTypes}`
+  },
+  question: {
+    acceptImageTypes: acceptImageTypes
   },
   tinymce: {
     apiKey: 'hp4m52i3gyuf4edxwxu9jyt91br22arfth7bg6ckya5a83k0',
