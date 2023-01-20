@@ -70,20 +70,14 @@ const ListExerciseCard = ({ translate, exerciseObjs, lang, customExercises }) =>
               <div className="card-img bg-light">
                 {
                   exercise.files.length > 0 && (
-                    (exercise.files[0].fileType === 'audio/mpeg' &&
+                    exercise.files[0].fileType === 'audio/mpeg' ? (
                       <div className="w-100">
                         <audio controls className="w-100">
                           <source src={`${process.env.REACT_APP_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
                         </audio>
                       </div>
-                    ) ||
-                    (exercise.files[0].fileType === 'video/mp4' &&
-                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise"
-                      />
-                    ) ||
-                    ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                      />
+                    ) : (
+                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise" />
                     )
                   )
                 }
