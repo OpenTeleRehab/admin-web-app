@@ -45,6 +45,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
+import settings from '../../../settings';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -459,330 +460,341 @@ const CreateExercise = ({ translate }) => {
         }
 
         {tab === TABS.CREATE &&
-          <Row>
-            <Col sm={4} xl={3}>
-              <div className="exercise-media">
-                <h4>{translate('exercise.media')}</h4>
-                { mediaUploads.map((mediaUpload, index) => (
-                  <div key={index} className="mb-2 position-relative w-75" >
+            <>
+              <Row>
+                <Col sm={4} xl={3}>
+                  <div className="exercise-media">
+                    <h4>{translate('exercise.media')}</h4>
+                    { mediaUploads.map((mediaUpload, index) => (
+                      <div key={index} className="mb-2 position-relative w-75" >
+                        {!isTranslating &&
+                              <div className="position-absolute remove-btn-wrapper">
+                                <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
+                              </div>
+                        }
+
+                        { mediaUpload.fileType === 'audio/mpeg' &&
+                              <div className="img-thumbnail w-100 pt-2">
+                                <audio controls className="w-100">
+                                  <source src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} type="audio/ogg" />
+                                </audio>
+                              </div>
+                        }
+
+                        { (mediaUpload.fileType !== 'audio/mpeg' && mediaUpload.fileType !== 'video/mp4') &&
+                              <img src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} alt="..." className="w-100 img-thumbnail"/>
+                        }
+
+                        { mediaUpload.fileType === 'video/mp4' &&
+                              <video className="w-100 img-thumbnail" controls>
+                                <source src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} type="video/mp4" />
+                              </video>
+                        }
+                        <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
+                      </div>
+                    ))}
                     {!isTranslating &&
-                      <div className="position-absolute remove-btn-wrapper">
-                        <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
-                      </div>
+                        <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
+                          <BsUpload size={15}/> {translate('exercise.media_upload')}
+                          <input
+                            multiple
+                            type="file"
+                            id="file"
+                            name="file"
+                            className="position-absolute upload-btn"
+                            onChange={handleFileChange}
+                            accept={settings.exercise.acceptFileTypes}
+                            aria-label="Upload"/>
+                        </div>
                     }
-
-                    { mediaUpload.fileType === 'audio/mpeg' &&
-                      <div className="img-thumbnail w-100 pt-2">
-                        <audio controls className="w-100">
-                          <source src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} type="audio/ogg" />
-                        </audio>
-                      </div>
+                    { mediaUploadsError &&
+                        <div className="text-danger">{translate('exercise.media_upload.required')}</div>
                     }
-
-                    { (mediaUpload.fileType !== 'audio/mpeg' && mediaUpload.fileType !== 'video/mp4') &&
-                      <img src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} alt="..." className="w-100 img-thumbnail"/>
-                    }
-
-                    { mediaUpload.fileType === 'video/mp4' &&
-                      <video className="w-100 img-thumbnail" controls>
-                        <source src={mediaUpload.url || `${process.env.REACT_APP_API_BASE_URL}/file/${mediaUpload.id}`} type="video/mp4" />
-                      </video>
-                    }
-                    <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
                   </div>
-                ))}
-                {!isTranslating &&
-                  <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)}>
-                    <BsUpload size={15}/> {translate('exercise.media_upload')}
-                    <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload"/>
-                  </div>
-                }
-                { mediaUploadsError &&
-                  <div className="text-danger">{translate('exercise.media_upload.required')}</div>
-                }
-              </div>
-            </Col>
-            <Col sm={7} xl={8} className="mb-5">
-              <Form.Group controlId="formLanguage">
-                <Form.Label>{translate('common.show_language.version')}</Form.Label>
-                {!isTranslating ? (
-                  <Select
-                    isDisabled={!id}
-                    classNamePrefix="filter"
-                    value={languages.filter(option => option.id.toString() === language.toString())}
-                    getOptionLabel={option => option.name}
-                    options={languages}
-                    onChange={(e) => setLanguage(e.id)}
-                    styles={customSelectStyles}
-                    aria-label="Language"
-                  />
-                ) : (
-                  <SelectLanguage
-                    translate={translate}
-                    resource={exercise}
-                    setLanguage={setLanguage}
-                    language={language ? language.toString() : null}
-                    setEditTranslationIndex={setEditTranslationIndex}
-                    setEditTranslations={setEditTranslations}
-                    isDisabled={!id}
-                  />
-                )}
-              </Form.Group>
-              <h4>{translate('exercise.information')}</h4>
-              <Form.Group controlId="formTitle">
-                <Form.Label>{translate('exercise.title')}</Form.Label>
-                <span className="text-dark ml-1">*</span>
-                {showFallbackText && formFields.fallback &&
-                    <FallbackText translate={translate} text={formFields.fallback.title} />
-                }
-                <Form.Control
-                  name="title"
-                  onChange={handleChange}
-                  value={formFields.title}
-                  placeholder={translate('exercise.title.placeholder')}
-                  isInvalid={titleError}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {translate('exercise.title.required')}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group controlId="formShowSetsReps">
-                <Form.Check
-                  name="show_sets_reps"
-                  onChange={handleCheck}
-                  value={true}
-                  checked={formFields.show_sets_reps}
-                  label={translate('exercise.set_efault_exercise_sets_and_reps')}
-                  disabled={isTranslating}
-                />
-              </Form.Group>
-              {formFields.show_sets_reps && (
-                <Card bg="light" body className="mb-3">
-                  <Form.Row>
-                    <Form.Group as={Col} controlId="formSets">
-                      <Form.Label>{translate('exercise.sets')}</Form.Label>
-                      <span className="text-dark ml-1">*</span>
-                      <Form.Control
-                        type="number"
-                        name="sets"
-                        placeholder={translate('exercise.sets.placeholder')}
-                        value={formFields.sets}
-                        onChange={handleChange}
-                        isInvalid={setsError}
-                        disabled={isTranslating}
+                </Col>
+                <Col sm={7} xl={8} className="mb-5">
+                  <Form.Group controlId="formLanguage">
+                    <Form.Label>{translate('common.show_language.version')}</Form.Label>
+                    {!isTranslating ? (
+                      <Select
+                        isDisabled={!id}
+                        classNamePrefix="filter"
+                        value={languages.filter(option => option.id.toString() === language.toString())}
+                        getOptionLabel={option => option.name}
+                        options={languages}
+                        onChange={(e) => setLanguage(e.id)}
+                        styles={customSelectStyles}
+                        aria-label="Language"
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {translate('exercise.sets.required')}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} controlId="formGridPassword">
-                      <Form.Label>{translate('exercise.reps')}</Form.Label>
-                      <span className="text-dark ml-1">*</span>
-                      <Form.Control
-                        type="number"
-                        name="reps"
-                        placeholder={translate('exercise.reps.placeholder')}
-                        value={formFields.reps}
-                        onChange={handleChange}
-                        isInvalid={repsError}
-                        disabled={isTranslating}
+                    ) : (
+                      <SelectLanguage
+                        translate={translate}
+                        resource={exercise}
+                        setLanguage={setLanguage}
+                        language={language ? language.toString() : null}
+                        setEditTranslationIndex={setEditTranslationIndex}
+                        setEditTranslations={setEditTranslations}
+                        isDisabled={!id}
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {translate('exercise.reps.required')}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Form.Row>
-                  <Form.Group controlId="formIncludeFeedback">
+                    )}
+                  </Form.Group>
+                  <h4>{translate('exercise.information')}</h4>
+                  <Form.Group controlId="formTitle">
+                    <Form.Label>{translate('exercise.title')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    {showFallbackText && formFields.fallback &&
+                        <FallbackText translate={translate} text={formFields.fallback.title} />
+                    }
+                    <Form.Control
+                      name="title"
+                      onChange={handleChange}
+                      value={formFields.title}
+                      placeholder={translate('exercise.title.placeholder')}
+                      isInvalid={titleError}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {translate('exercise.title.required')}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group controlId="formShowSetsReps">
                     <Form.Check
-                      name="include_feedback"
+                      name="show_sets_reps"
                       onChange={handleCheck}
                       value={true}
-                      checked={formFields.include_feedback}
-                      label={translate('exercise.include_collecting_feedback')}
+                      checked={formFields.show_sets_reps}
+                      label={translate('exercise.set_efault_exercise_sets_and_reps')}
                       disabled={isTranslating}
                     />
                   </Form.Group>
-                </Card>
-              )}
-              <Form.Group controlId="formGetPainLevel">
-                <Form.Check
-                  name="get_pain_level"
-                  onChange={handleCheck}
-                  value={true}
-                  checked={formFields.get_pain_level}
-                  label={translate('exercise.get_pain_level_feedback')}
-                  disabled={isTranslating}
-                />
-              </Form.Group>
-
-              <Accordion className="mb-3" defaultActiveKey={1}>
-                {
-                  categoryTreeData.map((category, index) => (
-                    <Card key={index}>
-                      <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
-                        {category.label}
-                        <div className="ml-auto">
-                          <span className="mr-3">
-                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
-                          </span>
-                          <ContextAwareToggle eventKey={(index + 1).toString()} />
-                        </div>
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
-                        <Card.Body>
-                          <CheckboxTree
-                            nodes={category.children || []}
-                            checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
-                            expanded={expanded}
-                            onCheck={(checked) => handleSetSelectedCategories(category.value, checked)}
-                            onExpand={expanded => setExpanded(expanded)}
-                            icons={{
-                              check: <FaRegCheckSquare size={40} color="black" />,
-                              uncheck: <BsSquare size={40} color="black" />,
-                              halfCheck: <BsDashSquare size={40} color="black" />,
-                              expandClose: <BsCaretRightFill size={40} color="black" />,
-                              expandOpen: <BsCaretDownFill size={40} color="black" />
-                            }}
-                            showNodeIcon={false}
+                  {formFields.show_sets_reps && (
+                    <Card bg="light" body className="mb-3">
+                      <Form.Row>
+                        <Form.Group as={Col} controlId="formSets">
+                          <Form.Label>{translate('exercise.sets')}</Form.Label>
+                          <span className="text-dark ml-1">*</span>
+                          <Form.Control
+                            type="number"
+                            name="sets"
+                            placeholder={translate('exercise.sets.placeholder')}
+                            value={formFields.sets}
+                            onChange={handleChange}
+                            isInvalid={setsError}
+                            disabled={isTranslating}
                           />
-                        </Card.Body>
-                      </Accordion.Collapse>
+                          <Form.Control.Feedback type="invalid">
+                            {translate('exercise.sets.required')}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group as={Col} controlId="formGridPassword">
+                          <Form.Label>{translate('exercise.reps')}</Form.Label>
+                          <span className="text-dark ml-1">*</span>
+                          <Form.Control
+                            type="number"
+                            name="reps"
+                            placeholder={translate('exercise.reps.placeholder')}
+                            value={formFields.reps}
+                            onChange={handleChange}
+                            isInvalid={repsError}
+                            disabled={isTranslating}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {translate('exercise.reps.required')}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Form.Row>
+                      <Form.Group controlId="formIncludeFeedback">
+                        <Form.Check
+                          name="include_feedback"
+                          onChange={handleCheck}
+                          value={true}
+                          checked={formFields.include_feedback}
+                          label={translate('exercise.include_collecting_feedback')}
+                          disabled={isTranslating}
+                        />
+                      </Form.Group>
                     </Card>
-                  ))
-                }
-              </Accordion>
+                  )}
+                  <Form.Group controlId="formGetPainLevel">
+                    <Form.Check
+                      name="get_pain_level"
+                      onChange={handleCheck}
+                      value={true}
+                      checked={formFields.get_pain_level}
+                      label={translate('exercise.get_pain_level_feedback')}
+                      disabled={isTranslating}
+                    />
+                  </Form.Group>
 
-              {
-                additionalFields.map((additionalField, index) => (
-                  <Card key={index} className="bg-light mb-3 additional-field">
-                    <Card.Body>
-                      {enableButtons() &&
-                        <div className="remove-btn-container">
-                          <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
-                            <Button
-                              aria-label="Remove field"
-                              variant="outline-danger"
-                              className="btn-remove"
-                              onClick={() => handleRemoveFields(index)}
-                            >
-                              <BsX size={20} />
-                            </Button>
-                          </OverlayTrigger>
-                        </div>
+                  <Accordion className="mb-3" defaultActiveKey={1}>
+                    {
+                      categoryTreeData.map((category, index) => (
+                        <Card key={index}>
+                          <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
+                            {category.label}
+                            <div className="ml-auto">
+                              <span className="mr-3">
+                                {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                              </span>
+                              <ContextAwareToggle eventKey={(index + 1).toString()} />
+                            </div>
+                          </Accordion.Toggle>
+                          <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
+                            <Card.Body>
+                              <CheckboxTree
+                                nodes={category.children || []}
+                                checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                                expanded={expanded}
+                                onCheck={(checked) => handleSetSelectedCategories(category.value, checked)}
+                                onExpand={expanded => setExpanded(expanded)}
+                                icons={{
+                                  check: <FaRegCheckSquare size={40} color="black" />,
+                                  uncheck: <BsSquare size={40} color="black" />,
+                                  halfCheck: <BsDashSquare size={40} color="black" />,
+                                  expandClose: <BsCaretRightFill size={40} color="black" />,
+                                  expandOpen: <BsCaretDownFill size={40} color="black" />
+                                }}
+                                showNodeIcon={false}
+                              />
+                            </Card.Body>
+                          </Accordion.Collapse>
+                        </Card>
+                      ))
+                    }
+                  </Accordion>
+
+                  {
+                    additionalFields.map((additionalField, index) => (
+                      <Card key={index} className="bg-light mb-3 additional-field">
+                        <Card.Body>
+                          {enableButtons() &&
+                                <div className="remove-btn-container">
+                                  <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
+                                    <Button
+                                      aria-label="Remove field"
+                                      variant="outline-danger"
+                                      className="btn-remove"
+                                      onClick={() => handleRemoveFields(index)}
+                                    >
+                                      <BsX size={20} />
+                                    </Button>
+                                  </OverlayTrigger>
+                                </div>
+                          }
+                          <Form.Group controlId={`formLabel${index}`}>
+                            <Form.Label>{translate('exercise.additional_field.label')}</Form.Label>
+                            <span className="text-dark ml-1">*</span>
+                            {showFallbackText && additionalField.fallback &&
+                                  <FallbackText translate={translate} text={additionalField.fallback.field} />
+                            }
+                            <Form.Control
+                              name="field"
+                              placeholder={translate('exercise.additional_field.placeholder.label')}
+                              value={additionalField.field}
+                              onChange={e => handleChangeInput(index, e)}
+                              isInvalid={inputFieldError[index]}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {translate('exercise.additional_field.label.required')}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                          <Form.Group controlId={`formValue${index}`}>
+                            <Form.Label>{translate('exercise.additional_field.value')}</Form.Label>
+                            <span className="text-dark ml-1">*</span>
+                            {showFallbackText && additionalField.fallback &&
+                                  <FallbackText translate={translate} text={additionalField.fallback.value} />
+                            }
+                            <Form.Control
+                              name="value"
+                              as="textarea"
+                              rows={3}
+                              placeholder={translate('exercise.additional_field.placeholder.value')}
+                              value={additionalField.value}
+                              onChange={event => handleChangeInput(index, event)}
+                              isInvalid={inputValueError[index]}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {translate('exercise.additional_field.value.required')}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Card.Body>
+                      </Card>
+                    ))
+                  }
+
+                  { enableButtons() &&
+                      <Form.Group>
+                        <Button
+                          aria-label="Add more field"
+                          variant="link"
+                          onClick={handleAddFields}
+                          className="p-0 mr-1"
+                          onKeyPress={(e) => handleNewField(e)}
+                        >
+                          <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
+                        </Button>
+                      </Form.Group>
+                  }
+                </Col>
+              </Row>
+
+              <Row>
+                <Col sm={12} xl={11} className="question-wrapper">
+                  <div className="sticky-btn d-flex justify-content-end">
+                    <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
+                      {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                          <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
+                            <Form.Check
+                              name="share_to_hi_library"
+                              label={translate('common.share_to_hi_library')}
+                              value={true}
+                              checked={formFields.share_to_hi_library}
+                              onChange={handleCheck}
+                              disabled={isTranslating}
+                            />
+                          </Form.Group>
                       }
-                      <Form.Group controlId={`formLabel${index}`}>
-                        <Form.Label>{translate('exercise.additional_field.label')}</Form.Label>
-                        <span className="text-dark ml-1">*</span>
-                        {showFallbackText && additionalField.fallback &&
-                            <FallbackText translate={translate} text={additionalField.fallback.field} />
-                        }
-                        <Form.Control
-                          name="field"
-                          placeholder={translate('exercise.additional_field.placeholder.label')}
-                          value={additionalField.field}
-                          onChange={e => handleChangeInput(index, e)}
-                          isInvalid={inputFieldError[index]}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          {translate('exercise.additional_field.label.required')}
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                      <Form.Group controlId={`formValue${index}`}>
-                        <Form.Label>{translate('exercise.additional_field.value')}</Form.Label>
-                        <span className="text-dark ml-1">*</span>
-                        {showFallbackText && additionalField.fallback &&
-                            <FallbackText translate={translate} text={additionalField.fallback.value} />
-                        }
-                        <Form.Control
-                          name="value"
-                          as="textarea"
-                          rows={3}
-                          placeholder={translate('exercise.additional_field.placeholder.value')}
-                          value={additionalField.value}
-                          onChange={event => handleChangeInput(index, event)}
-                          isInvalid={inputValueError[index]}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          {translate('exercise.additional_field.value.required')}
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Card.Body>
-                  </Card>
-                ))
-              }
-
-              { enableButtons() &&
-                <Form.Group>
-                  <Button
-                    aria-label="Add more field"
-                    variant="link"
-                    onClick={handleAddFields}
-                    className="p-0 mr-1"
-                    onKeyPress={(e) => handleNewField(e)}
-                  >
-                    <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
-                  </Button>
-                </Form.Group>
-              }
-            </Col>
-          </Row>
+                      {enableRejectApprove() &&
+                          <>
+                            <Button
+                              onClick={handleApprove}
+                              disabled={isLoading}
+                            >
+                              {translate('common.approve')}
+                            </Button>
+                            <Button
+                              onClick={handleReject}
+                              className="ml-2"
+                              variant="outline-primary"
+                              disabled={isLoading}
+                            >
+                              {translate('common.reject')}
+                            </Button>
+                          </>
+                      }
+                      {!enableRejectApprove() &&
+                          <Button
+                            id="formSave"
+                            onClick={handleSave}
+                            disabled={isLoading}
+                          >
+                            {translate('common.save')}
+                          </Button>
+                      }
+                      <Button
+                        className="ml-2"
+                        variant="outline-dark"
+                        as={Link}
+                        to={ROUTES.SERVICE_SETUP}
+                        disabled={isLoading}
+                      >
+                        {translate('common.cancel')}
+                      </Button>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </>
         }
-        <Row>
-          <Col sm={12} xl={11} className="question-wrapper">
-            <div className="sticky-btn d-flex justify-content-end">
-              <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
-                {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
-                    <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
-                      <Form.Check
-                        name="share_to_hi_library"
-                        label={translate('common.share_to_hi_library')}
-                        value={true}
-                        checked={formFields.share_to_hi_library}
-                        onChange={handleCheck}
-                        disabled={isTranslating}
-                      />
-                    </Form.Group>
-                }
-                {enableRejectApprove() &&
-                  <>
-                    <Button
-                      onClick={handleApprove}
-                      disabled={isLoading}
-                    >
-                      {translate('common.approve')}
-                    </Button>
-                    <Button
-                      onClick={handleReject}
-                      className="ml-2"
-                      variant="outline-primary"
-                      disabled={isLoading}
-                    >
-                      {translate('common.reject')}
-                    </Button>
-                  </>
-                }
-                {!enableRejectApprove() &&
-                  <Button
-                    id="formSave"
-                    onClick={handleSave}
-                    disabled={isLoading}
-                  >
-                    {translate('common.save')}
-                  </Button>
-                }
-                <Button
-                  className="ml-2"
-                  variant="outline-dark"
-                  as={Link}
-                  to={ROUTES.SERVICE_SETUP}
-                  disabled={isLoading}
-                >
-                  {translate('common.cancel')}
-                </Button>
-              </div>
-            </div>
-          </Col>
-        </Row>
 
         {tab === TABS.UPLOAD &&
           <Upload />
