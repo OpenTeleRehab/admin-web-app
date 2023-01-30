@@ -41,6 +41,7 @@ const Organization = ({ translate, handleRowEdit }) => {
     { name: 'admin_email', title: translate('organization.admin_email') },
     { name: 'max_number_of_therapist', title: translate('organization.max_number_of_therapist') },
     { name: 'max_ongoing_treatment_plan', title: translate('organization.max_ongoing_treatment_plan') },
+    { name: 'max_sms_per_week', title: translate('organization.max_sms_per_week') },
     { name: 'status', title: translate('common.status') },
     { name: 'action', title: translate('common.action') }
   ]);
@@ -58,6 +59,7 @@ const Organization = ({ translate, handleRowEdit }) => {
             admin_email: organization.admin_email,
             max_number_of_therapist: organization.max_number_of_therapist,
             max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
+            max_sms_per_week: organization.max_sms_per_week,
             status: renderStatusBadge(organization.status),
             action
           };

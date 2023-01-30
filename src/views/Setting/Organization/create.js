@@ -23,14 +23,16 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   const [errorSubDomainName, setErrorSubDomainName] = useState(false);
   const [errorMaxNumberOfTherapist, setErrorMaxNumberOfTherapist] = useState(false);
   const [errorMaxOngoingTreatmentPlan, setErrorMaxOngoingTreatmentPlan] = useState(false);
+  const [errorMaxSmsPerWeek, setErrorMaxSmsPerWeek] = useState(false);
 
   const [formFields, setFormFields] = useState({
-    name: '',
+    organization_name: '',
     type: '',
     admin_email: '',
     sub_domain_name: '',
     max_number_of_therapist: 0,
-    max_ongoing_treatment_plan: 0
+    max_ongoing_treatment_plan: 0,
+    max_sms_per_week: 0
   });
 
   useEffect(() => {
@@ -42,12 +44,13 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   useEffect(() => {
     if (editId && organization.id) {
       setFormFields({
-        name: organization.name,
+        organization_name: organization.name,
         type: organization.type,
         admin_email: organization.admin_email,
         sub_domain_name: organization.sub_domain_name,
         max_number_of_therapist: organization.max_number_of_therapist,
-        max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan
+        max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
+        max_sms_per_week: organization.max_sms_per_week
       });
     }
     // eslint-disable-next-line
@@ -70,7 +73,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   const handleConfirm = () => {
     let canSave = true;
 
-    if (formFields.name === '') {
+    if (formFields.organization_name === '') {
       canSave = false;
       setErrorName(true);
     } else {
@@ -97,12 +100,17 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     } else {
       setErrorMaxNumberOfTherapist(false);
     }
-
     if (formFields.max_ongoing_treatment_plan === '') {
       canSave = false;
       setErrorMaxOngoingTreatmentPlan(true);
     } else {
       setErrorMaxOngoingTreatmentPlan(false);
+    }
+    if (formFields.max_sms_per_week === '') {
+      canSave = false;
+      setErrorMaxSmsPerWeek(true);
+    } else {
+      setErrorMaxSmsPerWeek(false);
     }
 
     if (canSave) {
@@ -124,7 +132,6 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
       }
     }
   };
-
   const handleFormSubmit = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -142,17 +149,17 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Form.Group as={Col} controlId="name">
+          <Form.Group as={Col} controlId="formName">
             <Form.Label>{translate('organization.name')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Form.Control
-              name="name"
+              name="organization_name"
               onChange={handleChange}
               type="text"
               placeholder={translate('placeholder.organization.name')}
-              isInvalid={errorName}
-              value={formFields.name}
+              value={formFields.organization_name}
               maxLength={settings.textMaxLength}
+              isInvalid={errorName}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.name')}
@@ -234,6 +241,24 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.max_ongoing_treatment_plan')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="maxSmsPerWeek">
+            <Form.Label>{translate('organization.max_sms_per_week')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Form.Control
+              name="max_sms_per_week"
+              onChange={handleChange}
+              type="number"
+              min={0}
+              placeholder={translate('placeholder.organization.max_sms_per_week')}
+              isInvalid={errorMaxSmsPerWeek}
+              value={formFields.max_sms_per_week}
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.organization.max_sms_per_week')}
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
