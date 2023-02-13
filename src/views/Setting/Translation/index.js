@@ -64,11 +64,11 @@ const Translation = ({ translate }) => {
           const lang = _.find(languages, { code: key });
           if (lang) {
             if (regexp.test(smsRows[lang.code])) {
-              if (smsRows[lang.code].length > TEXT_MAX_LENGTH.GSM_7) {
+              if (smsRows[lang.code] && smsRows[lang.code].length > TEXT_MAX_LENGTH.GSM_7) {
                 overLengthTranslation.push({ lang: lang.name, maxLength: TEXT_MAX_LENGTH.GSM_7 });
               }
             } else {
-              if (smsRows[lang.code].length > TEXT_MAX_LENGTH.NON_GSM) {
+              if (smsRows[lang.code] && smsRows[lang.code].length > TEXT_MAX_LENGTH.NON_GSM) {
                 overLengthTranslation.push({ lang: lang.name, maxLength: TEXT_MAX_LENGTH.NON_GSM });
               }
             }
