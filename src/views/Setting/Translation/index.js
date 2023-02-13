@@ -12,6 +12,8 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import Dialog from 'components/Dialog';
+import { TEXT_MAX_LENGTH, TRANSLATION_KEYS } from 'variables/setting';
 
 let timer = null;
 const Translation = ({ translate }) => {
@@ -30,6 +32,8 @@ const Translation = ({ translate }) => {
   const [editingStateColumnExtensions] = useState([
     { columnName: 'key', editingEnabled: false }
   ]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [overLengthTranslations, setOverLengthTranslations] = useState([]);
 
   useEffect(() => {
     clearTimeout(timer);
@@ -51,7 +55,32 @@ const Translation = ({ translate }) => {
   const commitChanges = ({ changed }) => {
     if (changed && editingRowIds) {
       const changedRows = localizations.map((row, index) => (changed[index] ? { ...row, ...changed[index] } : row));
-      dispatch(updateLocalization(changedRows[editingRowIds].id, Object.values(changed)[0]));
+      const smsRows = _.find(changedRows, { key: TRANSLATION_KEYS.SMS_REMINDER_ALERT, id: changedRows[editingRowIds].id });
+      const overLengthTranslation = [];
+
+      if (smsRows) {
+        const regexp = new RegExp("^[A-Za-z0-9 \\r\\n@£$¥èéùìòÇØøÅå\u0394_\u03A6\u0393\u039B\u03A9\u03A0\u03A8\u03A3\u0398\u039EÆæßÉ!\"#$%&'()*+,\\-./:;<=>?¡ÄÖÑÜ§¿äöñüà^{}\\\\\\[~\\]|\u20AC]*$");
+        Object.keys(smsRows).map((key) => {
+          const lang = _.find(languages, { code: key });
+          if (lang) {
+            if (regexp.test(smsRows[lang.code])) {
+              if (smsRows[lang.code].length > TEXT_MAX_LENGTH.GSM_7) {
+                overLengthTranslation.push({ lang: lang.name, maxLength: TEXT_MAX_LENGTH.GSM_7 });
+              }
+            } else {
+              if (smsRows[lang.code].length > TEXT_MAX_LENGTH.NON_GSM) {
+                overLengthTranslation.push({ lang: lang.name, maxLength: TEXT_MAX_LENGTH.NON_GSM });
+              }
+            }
+          }
+        });
+      }
+
+      if (overLengthTranslation.length) {
+        showOverLengthTranslationAlert(overLengthTranslation);
+      } else {
+        dispatch(updateLocalization(changedRows[editingRowIds].id, Object.values(changed)[0]));
+      }
     }
   };
 
@@ -72,6 +101,11 @@ const Translation = ({ translate }) => {
         backgroundColor: scssColors.infoLight
       }
     })
+  };
+
+  const showOverLengthTranslationAlert = (overLengthTranslation) => {
+    setShowAlert(true);
+    setOverLengthTranslations(overLengthTranslation);
   };
 
   return (
@@ -119,6 +153,19 @@ const Translation = ({ translate }) => {
       />
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
       { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+      <Dialog
+        show={showAlert}
+        title={translate('setting.translations.over_length_title')}
+        onCancel={() => setShowAlert(false)}
+        cancelLabel={translate('common.close')}
+      >
+        <p>{translate('setting.translations.over_length_content')}</p>
+        {overLengthTranslations.map((item, index) => (
+          <div key={index}>
+            {item.lang + ' : ' + item.maxLength }
+          </div>
+        ))}
+      </Dialog>
     </>
   );
 };
