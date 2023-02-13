@@ -29,3 +29,12 @@ export const SETTINGS = [
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME
 ];
+
+export const TEXT_MAX_LENGTH = {
+  GSM_7: 160,
+  NON_GSM: 70
+};
+
+export const TRANSLATION_KEYS = {
+  SMS_REMINDER_ALERT: 'sms.reminder.alert'
+};
