@@ -49,31 +49,6 @@ const updateStaticPagesFail = () => ({
   type: 'UPDATE_STATIC_PAGE_FAIL'
 });
 
-const createPartnerLogoRequest = () => ({
-  type: 'CREATE_PARTNER_LOGO_REQUEST'
-});
-
-const createPartnerLogoSuccess = () => ({
-  type: 'CREATE_PARTNER_LOGO_SUCCESS'
-});
-
-const createPartnerLogoFail = () => ({
-  type: 'CREATE_PARTNER_LOGO_FAIL'
-});
-
-const getPartnerLogoRequest = () => ({
-  type: 'GET_PARTNER_LOGO_REQUEST'
-});
-
-const getPartnerLogoSuccess = (data) => ({
-  type: 'GET_PARTNER_LOGO_SUCCESS',
-  data
-});
-
-const getPartnerLogoFail = () => ({
-  type: 'GET_PARTNER_LOGO_FAIL'
-});
-
 const getFaqPageRequest = () => ({
   type: 'GET_FAQ_PAGE_REQUEST'
 });
@@ -100,12 +75,6 @@ export const mutation = {
   updateStaticPageRequest,
   updateStaticPageSuccess,
   updateStaticPagesFail,
-  createPartnerLogoRequest,
-  createPartnerLogoSuccess,
-  createPartnerLogoFail,
-  getPartnerLogoRequest,
-  getPartnerLogoSuccess,
-  getPartnerLogoFail,
   getFaqPageFail,
   getFaqPageSuccess,
   getFaqPageRequest

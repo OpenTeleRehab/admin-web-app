@@ -3,6 +3,5 @@ export const initialState = {
   staticPages: [],
   staticPage: {},
   loading: false,
-  partnerLogoFile: [],
   faqPage: []
 };

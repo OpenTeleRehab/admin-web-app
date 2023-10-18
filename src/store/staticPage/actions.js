@@ -68,35 +68,6 @@ export const createStaticPage = (payload) => async (dispatch) => {
   }
 };
 
-export const createPartnerLogo = (payload) => async (dispatch) => {
-  dispatch(mutation.createPartnerLogoRequest());
-  const data = await staticPage.createPartnerLogo(payload);
-  if (data.success) {
-    dispatch(mutation.createPartnerLogoSuccess());
-    dispatch(getPartnerLogo());
-    dispatch(showSuccessNotification('toast_title.add_partner_logo', data.message));
-    return true;
-  } else {
-    dispatch(mutation.createPartnerLogoPagesFail());
-    dispatch(showErrorNotification('toast_title.add_partner_logo', data.message));
-    return false;
-  }
-};
-
-export const getPartnerLogo = () => async dispatch => {
-  dispatch(mutation.getPartnerLogoRequest());
-  dispatch(showSpinner(true));
-  const data = await staticPage.getPartnerLogo();
-  if (data.success) {
-    dispatch(mutation.getPartnerLogoSuccess(data.data));
-    dispatch(showSpinner(false));
-  } else {
-    dispatch(mutation.getPartnerLogoFail());
-    dispatch(showSpinner(false));
-    dispatch(showErrorNotification('toast_title.error_message', data.message));
-  }
-};
-
 export const getFaqPage = payload => async dispatch => {
   dispatch(mutation.getFaqPageRequest());
   dispatch(showSpinner(true));
