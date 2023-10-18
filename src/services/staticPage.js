@@ -59,35 +59,6 @@ const updateStaticPage = (id, payload) => {
     });
 };
 
-const createPartnerLogo = (payload) => {
-  const formData = new FormData();
-  _.forIn(payload, (value, key) => {
-    formData.append(key, value);
-  });
-
-  return axios.post('/partner-logo', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
-const getPartnerLogo = () => {
-  return axios.get('/partner-logo')
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
 const getFaqPage = (payload) => {
   return axios.get('/page/static-page-data', { params: payload })
     .then(
@@ -105,7 +76,5 @@ export const staticPage = {
   createStaticPage,
   updateStaticPage,
   getStaticPage,
-  createPartnerLogo,
-  getPartnerLogo,
   getFaqPage
 };
