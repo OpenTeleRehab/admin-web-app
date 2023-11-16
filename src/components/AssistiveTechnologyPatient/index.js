@@ -25,9 +25,6 @@ const AssistiveTechnologyPatient = ({ translate }) => {
   const { profile } = useSelector(state => state.auth);
   const { countries } = useSelector(state => state.country);
   const { clinics } = useSelector(state => state.clinic);
-  const [country, setCountry] = useState('');
-  const [clinic, setClinic] = useState('');
-
   const columns = [
     { name: 'identity', title: translate('common.id') },
     { name: 'gender', title: translate('gender') },
@@ -58,10 +55,22 @@ const AssistiveTechnologyPatient = ({ translate }) => {
 
   useEffect(() => {
     if (profile) {
-      setCountry(profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '');
-      setClinic(profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '');
+      dispatch(getAssistiveTechnologyPatients({
+        page_size: pageSize,
+        page: currentPage + 1,
+        search_value: searchValue,
+        order_by: orderBy,
+        type: profile.type,
+        country: USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
+        clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
+        filters
+      })).then(result => {
+        if (result) {
+          setTotalCount(result.total_count);
+        }
+      });
     }
-  }, [profile]);
+  }, [profile, currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
 
   useEffect(() => {
     dispatch(getAssistiveTechnologies());
@@ -70,23 +79,6 @@ const AssistiveTechnologyPatient = ({ translate }) => {
   useEffect(() => {
     setCurrentPage(0);
   }, [pageSize, searchValue, filters]);
-
-  useEffect(() => {
-    dispatch(getAssistiveTechnologyPatients({
-      page_size: pageSize,
-      page: currentPage + 1,
-      search_value: searchValue,
-      order_by: orderBy,
-      type: profile.type,
-      country,
-      clinic,
-      filters
-    })).then(result => {
-      if (result) {
-        setTotalCount(result.total_count);
-      }
-    });
-  }, [currentPage, pageSize, dispatch, filters, searchValue, orderBy, profile, clinic, country]);
 
   return (
     <div className="mt-4">

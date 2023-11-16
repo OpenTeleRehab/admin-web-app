@@ -50,36 +50,29 @@ const PatientList = ({ translate }) => {
   const [filters, setFilters] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [orderBy] = useState('identity');
-  const [country, setCountry] = useState('');
-  const [clinic, setClinic] = useState('');
 
   useEffect(() => {
     if (profile) {
-      setCountry(profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '');
-      setClinic(profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '');
+      dispatch(getGlobalPatients({
+        page_size: pageSize,
+        page: currentPage + 1,
+        search_value: searchValue,
+        order_by: orderBy,
+        type: profile.type,
+        country: profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
+        clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
+        filters
+      })).then(result => {
+        if (result) {
+          setTotalCount(result.total_count);
+        }
+      });
     }
-  }, [profile]);
+  }, [profile, currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
 
   useEffect(() => {
     setCurrentPage(0);
   }, [pageSize, searchValue, filters]);
-
-  useEffect(() => {
-    dispatch(getGlobalPatients({
-      page_size: pageSize,
-      page: currentPage + 1,
-      search_value: searchValue,
-      order_by: orderBy,
-      type: USER_GROUPS.ORGANIZATION_ADMIN,
-      country,
-      clinic,
-      filters
-    })).then(result => {
-      if (result) {
-        setTotalCount(result.total_count);
-      }
-    });
-  }, [currentPage, pageSize, dispatch, filters, searchValue, orderBy, country, clinic]);
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id).replace(':countryId', row.country_id));
