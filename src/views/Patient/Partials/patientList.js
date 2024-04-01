@@ -25,6 +25,7 @@ const PatientList = ({ translate }) => {
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
+    { name: 'gender', title: translate('gender') },
     { name: 'age', title: translate('common.age') },
     { name: 'region', title: translate('common.region') },
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') }
@@ -99,6 +100,7 @@ const PatientList = ({ translate }) => {
             country_id: patient.country_id,
             identity: patient.identity,
             email: patient.email,
+            gender: translate('common.' + patient.gender),
             age: patient.date_of_birth !== null ? AgeCalculation(patient.date_of_birth, translate) : '',
             country: getCountryName(patient.country_id, countries),
             clinic: getClinicName(patient.clinic_id, clinics),
