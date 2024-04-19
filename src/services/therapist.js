@@ -65,7 +65,7 @@ const getTherapists = payload => {
 };
 
 const deleteTherapistUser = (id, payload) => {
-  return adminAxios.post(`/therapist/delete/by-id/${id}`, { country_code: payload.country_code })
+  return adminAxios.post(`/therapist/delete/by-id/${id}`, payload)
     .then(
       res => {
         return res.data;

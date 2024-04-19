@@ -9,10 +9,13 @@ import { getTranslate, Translate } from 'react-localize-redux';
 import { getIdentity, getChatRooms } from 'utils/therapist';
 import PropTypes from 'prop-types';
 import { deleteTherapistUser } from 'store/therapist/actions';
+import { USER_ROLES } from '../../../variables/user';
+import { useKeycloak } from '@react-keycloak/web';
 
-const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientTherapists, therapistsSameClinic, showDeleteDialog, therapistId, clinicId }) => {
+const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, therapistsSameClinic, showDeleteDialog, therapistId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { keycloak } = useKeycloak();
   const therapists = useSelector(state => state.therapist.therapists);
   const [errorTherapist, setErrorTherapist] = useState(false);
   const dispatch = useDispatch();
@@ -53,8 +56,13 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
   }, [therapistsSameClinic, patientTherapists]);
 
   const handleDeleteConfirm = () => {
+    const therapist = therapists.find(item => item.id === therapistId);
+
     if (patientTherapists.length === 0 || !isTransfer) {
-      dispatch(deleteTherapistUser(therapistId, { country_code: countryCode })).then(result => {
+      dispatch(deleteTherapistUser(therapistId, {
+        country_code: therapist.country_id,
+        hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)
+      })).then(result => {
         if (result) {
           setShowDeleteDialog(false);
           setConfirmTransfer(false);
@@ -65,7 +73,10 @@ const DeleteTherapist = ({ countryCode, setShowDeleteDialog, chatRooms, patientT
       therapistService.transferPatientToTherapist(lastPatientId, formFields).then(res => {
         if (res) {
           setFormFields({ ...formFields, therapist_id: '', therapist_identity: '', new_chat_rooms: '', chat_rooms: chatRooms });
-          dispatch(deleteTherapistUser(therapistId, { country_code: countryCode })).then(result => {
+          dispatch(deleteTherapistUser(therapistId, {
+            country_code: therapist.country_id,
+            hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)
+          })).then(result => {
             if (result) {
               setShowDeleteDialog(false);
               setConfirmTransfer(false);
@@ -203,8 +214,6 @@ DeleteTherapist.propTypes = {
   therapistsSameClinic: PropTypes.array,
   showDeleteDialog: PropTypes.func,
   therapistId: PropTypes.number,
-  clinicId: PropTypes.number,
-  countryCode: PropTypes.string,
   setShowDeleteDialog: PropTypes.func
 };
 
