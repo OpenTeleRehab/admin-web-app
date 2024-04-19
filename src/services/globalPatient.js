@@ -14,6 +14,18 @@ const getGlobalPatients = payload => {
     });
 };
 
+const deleteGlobalPatient = id => {
+  return axios.delete(`/global-patients/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    ).catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const GlobalPatient = {
-  getGlobalPatients
+  getGlobalPatients,
+  deleteGlobalPatient
 };

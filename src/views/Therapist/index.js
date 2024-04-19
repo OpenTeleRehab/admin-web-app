@@ -9,7 +9,7 @@ import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import CreateTherapist from 'views/Therapist/create';
 import { getTherapists, updateTherapistStatus, resendEmail } from 'store/therapist/actions';
-import { getCountryName, getCountryISO, getCountryIsoCode } from 'utils/country';
+import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicRegion, getTotalTherapistLimit } from 'utils/clinic';
 import * as moment from 'moment';
 import settings from 'settings';
@@ -46,15 +46,13 @@ const Therapist = ({ translate }) => {
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
   const [therapistChatRooms, setTherapistChatRooms] = useState('');
-  const [isGlobalAdmin, setIsGlobalAdmin] = useState(false);
   const [isTherapistLimit, setIsTherapistLimit] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
 
   const [formFields, setFormFields] = useState({
     enabled: 0
   });
 
-  const columns = [
+  let columns = [
     { name: 'id', title: translate('common.id') },
     { name: 'last_name', title: translate('common.last_name') },
     { name: 'first_name', title: translate('common.first_name') },
@@ -67,16 +65,19 @@ const Therapist = ({ translate }) => {
     { name: 'action', title: translate('common.action') }
   ];
 
-  const globalAdminTherapistColumns = [
-    { name: 'id', title: translate('common.id') },
-    { name: 'profession', title: translate('common.profession') },
-    { name: 'therapist_country', title: translate('common.country') },
-    { name: 'region', title: translate('common.region') },
-    { name: 'therapist_clinic', title: translate('common.clinic') },
-    { name: 'total_patient', title: translate('common.total_patient') },
-    { name: 'on_going_treatment', title: translate('common.ongoing_treatment_plan') },
-    { name: 'limit_patient', title: translate('common.on_going.treatment_let') }
-  ];
+  if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
+    columns = [
+      { name: 'id', title: translate('common.id') },
+      { name: 'profession', title: translate('common.profession') },
+      { name: 'therapist_country', title: translate('common.country') },
+      { name: 'region', title: translate('common.region') },
+      { name: 'therapist_clinic', title: translate('common.clinic') },
+      { name: 'total_patient', title: translate('common.total_patient') },
+      { name: 'on_going_treatment', title: translate('common.ongoing_treatment_plan') },
+      { name: 'limit_patient', title: translate('common.on_going.treatment_let') },
+      { name: 'action', title: translate('common.action') }
+    ];
+  }
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true, width: 250 },
@@ -124,12 +125,6 @@ const Therapist = ({ translate }) => {
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
   useEffect(() => {
-    if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
-      setIsGlobalAdmin(true);
-    }
-  }, [keycloak]);
-
-  useEffect(() => {
     if (therapists && therapists.length > 0 && totalCount) {
       const therapistIds = _.map(therapists, 'id');
       therapistService.getPatientByTherapistIds(therapistIds, { country_code: getCountryIsoCode(profile.country_id) }).then(res => {
@@ -137,12 +132,11 @@ const Therapist = ({ translate }) => {
           setPatients(res.data);
         }
       });
-    };
+    }
   }, [therapists, totalCount, profile]);
 
   useEffect(() => {
     if (profile !== undefined && profile.type === USER_GROUPS.CLINIC_ADMIN) {
-      setCountryCode(getCountryISO(profile.country_id, countries));
       clinicService.countTherapistByClinic(profile.clinic_id).then(res => {
         if (res.success) {
           if (res.data.therapistTotal < getTotalTherapistLimit(profile.clinic_id, clinics)) {
@@ -167,18 +161,22 @@ const Therapist = ({ translate }) => {
     setShow(false);
   };
 
-  const handleDelete = (id) => {
-    therapistService.getPatientForTherapistRemove(id, { country_code: getCountryIsoCode(profile.country_id) }).then(res => {
-      if (res.data) {
-        setPatientTherapists(res.data);
-      }
-    });
+  const handleDelete = (id, withoutTransfer) => {
+    const therapist = therapists.find(item => item.id === id);
 
-    therapistService.getTherapistsByClinic(profile.clinic_id).then(res => {
-      if (res.data) {
-        setTherapistsSameClinic(res.data);
-      }
-    });
+    if (!withoutTransfer) {
+      therapistService.getPatientForTherapistRemove(id, { country_code: getCountryIsoCode(therapist.country_id) }).then(res => {
+        if (res.data) {
+          setPatientTherapists(res.data);
+        }
+      });
+
+      therapistService.getTherapistsByClinic(therapist.clinic_id).then(res => {
+        if (res.data) {
+          setTherapistsSameClinic(res.data);
+        }
+      });
+    }
 
     setId(id);
     setShowDeleteDialog(true);
@@ -212,7 +210,7 @@ const Therapist = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('therapist.list')}</h1>
-        {(!isGlobalAdmin && isTherapistLimit) &&
+        {(!keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && isTherapistLimit) &&
           <div className="btn-toolbar mb-2 mb-md-0">
             <Button variant="primary" onClick={handleShow}>
               <BsPlus size={20} className="mr-1" />
@@ -231,18 +229,25 @@ const Therapist = ({ translate }) => {
         setSearchValue={setSearchValue}
         setFilters={setFilters}
         filters={filters}
-        columns={isGlobalAdmin ? globalAdminTherapistColumns : columns}
+        columns={columns}
         columnExtensions={columnExtensions}
         rows={therapists.map(user => {
           const action = (
             <>
-              {user.enabled
-                ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} disabled={!!getPatient(user.id, patients)}/>
-                : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} disabled={!!getPatient(user.id, patients)} />
-              }
-              <EditAction onClick={() => handleEdit(user.id)} />
-              <DeleteAction className="ml-1" onClick={() => handleDelete(user.id, patients)} />
-              <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
+              {keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
+                <>
+                  {user.enabled
+                    ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} disabled={!!getPatient(user.id, patients)} />
+                    : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} disabled={!!getPatient(user.id, patients)} />
+                  }
+                  <EditAction onClick={() => handleEdit(user.id)} />
+                  <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
+                  <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
+                </>
+              )}
+              {keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
+                <DeleteAction className="ml-1" onClick={() => handleDelete(user.id, true)} />
+              )}
             </>
           );
 
@@ -265,7 +270,14 @@ const Therapist = ({ translate }) => {
           };
         })}
       />
-      <DeleteTherapist countryCode={countryCode} setShowDeleteDialog={setShowDeleteDialog} chatRooms={therapistChatRooms} showDeleteDialog={showDeleteDialog} patientTherapists={patientTherapists} therapistId={id} therapistsSameClinic={therapistsSameClinic} />
+      <DeleteTherapist
+        showDeleteDialog={showDeleteDialog}
+        setShowDeleteDialog={setShowDeleteDialog}
+        chatRooms={therapistChatRooms}
+        patientTherapists={patientTherapists}
+        therapistId={id}
+        therapistsSameClinic={therapistsSameClinic}
+      />
       <Dialog
         show={showSwitchStatusDialog}
         title={translate('user.switchStatus_confirmation_title')}

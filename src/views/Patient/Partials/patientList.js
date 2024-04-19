@@ -6,12 +6,14 @@ import CustomTable from 'components/Table';
 import { getCountryName } from 'utils/country';
 import { getClinicName, getClinicRegion } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
-import { getGlobalPatients } from 'store/globalPatient/actions';
+import { deleteGlobalPatient, getGlobalPatients } from 'store/globalPatient/actions';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { USER_GROUPS } from 'variables/user';
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
+import { DeleteAction, ViewAction } from '../../../components/ActionIcons';
 import customColorScheme from '../../../utils/customColorScheme';
+import Dialog from '../../../components/Dialog';
 import _ from 'lodash';
 
 const PatientList = ({ translate }) => {
@@ -37,7 +39,7 @@ const PatientList = ({ translate }) => {
     { columnName: 'treatment_status', wordWrapEnabled: true }
   ];
 
-  if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) {
+  if ([USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN].includes(profile.type)) {
     columns.splice(2, 0, { name: 'country', title: translate('common.country') });
   }
 
@@ -45,11 +47,17 @@ const PatientList = ({ translate }) => {
     columns.splice(3, 0, { name: 'clinic', title: translate('common.clinic') });
   }
 
+  if ([USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN].includes(profile.type)) {
+    columns.push({ name: 'action', title: translate('common.action') });
+  }
+
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [editId, setEditId] = useState('');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [orderBy] = useState('identity');
 
   useEffect(() => {
@@ -79,6 +87,24 @@ const PatientList = ({ translate }) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id).replace(':countryId', row.country_id));
   };
 
+  const handleDelete = (id) => {
+    setEditId(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setEditId(null);
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteDialogConfirm = () => {
+    dispatch(deleteGlobalPatient(editId)).then(result => {
+      if (result) {
+        handleDeleteDialogClose();
+      }
+    });
+  };
+
   return (
     <div className="mt-4">
       <CustomTable
@@ -92,23 +118,45 @@ const PatientList = ({ translate }) => {
         filters={filters}
         columns={columns}
         columnExtensions={columnExtensions}
-        onRowClick={handleRowClick}
         hover="hover-primary"
         rows={patients.map(patient => {
+          const action = (
+            <>
+              <ViewAction className="ml-1" onClick={() => handleRowClick(patient)} />
+
+              {[USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN].includes(profile.type) && (
+                <DeleteAction className="ml-1" onClick={() => handleDelete(patient.patient_id)} />
+              )}
+            </>
+          );
+
+          console.log(patient);
+
           return {
             id: patient.patient_id,
             country_id: patient.country_id,
             identity: patient.identity,
             email: patient.email,
-            gender: translate('common.' + patient.gender),
+            gender: translate(`common.${patient.gender}`),
             age: patient.date_of_birth !== null ? AgeCalculation(patient.date_of_birth, translate) : '',
             country: getCountryName(patient.country_id, countries),
             clinic: getClinicName(patient.clinic_id, clinics),
             region: getClinicRegion(patient.clinic_id, clinics),
-            treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.lastTreatmentPlan)
+            treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.lastTreatmentPlan),
+            action
           };
         })}
       />
+      <Dialog
+        show={showDeleteDialog}
+        title={translate('patient.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDeleteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleDeleteDialogConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
