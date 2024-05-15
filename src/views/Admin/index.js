@@ -109,7 +109,7 @@ const Admin = ({ translate }) => {
   const handleSwitchStatusDialogConfirm = () => {
     if (countryId) {
       const user = users.find(user => user.country_id === countryId);
-      if (user && user.id !== id && user.enabled === 1) {
+      if (user && user.id === id && user.enabled === 1) {
         setErrorCountryInUsed(translate('error.country.in_used'));
       } else {
         dispatch(updateUserStatus(id, formFields)).then(result => {
