@@ -130,8 +130,6 @@ const PatientList = ({ translate }) => {
             </>
           );
 
-          console.log(patient);
-
           return {
             id: patient.patient_id,
             country_id: patient.country_id,

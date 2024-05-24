@@ -111,6 +111,7 @@ const Therapist = ({ translate }) => {
     timer = setTimeout(() => {
       dispatch(getTherapists({
         clinic_id: profile ? profile.clinic_id : null,
+        country_id: profile ? profile.country_id : null,
         filters,
         search_value: searchValue,
         user_type: profile.type,
