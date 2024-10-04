@@ -155,7 +155,7 @@ const resendEmail = (id) => {
 };
 
 const transferPatientToTherapist = (patientId, payload) => {
-  return adminAxios.post(`/patient/transfer-to-therapist/${patientId}`, { payload })
+  return adminAxios.post(`/patient/transfer-to-therapist/${patientId}`, payload)
     .then(
       res => {
         return res.data;
