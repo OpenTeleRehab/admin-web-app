@@ -101,6 +101,7 @@ const Therapist = ({ translate }) => {
   const [patients, setPatients] = useState([]);
   const [patientTherapists, setPatientTherapists] = useState([]);
   const [therapistsSameClinic, setTherapistsSameClinic] = useState([]);
+  const [numberOfActiveTransfers, setNumberOfActiveTransfers] = useState(0);
 
   useEffect(() => {
     setCurrentPage(0);
@@ -164,6 +165,11 @@ const Therapist = ({ translate }) => {
 
   const handleDelete = (id, withoutTransfer) => {
     const therapist = therapists.find(item => item.id === id);
+    therapistService.getNumberOfActiveTransfers(id, { country_code: getCountryIsoCode(therapist.country_id) }).then(res => {
+      if (res.data) {
+        setNumberOfActiveTransfers(res.data);
+      }
+    });
 
     if (!withoutTransfer) {
       therapistService.getPatientForTherapistRemove(id, { country_code: getCountryIsoCode(therapist.country_id) }).then(res => {
@@ -247,7 +253,7 @@ const Therapist = ({ translate }) => {
                 </>
               )}
               {keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
-                <DeleteAction className="ml-1" onClick={() => handleDelete(user.id, true)} />
+                <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
               )}
             </>
           );
@@ -278,6 +284,7 @@ const Therapist = ({ translate }) => {
         patientTherapists={patientTherapists}
         therapistId={id}
         therapistsSameClinic={therapistsSameClinic}
+        numberOfActiveTransfers={numberOfActiveTransfers}
       />
       <Dialog
         show={showSwitchStatusDialog}

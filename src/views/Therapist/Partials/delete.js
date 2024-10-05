@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form, Col } from 'react-bootstrap';
+import { Modal, Button, Form, Col, Badge } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { Therapist as therapistService } from 'services/therapist';
@@ -12,7 +12,7 @@ import { deleteTherapistUser } from 'store/therapist/actions';
 import { USER_ROLES } from '../../../variables/user';
 import { useKeycloak } from '@react-keycloak/web';
 
-const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, therapistsSameClinic, showDeleteDialog, therapistId }) => {
+const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, therapistsSameClinic, showDeleteDialog, therapistId, numberOfActiveTransfers }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { keycloak } = useKeycloak();
@@ -23,6 +23,7 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
   const [lastPatientId, setLastPatientId] = useState(null);
   const [confirmTransfer, setConfirmTransfer] = useState(false);
   const [isTransfer, setIsTransfer] = useState(null);
+  const [numberOfOnGoingTreatmentPlans, setNumberOfOnGoingTreatmentPlans] = useState(0);
 
   const customSelectStyles = {
     option: (provided) => ({
@@ -50,6 +51,12 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
   useEffect(() => {
     if (therapistsSameClinic.length > 0 && patientTherapists.length > 0) {
       setConfirmTransfer(true);
+
+      let sumOfOnGoingTreatmentPlans = 0;
+      patientTherapists.forEach(item => {
+        sumOfOnGoingTreatmentPlans += item.ongoingTreatmentPlan.length;
+      });
+      setNumberOfOnGoingTreatmentPlans(sumOfOnGoingTreatmentPlans);
     } else {
       setConfirmTransfer(false);
     }
@@ -171,7 +178,29 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
             <p>{translate('common.delete_confirmation_message')}</p>
           }
           { confirmTransfer &&
-            <p>{translate('common.transfer_confirmation_message')}</p>
+            <>
+              <p>{translate('common.transfer_confirmation_message')}</p>
+              {!!numberOfOnGoingTreatmentPlans &&
+                <h5>
+                  <Badge variant="warning">
+                    <Translate
+                      id="common.transfer_confirmation_message.number_of_on_going_treatment_plans"
+                      data={{ numberOfOnGoingTreatmentPlans: numberOfOnGoingTreatmentPlans }}
+                    />
+                  </Badge>
+                </h5>
+              }
+              {!!numberOfActiveTransfers &&
+                <h5>
+                  <Badge variant="warning">
+                    <Translate
+                      id="common.transfer_confirmation_message.number_of_in_progress_patient_transfer_requests"
+                      data={{ numberOfActiveTransfers: numberOfActiveTransfers }}
+                    />
+                  </Badge>
+                </h5>
+              }
+            </>
           }
         </Modal.Body>
         <Modal.Footer className="justify-content-between">
@@ -214,7 +243,8 @@ DeleteTherapist.propTypes = {
   therapistsSameClinic: PropTypes.array,
   showDeleteDialog: PropTypes.func,
   therapistId: PropTypes.number,
-  setShowDeleteDialog: PropTypes.func
+  setShowDeleteDialog: PropTypes.func,
+  numberOfActiveTransfers: PropTypes.number
 };
 
 export default DeleteTherapist;
