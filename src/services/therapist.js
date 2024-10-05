@@ -129,6 +129,19 @@ const getPatientForTherapistRemove = (therapistId, payload) => {
     });
 };
 
+const getNumberOfActiveTransfers = (therapistId, payload) => {
+  const params = { therapist_id: therapistId };
+  return adminAxios.get('transfer/number/by-therapist', { params, headers: { country: payload.country_code } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const getTherapistsByClinic = (clinicId) => {
   const params = { clinic_id: clinicId };
   return adminAxios.get('therapist/list/by-clinic-id', { params })
@@ -178,5 +191,6 @@ export const Therapist = {
   resendEmail,
   getPatientForTherapistRemove,
   getTherapistsByClinic,
-  transferPatientToTherapist
+  transferPatientToTherapist,
+  getNumberOfActiveTransfers
 };
