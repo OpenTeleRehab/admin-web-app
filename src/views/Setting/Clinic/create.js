@@ -6,8 +6,9 @@ import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { createClinic, updateClinic } from 'store/clinic/actions';
 import settings from 'settings';
-import { getCountryISO, getTotalTherapistLimit } from 'utils/country';
+import { getCountryISO, getCountryIsoCode, getTotalTherapistLimit } from 'utils/country';
 import { Clinic as clinicService } from 'services/clinic';
+import PhoneInput from 'react-phone-input-2';
 
 const CreateClinic = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -17,6 +18,8 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   const [errorName, setErrorName] = useState(false);
   const [errorCity, setErrorCity] = useState(false);
   const [errorRegion, setErrorRegion] = useState(false);
+  const [errorClass, setErrorClass] = useState('');
+  const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
   const [errorTherapistLimitMessage, setErrorTherapistLimitMessage] = useState('');
   const [errorTherapistLimit, setErrorTherapistLimit] = useState(false);
   const [therapistLimit, setTherapistLimit] = useState(0);
@@ -26,6 +29,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
   const profile = useSelector(state => state.auth.profile);
+  const definedCountries = useSelector(state => state.country.definedCountries);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -34,6 +38,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     province: '',
     city: '',
     country_iso: '',
+    phone: '',
     therapist_limit: 0
   });
 
@@ -61,6 +66,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
         province: clinic.province,
         city: clinic.city,
         country_iso: getCountryISO(profile.country_id, countries),
+        phone: clinic.phone || '',
         therapist_limit: clinic.therapist_limit
       });
 
@@ -107,6 +113,16 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     } else {
       setErrorCity(false);
     }
+
+    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
+      canSave = false;
+      setErrorClass('d-block text-danger invalid-feedback');
+      setErrorPhoneMessage(translate('error.phone'));
+    } else {
+      setErrorClass('invalid-feedback');
+      setErrorPhoneMessage('');
+    }
+
     const pattern = new RegExp(/^[0-9\b]+$/);
     if (formFields.therapist_limit === '') {
       canSave = false;
@@ -138,14 +154,21 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     }
 
     if (canSave) {
+      let data = { ...formFields };
+      const phoneValue = formFields.phone;
+      const numOnly = phoneValue.split(formFields.dial_code);
+      if (numOnly[1].match('^0')) {
+        data = { ...data, phone: formFields.dial_code + numOnly[1].slice(1) };
+      }
+
       if (editId) {
-        dispatch(updateClinic(editId, formFields)).then(result => {
+        dispatch(updateClinic(editId, data)).then(result => {
           if (result) {
             handleClose();
           }
         });
       } else {
-        dispatch(createClinic(formFields)).then(result => {
+        dispatch(createClinic(data)).then(result => {
           if (result) {
             handleClose();
           }
@@ -238,6 +261,28 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             />
           </Form.Group>
         </Form.Row>
+
+        <Form.Group controlId="formPhone">
+          <label htmlFor="phone">{translate('common.phone')}</label>
+          <span className="text-dark ml-1">*</span>
+          <PhoneInput
+            inputProps={{
+              id: 'phone'
+            }}
+            countryCodeEditable={false}
+            country={getCountryIsoCode().toLowerCase()}
+            value={formFields.phone}
+            onlyCountries={
+              definedCountries.map(country => { return country.iso_code.toLowerCase(); })
+            }
+            onChange={(value, country) => {
+              setFormFields({ ...formFields, phone: value, dial_code: country.dialCode });
+            }}
+          />
+          <Form.Control.Feedback type="invalid" class={errorClass}>
+            {errorPhoneMessage}
+          </Form.Control.Feedback>
+        </Form.Group>
 
         <Form.Group controlId="formTherapistLimit">
           <Form.Label>{translate('common.therapist_limit')}</Form.Label>

@@ -6,7 +6,7 @@ import { getTranslate, Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import validateEmail from 'utils/validateEmail';
 import { createTherapist, updateTherapist } from 'store/therapist/actions';
-import { getCountryName, getCountryIdentity } from 'utils/country';
+import { getCountryName, getCountryIdentity, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
 import { getProfessions } from 'store/profession/actions';
 import { Therapist as therapistService } from 'services/therapist';
@@ -16,6 +16,7 @@ import scssColors from '../../scss/custom.scss';
 import {
   getTotalOnGoingTreatment
 } from 'utils/patient';
+import PhoneInput from 'react-phone-input-2';
 
 const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient }) => {
   const localize = useSelector((state) => state.localize);
@@ -24,6 +25,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
   const therapists = useSelector(state => state.therapist.therapists);
   const countries = useSelector(state => state.country.countries);
+  const definedCountries = useSelector(state => state.country.definedCountries);
   const clinics = useSelector(state => state.clinic.clinics);
 
   const [patients, setPatients] = useState([]);
@@ -34,6 +36,8 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
   const languages = useSelector(state => state.language.languages);
 
   const [errorEmail, setErrorEmail] = useState(false);
+  const [errorClass, setErrorClass] = useState('');
+  const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorLimitPatient, setErrorLimitPatient] = useState(false);
   const [errorLimitPatientMessage, setErrorLimitPatientMessage] = useState('');
@@ -45,6 +49,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
   const [formFields, setFormFields] = useState({
     email: '',
+    phone: '',
     first_name: '',
     last_name: '',
     country: '',
@@ -66,6 +71,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
     setErrorClinic(false);
     setFormFields({
       email: '',
+      phone: '',
       first_name: '',
       last_name: '',
       limit_patient: defaultOnGoingLimitPatient,
@@ -95,6 +101,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       const editingData = therapists.find(user => user.id === editId);
       setFormFields({
         email: editingData.email || '',
+        phone: editingData.phone || '',
         first_name: editingData.first_name || '',
         last_name: editingData.last_name || '',
         country: editingData.country_id || '',
@@ -129,6 +136,15 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       setErrorEmail(true);
     } else {
       setErrorEmail(false);
+    }
+
+    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
+      canSave = false;
+      setErrorClass('d-block text-danger invalid-feedback');
+      setErrorPhoneMessage(translate('error.phone'));
+    } else {
+      setErrorClass('invalid-feedback');
+      setErrorPhoneMessage('');
     }
 
     if (formFields.country === '') {
@@ -189,7 +205,14 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
     if (canSave) {
       const language = languages.find(item => item.id === formFields.language_id);
-      const data = { ...formFields, language_code: (language ? language.code : null) };
+      let data = { ...formFields, language_code: (language ? language.code : null) };
+
+      const phoneValue = formFields.phone;
+      const numOnly = phoneValue.split(formFields.dial_code);
+      if (numOnly[1].match('^0')) {
+        data = { ...data, phone: formFields.dial_code + numOnly[1].slice(1) };
+      }
+
       if (editId) {
         dispatch(updateTherapist(editId, data)).then(result => {
           if (result) {
@@ -248,6 +271,27 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.email')}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group controlId="formPhone">
+          <label htmlFor="phone">{translate('common.phone')}</label>
+          <span className="text-dark ml-1">*</span>
+          <PhoneInput
+            inputProps={{
+              id: 'phone'
+            }}
+            countryCodeEditable={false}
+            country={getCountryIsoCode().toLowerCase()}
+            value={formFields.phone}
+            onlyCountries={
+              definedCountries.map(country => { return country.iso_code.toLowerCase(); })
+            }
+            onChange={(value, country) => {
+              setFormFields({ ...formFields, phone: value, dial_code: country.dialCode });
+            }}
+          />
+          <Form.Control.Feedback type="invalid" class={errorClass}>
+            {errorPhoneMessage}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Row>
