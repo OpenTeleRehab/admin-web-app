@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
-
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
+import { Auth } from 'services/auth';
 
 const navItems = [
   {
@@ -77,8 +77,10 @@ const Navigation = ({ translate }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (keycloak.authenticated) {
+      // Audit log for logout
+      await Auth.logUserAuthAction({ type: 'logout' });
       keycloak.logout();
     }
   };
