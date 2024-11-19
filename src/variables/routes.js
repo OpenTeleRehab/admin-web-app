@@ -43,3 +43,5 @@ export const PP = '/privacy-policy';
 export const PROFILE_PASSWORD = PROFILE + '#password';
 
 export const VIEW_TREATMENT_PLAN_DETAIL = VIEW_PATIENT_DETAIL + '/treatment-plan/:id';
+
+export const AUDIT_LOGS = '/audit-logs';

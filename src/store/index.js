@@ -33,8 +33,10 @@ import { organization } from 'store/organization/reducers';
 import { colorScheme } from 'store/colorScheme/reducers';
 import { translator } from 'store/translator/reducers';
 import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
+import { auditLog } from 'store/auditLog/reducers';
 
 export const rootReducer = {
+  auditLog,
   auth,
   assistiveTechnology,
   category,

@@ -61,6 +61,12 @@ const navItems = [
     to: ROUTES.SETTING,
     exact: true,
     roles: SETTING_ROLES
+  },
+  {
+    label: 'audit_logs',
+    to: ROUTES.AUDIT_LOGS,
+    exact: true,
+    roles: [USER_ROLES.ORGANIZATION_ADMIN, USER_ROLES.COUNTRY_ADMIN, USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
   }
 ];
 
