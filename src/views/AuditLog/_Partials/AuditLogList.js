@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import PropTypes from 'prop-types';
 import { getAuditLogs } from 'store/auditLog/actions';
 
+let timer = null;
 const AuditLogList = ({ translate }) => {
   const dispatch = useDispatch();
   const auditLogs = useSelector(state => state.auditLog.auditLogs);
@@ -26,17 +27,20 @@ const AuditLogList = ({ translate }) => {
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    dispatch(
-      getAuditLogs({
-        page_size: pageSize,
-        page: currentPage + 1
-      }).then(result => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      dispatch(
+        getAuditLogs({
+          page_size: pageSize,
+          page: currentPage + 1
+        })
+      ).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
-      })
-    );
-  }, []);
+      });
+    });
+  }, [currentPage, pageSize, dispatch]);
 
   const renderChangedItems = item => (
     <ul>
