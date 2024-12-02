@@ -34,8 +34,4 @@ SearchInput.propTypes = {
   onClear: PropTypes.func
 };
 
-SearchInput.defaultProps = {
-
-};
-
 export default SearchInput;

@@ -154,7 +154,7 @@ const AdherenceTab = () => {
                 <Card>
                   <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="bg-blue-light-2 text-primary font-weight-bold d-flex align-items-center">
                     <span>{moment(key).format(settings.date_format)}</span>
-                    <ContextAwareToggle eventKey={index + 1} />
+                    <ContextAwareToggle eventKey={(index + 1).toString()} />
                   </Accordion.Toggle>
                   <Accordion.Collapse eventKey={index + 1}>
                     <Card.Body>

@@ -228,7 +228,7 @@ const EducationMaterial = ({ translate }) => {
                           <span className="mr-3">
                             {selectedCategories[category.value] ? selectedCategories[category.value].length : 0}
                           </span>
-                          <ContextAwareToggle eventKey={category.value} />
+                          <ContextAwareToggle eventKey={category.value.toString()} />
                         </div>
                       </Accordion.Toggle>
                       <Accordion.Collapse eventKey={category.value}>
