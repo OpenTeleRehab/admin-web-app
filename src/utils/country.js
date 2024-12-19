@@ -32,3 +32,19 @@ export const getCountryIsoCode = (countryId) => {
 
   return country ? country.iso_code : '';
 };
+
+export const getCountryNames = (ids, countries) => {
+  return _.chain(countries)
+    .filter(item => ids.includes(item.id))
+    .map(item => item.name)
+    .join(', ')
+    .value();
+};
+
+export const getLocations = (ids, locations, translate) => {
+  return _.chain(locations)
+    .filter(item => ids.includes(item.value))
+    .map(item => translate(`common.${item.label}`))
+    .join(', ')
+    .value();
+};

@@ -12,6 +12,7 @@ export const VIEW_DISEASE = 'disease';
 export const VIEW_ORGANIZATION = 'organization';
 export const VIEW_ASSISTIVE_TECHNOLOGY = 'assistive_technology';
 export const VIEW_COLOR_SCHEME = 'color_scheme';
+export const VIEW_SURVEY = 'survey';
 
 export const SETTINGS = [
   VIEW_COUNTRY,
@@ -27,7 +28,8 @@ export const SETTINGS = [
   VIEW_DISEASE,
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
-  VIEW_COLOR_SCHEME
+  VIEW_COLOR_SCHEME,
+  VIEW_SURVEY
 ];
 
 export const TEXT_MAX_LENGTH = {

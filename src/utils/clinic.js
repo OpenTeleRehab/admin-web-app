@@ -23,3 +23,11 @@ export const getTotalTherapistLimit = (id, clinics) => {
 
   return clinic ? clinic.therapist_limit : 0;
 };
+
+export const getClinicNames = (ids, clinics) => {
+  return _.chain(clinics)
+    .filter(item => ids.includes(item.id))
+    .map(item => item.name)
+    .join(', ')
+    .value();
+};
