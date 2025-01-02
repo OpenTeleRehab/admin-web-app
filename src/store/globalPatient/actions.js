@@ -1,6 +1,7 @@
 import { GlobalPatient } from 'services/globalPatient';
 import { mutation } from './mutations';
 import { showErrorNotification, showSuccessNotification } from '../notification/actions';
+import { saveAs } from 'file-saver';
 
 export const getGlobalPatients = payload => async (dispatch, getState) => {
   dispatch(mutation.getPatientRequest());
@@ -26,6 +27,20 @@ export const deleteGlobalPatient = id => async (dispatch, getState) => {
   } else {
     dispatch(mutation.deleteGlobalPatientFail());
     dispatch(showErrorNotification('toast_title.delete_patient', data.message));
+    return false;
+  }
+};
+
+export const downloadPatientRawData = payload => async dispatch => {
+  dispatch(mutation.downloadPatientRawDataRequest());
+  const res = await GlobalPatient.downloadPatientRawData(payload);
+  if (res) {
+    dispatch(mutation.downloadPatientRawDataSuccess());
+    saveAs(res, 'Patient_Raw_Data.xlsx');
+    return true;
+  } else {
+    dispatch(mutation.downloadPatientRawDataFail());
+    dispatch(showErrorNotification('toast_title.error_message', res.message));
     return false;
   }
 };

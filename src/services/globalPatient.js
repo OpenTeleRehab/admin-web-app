@@ -25,7 +25,20 @@ const deleteGlobalPatient = id => {
     });
 };
 
+const downloadPatientRawData = (payload) => {
+  return axios.get('/patient-raw-data/export', { params: payload, responseType: 'blob' })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const GlobalPatient = {
   getGlobalPatients,
-  deleteGlobalPatient
+  deleteGlobalPatient,
+  downloadPatientRawData
 };

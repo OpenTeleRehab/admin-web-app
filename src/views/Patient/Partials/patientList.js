@@ -16,7 +16,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import Dialog from '../../../components/Dialog';
 import _ from 'lodash';
 
-const PatientList = ({ translate }) => {
+const PatientList = ({ translate, setDownloadfilter }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const patients = useSelector(state => state.patient.patients);
@@ -77,6 +77,14 @@ const PatientList = ({ translate }) => {
         }
       });
     }
+    setDownloadfilter(prevState => ({
+      ...prevState,
+      search_value: searchValue,
+      type: profile.type,
+      country: profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
+      clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
+      filters
+    }));
   }, [profile, currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
 
   useEffect(() => {
@@ -161,7 +169,8 @@ const PatientList = ({ translate }) => {
 };
 
 PatientList.propTypes = {
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  setDownloadfilter: PropTypes.func
 };
 
 export default PatientList;

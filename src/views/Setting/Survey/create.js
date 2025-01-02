@@ -56,6 +56,8 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   const [titleError, setTitleError] = useState(false);
   const [questionTitleError, setQuestionTitleError] = useState([]);
   const [answerFieldError, setAnswerFieldError] = useState([]);
+  const [answerValueError, setAnswerValueError] = useState([]);
+  const [answerThresholdError, setAnswerThresholdError] = useState([]);
   const [questionnaire, setQuestionnaire] = useState({ title: '', questions: [] });
   const [questionnaireId, setQuestionnaireId] = useState();
   const [language, setLanguage] = useState('');
@@ -114,7 +116,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     if (startDate) {
       if (moment(startDate, settings.date_format, true).isValid()) {
         const date = moment(startDate, settings.date_format).locale('en').format(settings.date_format);
-        setFormFields({ ...formFields, start_date: date });
+        setFormFields({ ...formFields, start_date: date, include_at_the_start: false, include_at_the_end: false });
         setErrorInvalidStartDate(false);
       } else {
         setErrorInvalidStartDate(true);
@@ -151,6 +153,8 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     let canSave = true;
     const errorQuestionTitle = [];
     const errorAnswerField = [];
+    const errorAnswerValue = [];
+    const errorAnswerThreshold = [];
 
     if (formFields.organization.length === 0) {
       canSave = false;
@@ -194,18 +198,34 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorEndDate(false);
     }
 
-    if (formFields.role !== USER_GROUPS.PATIENT && moment(formFields.end_date, settings.date_format).isBefore(moment(formFields.start_date, settings.date_format))) {
+    if (moment(formFields.end_date, settings.date_format).isBefore(moment(formFields.start_date, settings.date_format))) {
       canSave = false;
       setErrorEndDateBeforeStartDate(true);
     } else {
       setErrorEndDateBeforeStartDate(false);
     }
 
-    if (formFields.role === USER_GROUPS.PATIENT && !formFields.include_at_the_end && !formFields.include_at_the_start) {
+    if (formFields.role === USER_GROUPS.PATIENT && formFields.start_date === '' && formFields.end_date === '' && !formFields.include_at_the_end && !formFields.include_at_the_start) {
       canSave = false;
       setErrorinclude(true);
     } else {
       setErrorinclude(false);
+    }
+
+    if (formFields.role === USER_GROUPS.PATIENT && !formFields.include_at_the_end && !formFields.include_at_the_start) {
+      if (formFields.start_date === '') {
+        canSave = false;
+        setErrorStartDate(true);
+      } else {
+        setErrorStartDate(false);
+      }
+
+      if (formFields.end_date === '') {
+        canSave = false;
+        setErrorEndDate(true);
+      } else {
+        setErrorEndDate(false);
+      }
     }
 
     if (formFields.role === USER_GROUPS.PATIENT && formFields.location.length === 0) {
@@ -240,17 +260,35 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
 
     for (let i = 0; i < questionnaire.questions.length; i++) {
       errorAnswerField.push([]);
+      errorAnswerValue.push([]);
+      errorAnswerThreshold.push([]);
       for (let j = 0; j < questionnaire.questions[i].answers.length; j++) {
-        if (questionnaire.questions[i].answers[j].description === '') {
+        if (questionnaire.questions[i].type !== 'open-number' && questionnaire.questions[i].answers[j].description === '') {
           canSave = false;
           errorAnswerField[i].push(true);
         } else {
           errorAnswerField[i].push(false);
         }
+
+        if (questionnaire.questions[i].answers[j].value === '') {
+          canSave = false;
+          errorAnswerValue[i].push(true);
+        } else {
+          errorAnswerValue[i].push(false);
+        }
+
+        if (questionnaire.questions[i].answers[j].threshold === '') {
+          canSave = false;
+          errorAnswerThreshold[i].push(true);
+        } else {
+          errorAnswerThreshold[i].push(false);
+        }
       }
     }
     setQuestionTitleError(errorQuestionTitle);
     setAnswerFieldError(errorAnswerField);
+    setAnswerValueError(errorAnswerValue);
+    setAnswerThresholdError(errorAnswerThreshold);
 
     if (errorInvalidStartDate || errorInvalidEndDate) {
       canSave = false;
@@ -292,6 +330,8 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       include_at_the_end: false,
       include_at_the_start: false
     });
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const handleMultipleSelectChange = (selected, e) => {
@@ -304,7 +344,9 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
 
   const handleCheck = e => {
     const { name, checked } = e.target;
-    setFormFields({ ...formFields, [name]: checked });
+    setFormFields({ ...formFields, [name]: checked, start_date: '', end_date: '' });
+    setStartDate(null);
+    setEndDate(null);
   };
 
   return (
@@ -422,65 +464,65 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             )}
-            {formFields.role !== USER_GROUPS.PATIENT && (
-              <Row>
-                <Col sm={6} xl={6}>
-                  <Form.Group controlId="formStartDate">
-                    <label htmlFor="start-date">{translate('survey.start_date')}</label>
-                    <span className="text-dark ml-1">*</span>
-                    <Datetime
-                      inputProps={{
-                        id: 'start_date',
-                        name: 'start_date',
-                        autoComplete: 'off',
-                        className: errorInvalidStartDate || errorStartDate ? 'form-control is-invalid' : 'form-control',
-                        placeholder: translate('survey.placeholder.start_date')
-                      }}
-                      dateFormat={settings.date_format}
-                      timeFormat={false}
-                      closeOnSelect={true}
-                      value={startDate}
-                      onChange={(value) => setStartDate(value)}
-                      locale={locale}
-                      isValidDate={(current) => current.isAfter(Datetime.moment().subtract(1, 'day'))}
-                    />
-                    {(errorInvalidStartDate || errorStartDate) && (
-                      <Form.Control.Feedback type="invalid" className="d-block">
-                        {translate(errorInvalidStartDate ? 'survey.error.invalid_date' : 'survey.error.start_date')}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Col>
-                <Col sm={6} xl={6}>
-                  <Form.Group controlId="formEndDate">
-                    <label htmlFor="end-date">{translate('survey.end_date')}</label>
-                    <span className="text-dark ml-1">*</span>
-                    <Datetime
-                      inputProps={{
-                        id: 'end_date',
-                        name: 'end_date',
-                        autoComplete: 'off',
-                        className: errorInvalidEndDate || errorEndDate ? 'form-control is-invalid' : 'form-control',
-                        placeholder: translate('survey.placeholder.end_date'),
-                        disabled: !startDate
-                      }}
-                      dateFormat={settings.date_format}
-                      timeFormat={false}
-                      closeOnSelect={true}
-                      value={endDate}
-                      onChange={(value) => setEndDate(value)}
-                      locale={locale}
-                      isValidDate={(current) => current.isAfter(Datetime.moment().subtract(1, 'day'))}
-                    />
-                    {(errorInvalidEndDate || errorEndDate || errorEndDateBeforeStartDate) && (
-                      <Form.Control.Feedback type="invalid" className="d-block">
-                        {translate(errorInvalidEndDate ? 'survey.error.invalid_date' : errorEndDateBeforeStartDate ? 'survey.error.end_before_start_date' : 'survey.error.end_date')}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Col>
-              </Row>
-            )}
+            <Row>
+              <Col sm={6} xl={6}>
+                <Form.Group controlId="formStartDate">
+                  <label htmlFor="start-date">{translate('survey.start_date')}</label>
+                  <span className="text-dark ml-1">*</span>
+                  <Datetime
+                    inputProps={{
+                      id: 'start_date',
+                      name: 'start_date',
+                      autoComplete: 'off',
+                      className: errorInvalidStartDate || errorStartDate ? 'form-control is-invalid' : 'form-control',
+                      placeholder: translate('survey.placeholder.start_date'),
+                      value: startDate ? moment(startDate, settings.date_format).locale('en').format(settings.date_format) : ''
+                    }}
+                    dateFormat={settings.date_format}
+                    timeFormat={false}
+                    closeOnSelect={true}
+                    value={startDate}
+                    onChange={(value) => setStartDate(value)}
+                    locale={locale}
+                    isValidDate={(current) => current.isAfter(Datetime.moment().subtract(1, 'day'))}
+                  />
+                  {(errorInvalidStartDate || errorStartDate) && (
+                    <Form.Control.Feedback type="invalid" className="d-block">
+                      {translate(errorInvalidStartDate ? 'survey.error.invalid_date' : 'survey.error.start_date')}
+                    </Form.Control.Feedback>
+                  )}
+                </Form.Group>
+              </Col>
+              <Col sm={6} xl={6}>
+                <Form.Group controlId="formEndDate">
+                  <label htmlFor="end-date">{translate('survey.end_date')}</label>
+                  <span className="text-dark ml-1">*</span>
+                  <Datetime
+                    inputProps={{
+                      id: 'end_date',
+                      name: 'end_date',
+                      autoComplete: 'off',
+                      className: errorInvalidEndDate || errorEndDate ? 'form-control is-invalid' : 'form-control',
+                      placeholder: translate('survey.placeholder.end_date'),
+                      disabled: !startDate,
+                      value: endDate ? moment(endDate, settings.date_format).locale('en').format(settings.date_format) : ''
+                    }}
+                    dateFormat={settings.date_format}
+                    timeFormat={false}
+                    closeOnSelect={true}
+                    value={endDate}
+                    onChange={(value) => setEndDate(value)}
+                    locale={locale}
+                    isValidDate={(current) => current.isAfter(Datetime.moment().subtract(1, 'day'))}
+                  />
+                  {(errorInvalidEndDate || errorEndDate || errorEndDateBeforeStartDate) && (
+                    <Form.Control.Feedback type="invalid" className="d-block">
+                      {translate(errorInvalidEndDate ? 'survey.error.invalid_date' : errorEndDateBeforeStartDate ? 'survey.error.end_before_start_date' : 'survey.error.end_date')}
+                    </Form.Control.Feedback>
+                  )}
+                </Form.Group>
+              </Col>
+            </Row>
             <Form.Group controlId="formFrequency">
               <Form.Label>{translate('survey.frequency') + '(' + translate('survey.in_day') + ')'}</Form.Label>
               <span className="text-dark ml-1">*</span>
@@ -530,6 +572,8 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
           titleError={titleError}
           questionTitleError={questionTitleError}
           answerFieldError={answerFieldError}
+          answerValueError={answerValueError}
+          answerThresholdError={answerThresholdError}
           id={questionnaireId}
           questionnaireData={questionnaire}
           setQuestionnaireData={setQuestionnaire}

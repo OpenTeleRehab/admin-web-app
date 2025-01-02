@@ -26,7 +26,7 @@ import { USER_ROLES } from '../../../../../variables/user';
 import SelectLanguage from '../../../../ServiceSetup/_Partials/SelectLanguage';
 import FallbackText from '../../../../../components/Form/FallbackText';
 
-const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldError, id, questionnaireData, setQuestionnaireData, language, setLanguage }) => {
+const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldError, id, questionnaireData, setQuestionnaireData, language, setLanguage, answerValueError, answerThresholdError }) => {
   const dispatch = useDispatch();
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
@@ -37,7 +37,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
 
-  const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '' }, { description: '' }], file: null }]);
+  const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null }]);
   const [editTranslations, setEditTranslations] = useState([]);
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
@@ -150,7 +150,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
   };
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { title: '', type: 'checkbox', answers: [{ description: '' }, { description: '' }], file: null }]);
+    setQuestions([...questions, { title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null }]);
     setTimeout(() => {
       window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' });
     }, 300);
@@ -297,6 +297,8 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
               language={language}
               questionTitleError={questionTitleError}
               answerFieldError={answerFieldError}
+              answerValueError={answerValueError}
+              answerThresholdError={answerThresholdError}
               modifiable={!questionnaire.is_used || !id}
               questionnaire={questionnaire}
               showFallbackText={showFallbackText}
@@ -331,7 +333,9 @@ Questionnaire.propTypes = {
   questionnaireData: PropTypes.object,
   id: PropTypes.number,
   language: PropTypes.string,
-  setLanguage: PropTypes.func
+  setLanguage: PropTypes.func,
+  answerValueError: PropTypes.array,
+  answerThresholdError: PropTypes.array
 };
 
 export default withLocalize(Questionnaire);

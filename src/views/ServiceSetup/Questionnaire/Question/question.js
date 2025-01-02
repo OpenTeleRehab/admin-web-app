@@ -119,7 +119,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
   const handleSelectChange = (index, e) => {
     const values = [...questions];
     values[index].type = e.target.value;
-    values[index] = { ...values[index], answers: values[index].type === 'checkbox' || values[index].type === 'multiple' ? [{ description: '' }, { description: '' }] : [] };
+    values[index] = { ...values[index], answers: values[index].type === 'checkbox' || values[index].type === 'multiple' ? [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }] : values[index].type === 'open-number' ? [{ value: '', threshold: '' }] : [] };
     setQuestions(values);
   };
 
@@ -494,7 +494,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                 <Form.Group controlId='formValue'>
                                   <Form.Control
                                     disabled
-                                    name="value"
+                                    name="description"
                                     aria-label="Open text"
                                   />
                                 </Form.Group>
@@ -508,52 +508,51 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                       <Form.Control
                                         disabled
                                         type="number"
-                                        name="value"
+                                        name="description"
                                         aria-label="Open number"
                                       />
                                     </Form.Group>
                                   </Col>
                                   {Boolean(question.mark_as_countable) && (
-                                    question.answers.map((answer, answerIndex) => (
-                                      <>
-                                        <Col sm={3} xs={3}>
-                                          <Form.Group controlId={`formAnswerValue${answerIndex}`}>
-                                            <Form.Control
-                                              type="number"
-                                              name="value"
-                                              value={answer.value}
-                                              placeholder={translate('question.answer_value')}
-                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                              aria-label="answer value"
-                                              disabled={disabledEditAnswerValueThreshold()}
-                                              min={0}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                              {translate('question.answer.value.required')}
-                                            </Form.Control.Feedback>
-                                          </Form.Group>
-                                        </Col>
-                                        <Col sm={3} xs={3}>
-                                          <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
-                                            <Form.Control
-                                              type="number"
-                                              name="threshold"
-                                              value={answer.threshold}
-                                              placeholder={translate('question.answer_threshold')}
-                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                              aria-label="answer threshold"
-                                              disabled={disabledEditAnswerValueThreshold()}
-                                              min={0}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                              {translate('question.answer.threshold.required')}
-                                            </Form.Control.Feedback>
-                                          </Form.Group>
-                                        </Col>
-                                      </>
-                                    )))}
+                                    <>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerValue'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="value"
+                                            value={question.answers[0] ? question.answers[0].value : ''}
+                                            placeholder={translate('question.answer_value')}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer value"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.value.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerThreshold'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="threshold"
+                                            value={question.answers[0] ? question.answers[0].threshold : ''}
+                                            placeholder={translate('question.answer_threshold')}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer threshold"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.threshold.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                    </>
+                                  )}
                                 </Row>
                               )
                             }
