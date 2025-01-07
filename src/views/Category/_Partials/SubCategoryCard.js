@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Button, Card } from 'react-bootstrap';
-import { BsPlus } from 'react-icons/all';
+import { BsPlus } from 'react-icons/bs';
 import SubCategoryList from './subCategoryList';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';

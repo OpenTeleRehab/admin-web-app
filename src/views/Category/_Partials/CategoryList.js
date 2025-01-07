@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, CardGroup } from 'react-bootstrap';
-import { BsPlus } from 'react-icons/all';
+import { BsPlus } from 'react-icons/bs';
 import _ from 'lodash';
 
 import SubCategoryList from '../_Partials/subCategoryList';
