@@ -349,6 +349,12 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     setEndDate(null);
   };
 
+  const validateNumberInput = (e) => {
+    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Dialog
       show={show}
@@ -532,6 +538,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 placeholder={translate('survey.placeholder.frequency')}
                 aria-label="Frequency"
                 value={formFields.frequency}
+                onKeyDown={(e) => validateNumberInput(e)}
                 onChange={handleChange}
                 className={errorFrequency ? 'is-invalid' : ''}
                 min={1}

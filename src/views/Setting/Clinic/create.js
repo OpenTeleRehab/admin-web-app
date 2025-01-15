@@ -67,7 +67,8 @@ const CreateClinic = ({ show, editId, handleClose }) => {
         city: clinic.city,
         country_iso: getCountryISO(profile.country_id, countries),
         phone: clinic.phone || '',
-        therapist_limit: clinic.therapist_limit
+        therapist_limit: clinic.therapist_limit,
+        dial_code: clinic.dial_code
       });
 
       clinicService.countTherapistByClinic(clinic.id).then(res => {

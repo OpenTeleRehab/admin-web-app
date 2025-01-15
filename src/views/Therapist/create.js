@@ -108,7 +108,8 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         clinic: editingData.clinic_id || '',
         limit_patient: editingData.limit_patient || '',
         language_id: editingData.language_id || '',
-        profession: editingData.profession_id || ''
+        profession: editingData.profession_id || '',
+        dial_code: editingData.dial_code
       });
     } else {
       resetData();
