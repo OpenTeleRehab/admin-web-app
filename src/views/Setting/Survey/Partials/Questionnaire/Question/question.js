@@ -97,6 +97,12 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     setQuestions([...questions]);
   };
 
+  const handleCheckboxChange = (index, e) => {
+    const values = [...questions];
+    values[index].mandatory = e.target.checked;
+    setQuestions(values);
+  };
+
   const enableButtons = (question, isEnabled) => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
     return languageObj && languageObj.code === languageObj.fallback && (modifiable || !question.id || isEnabled) && !isTranslating;
@@ -240,7 +246,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                       <Button
                                         aria-label="remove file"
                                         variant="outline-danger"
-                                        className="remove-btn"
+                                        className="remove-btn d-flex align-items-center justify-content-center"
                                         onClick={() => handleFileRemove(index)}
                                         onKeyPress={(e) => handleEnterKeyPress(e)}
                                       >
@@ -324,31 +330,12 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Control.Feedback>
                                       </Form.Group>
                                     </Col>
-                                    <Col sm={3} xs={3}>
-                                      <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
-                                        <Form.Control
-                                          type="number"
-                                          name="threshold"
-                                          value={answer.threshold}
-                                          placeholder={translate('question.answer_threshold')}
-                                          onKeyDown={(e) => validateNumberInput(e)}
-                                          onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                          isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                          aria-label="answer threshold"
-                                          disabled={disabledEditAnswerValueThreshold()}
-                                          min={0}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                          {translate('question.answer.threshold.required')}
-                                        </Form.Control.Feedback>
-                                      </Form.Group>
-                                    </Col>
                                     {enableButtons(question, !answer.id) &&
                                       <Col sm={2} xl={2} className="mt-1">
                                         <Button
                                           aria-label="remove answer"
                                           variant="outline-danger"
-                                          className="remove-btn"
+                                          className="remove-btn d-flex align-items-center justify-content-center"
                                           onClick={() => handleAnswerRemove(index, answerIndex)}
                                           disabled={question.answers.length <= 2}
                                           onKeyPress={(e) => handleEnterKeyPress(e)}
@@ -407,30 +394,11 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Control.Feedback>
                                       </Form.Group>
                                     </Col>
-                                    <Col sm={3} xs={3}>
-                                      <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
-                                        <Form.Control
-                                          type="number"
-                                          name="threshold"
-                                          value={answer.threshold}
-                                          placeholder={translate('question.answer_threshold')}
-                                          onKeyDown={(e) => validateNumberInput(e)}
-                                          onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                          isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                          aria-label="answer threshold"
-                                          disabled={disabledEditAnswerValueThreshold()}
-                                          min={0}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                          {translate('question.answer.threshold.required')}
-                                        </Form.Control.Feedback>
-                                      </Form.Group>
-                                    </Col>
                                     {enableButtons(question, !answer.id) &&
                                       <Col sm={2} xl={2} className="mt-1">
                                         <Button
                                           variant="outline-danger"
-                                          className="remove-btn"
+                                          className="remove-btn d-flex align-items-center justify-content-center"
                                           onClick={() => handleAnswerRemove(index, answerIndex)}
                                           disabled={question.answers.length <= 2}
                                           onKeyPress={(e) => handleEnterKeyPress(e)}
@@ -521,6 +489,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   </Button>
                                 </Form.Group>
                             }
+                            <Form.Group controlId={`formCheckbox${index}`}>
+                              <Form.Check checked={question.mandatory} onChange={(event) => handleCheckboxChange(index, event)} type='checkbox' label="Mandatory" aria-label="checkbox"/>
+                            </Form.Group>
                           </div>
                         </Card.Body>
                       </Card>

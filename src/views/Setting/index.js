@@ -158,6 +158,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_COUNTRY && keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY)) ||
                     (view === VIEW_CLINIC && keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC)) ||
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
+                    (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
                     (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (
                     <Button variant="primary" onClick={handleShow}>
