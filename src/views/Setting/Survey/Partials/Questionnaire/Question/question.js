@@ -88,7 +88,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
   const handleSelectChange = (index, e) => {
     const values = [...questions];
     values[index].type = e.target.value;
-    values[index] = { ...values[index], answers: values[index].type === 'checkbox' || values[index].type === 'multiple' ? [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }] : values[index].type === 'open-number' ? [{ value: '', threshold: '' }] : [] };
+    values[index] = { ...values[index], answers: values[index].type === 'checkbox' || values[index].type === 'multiple' ? [{ description: '', value: '' }, { description: '', value: '' }] : values[index].type === 'open-number' ? [{ value: '', threshold: '' }] : [] };
     setQuestions(values);
   };
 
