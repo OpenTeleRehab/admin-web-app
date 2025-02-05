@@ -13,11 +13,16 @@ const AuditLogList = ({ translate }) => {
   const columns = [
     { name: 'type_of_changes', title: translate('audit_logs.type_of_changes') },
     { name: 'who', title: translate('audit_logs.who') },
+    { name: 'user_group', title: translate('audit_logs.user_groups') },
+    { name: 'country', title: translate('common.country') },
+    { name: 'clinic', title: translate('common.clinic') },
     { name: 'date_time', title: translate('audit_logs.date_time') },
+    { name: 'subject_type', title: translate('audit_logs.object_type') },
     { name: 'before_changed', title: translate('audit_logs.before_changed') },
     { name: 'after_changed', title: translate('audit_logs.after_changed') }
   ];
   const columnExtensions = [
+    { columnName: 'date_time', wordWrapEnabled: true, width: 200 },
     { columnName: 'before_changed', wordWrapEnabled: true, width: 250 },
     { columnName: 'after_changed', wordWrapEnabled: true, width: 250 }
   ];
@@ -25,6 +30,8 @@ const AuditLogList = ({ translate }) => {
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [filters, setFilters] = useState([]);
 
   useEffect(() => {
     clearTimeout(timer);
@@ -32,15 +39,19 @@ const AuditLogList = ({ translate }) => {
       dispatch(
         getAuditLogs({
           page_size: pageSize,
-          page: currentPage + 1
+          page: currentPage + 1,
+          search_value: searchValue,
+          filters: filters
         })
       ).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
-    });
-  }, [currentPage, pageSize, dispatch]);
+    }, 500);
+  }, [currentPage, pageSize, dispatch, searchValue, filters]);
+
+  console.log(filters);
 
   const renderChangedItems = item => (
     <ul>
@@ -59,13 +70,19 @@ const AuditLogList = ({ translate }) => {
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
       totalCount={totalCount}
-      hideSearchFilter={true}
+      setSearchValue={setSearchValue}
+      setFilters={setFilters}
+      filters={filters}
       columns={columns}
       columnExtensions={columnExtensions}
       rows={auditLogs.map(auditLog => {
         return {
           type_of_changes: auditLog.type_of_changes,
+          user_group: auditLog.user_group,
           who: auditLog.who,
+          country: auditLog.country,
+          clinic: auditLog.clinic,
+          subject_type: auditLog.subject_type,
           date_time: auditLog.date_time ? moment.utc(auditLog.date_time).local().format(settings.datetime_format) : '',
           before_changed: auditLog.before_changed ? renderChangedItems(auditLog.before_changed) : '',
           after_changed: renderChangedItems(auditLog.after_changed)
