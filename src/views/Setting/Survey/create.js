@@ -41,6 +41,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorEndDate, setErrorEndDate] = useState(false);
   const [errorFrequency, setErrorFrequency] = useState(false);
+  const [errorGender, setErrorGender] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [locale, setLocale] = useState('en-us');
@@ -48,6 +49,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     organization: [],
     role: '',
     country: [],
+    gender: '',
     location: [],
     clinic: [],
     frequency: ''
@@ -98,6 +100,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
         organization: survey.organization,
         role: survey.role,
         country: survey.country,
+        gender: survey.gender,
         location: survey.location,
         clinic: survey.clinic,
         include_at_the_end: survey.include_at_the_end,
@@ -156,11 +159,13 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     const errorAnswerValue = [];
     const errorAnswerThreshold = [];
 
-    if (formFields.organization.length === 0) {
-      canSave = false;
-      setErrorOrganization(true);
-    } else {
-      setErrorOrganization(false);
+    if (profile.type === USER_GROUPS.SUPER_ADMIN) {
+      if (!formFields.organization.length) {
+        canSave = false;
+        setErrorOrganization(true);
+      } else {
+        setErrorOrganization(false);
+      }
     }
 
     if (formFields.role.length === 0) {
@@ -175,6 +180,13 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorCountry(true);
     } else {
       setErrorCountry(false);
+    }
+
+    if (formFields.role === USER_GROUPS.PATIENT && !formFields.gender.length) {
+      canSave = false;
+      setErrorGender(true);
+    } else {
+      setErrorGender(false);
     }
 
     if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.clinic.length === 0) {
@@ -277,14 +289,17 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
           errorAnswerValue[i].push(false);
         }
 
-        if (questionnaire.questions[i].answers[j].threshold === '') {
-          canSave = false;
-          errorAnswerThreshold[i].push(true);
-        } else {
-          errorAnswerThreshold[i].push(false);
+        if (questionnaire.questions[i].type !== 'multiple' && questionnaire.questions[i].type !== 'checkbox') {
+          if (questionnaire.questions[i].answers[j].threshold === '') {
+            canSave = false;
+            errorAnswerThreshold[i].push(true);
+          } else {
+            errorAnswerThreshold[i].push(false);
+          }
         }
       }
     }
+
     setQuestionTitleError(errorQuestionTitle);
     setAnswerFieldError(errorAnswerField);
     setAnswerValueError(errorAnswerValue);
@@ -365,34 +380,59 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       size="xl"
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
-        <Form.Group controlId="organization">
-          <Form.Label>{translate('survey.organization')}</Form.Label>
-          <span className="text-dark ml-1">*</span>
-          <Select
-            name="organization"
-            options={organizationOptions}
-            isMulti
-            onChange={handleMultipleSelectChange}
-            value={organizationOptions.filter(option => formFields.organization.includes(option.value))}
-            placeholder={translate('survey.placeholder.organization')}
-            className={errorOrganization ? 'is-invalid' : ''}
-            classNamePrefix="select"
-            isClearable
-            aria-label="organization"
-          />
-          <Form.Control.Feedback type="invalid">
-            {translate('survey.error.oranization')}
-          </Form.Control.Feedback>
-        </Form.Group>
+        {profile.type === USER_GROUPS.SUPER_ADMIN && (
+          <Form.Group controlId="organization">
+            <Form.Label>
+              {translate('survey.organization')}
+              <span className="text-dark ml-1">*</span>
+            </Form.Label>
+            <Select
+              name="organization"
+              options={organizationOptions}
+              isMulti
+              onChange={handleMultipleSelectChange}
+              value={organizationOptions.filter((option) =>
+                formFields.organization.includes(option.value)
+              )}
+              placeholder={translate('survey.placeholder.organization')}
+              className={errorOrganization ? 'is-invalid' : ''}
+              classNamePrefix="select"
+              isClearable
+              aria-label="organization"
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('survey.error.oranization')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        )}
         <Form.Group controlId="role">
           <Form.Label>{translate('survey.role')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Select
             name="role"
             getOptionLabel={option => translate('common.' + option.value)}
-            options={SURVEY_ROLES}
-            onChange={(e) => handleRoleChange('role', e.value)}
-            value={SURVEY_ROLES.filter(option => formFields.role.includes(option.value))}
+            options={
+              profile.type === USER_GROUPS.ORGANIZATION_ADMIN
+                ? SURVEY_ROLES.filter(
+                  (option) => option.value !== USER_GROUPS.ORGANIZATION_ADMIN
+                )
+                : profile.type === USER_GROUPS.COUNTRY_ADMIN
+                  ? SURVEY_ROLES.filter(
+                    (option) =>
+                      option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                        option.value !== USER_GROUPS.COUNTRY_ADMIN
+                  )
+                  : profile.type === USER_GROUPS.CLINIC_ADMIN
+                    ? SURVEY_ROLES.filter(
+                      (option) =>
+                        option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                          option.value !== USER_GROUPS.COUNTRY_ADMIN &&
+                          option.value !== USER_GROUPS.CLINIC_ADMIN
+                    )
+                    : SURVEY_ROLES
+            }
+            onChange={(e) => { e == null ? handleRoleChange('role', null) : handleRoleChange('role', e.value); }}
+            value={SURVEY_ROLES.filter(option => formFields.role && formFields.role.includes(option.value))}
             placeholder={translate('survey.placeholder.role')}
             className={errorRole ? 'is-invalid' : ''}
             classNamePrefix="select"
@@ -423,6 +463,28 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.country')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {formFields.role === USER_GROUPS.PATIENT && (
+              <Form.Group controlId="gender">
+                <Form.Label>{translate('gender')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="gender"
+                  getOptionLabel={option => translate('common.' + option.value)}
+                  options={settings.genders.options}
+                  isMulti
+                  onChange={handleMultipleSelectChange}
+                  value={settings.genders.options.filter(option => formFields.gender.includes(option.value))}
+                  placeholder={translate('placeholder.gender')}
+                  className={errorGender ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="gender"
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.gender')}
                 </Form.Control.Feedback>
               </Form.Group>
             )}

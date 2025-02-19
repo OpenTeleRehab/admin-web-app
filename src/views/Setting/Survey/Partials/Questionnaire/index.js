@@ -37,7 +37,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
 
-  const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null }]);
+  const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null, mandatory: false }]);
   const [editTranslations, setEditTranslations] = useState([]);
   const [editTranslationIndex, setEditTranslationIndex] = useState(1);
   const [editTranslation, setEditTranslation] = useState(null);
@@ -150,7 +150,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
   };
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null }]);
+    setQuestions([...questions, { title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null, mandatory: false }]);
     setTimeout(() => {
       window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' });
     }, 300);
@@ -204,7 +204,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
-          <Col sm={6} xl={5}>
+          <Col sm={6} xl={6}>
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
               {!isTranslating ? (
@@ -233,7 +233,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
           </Col>
         </Row>
         <Row>
-          <Col sm={12} xl={11}>
+          <Col sm={12} xl={12}>
             <Form.Group controlId={'formDescription'}>
               <Form.Label>{translate('questionnaire.description')}</Form.Label>
               {showFallbackText && questionnaire.fallback &&
@@ -250,7 +250,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
           </Col>
         </Row>
         <Row>
-          <Col sm={12} xl={11}>
+          <Col sm={12} xl={12}>
             <Accordion className="mb-3" defaultActiveKey={1}>
               {
                 categoryTreeData.map((category, index) => (
@@ -290,7 +290,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
           </Col>
         </Row>
         <Row>
-          <Col sm={12} xl={11} className="question-wrapper">
+          <Col sm={12} xl={12} className="question-wrapper">
             <Question
               questions={questions}
               setQuestions={setQuestions}
