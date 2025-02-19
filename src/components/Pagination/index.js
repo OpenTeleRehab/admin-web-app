@@ -7,7 +7,7 @@ import ReactPaginate from 'react-paginate';
 let recordStart = 0;
 let recordEnd = 0;
 
-const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, pageSizes, setPageSize }) => {
+const Pagination = ({ pageSize = 10, totalCount = 0, currentPage = 1, setCurrentPage, pageSizes = [10, 20, 30, 40, 50], setPageSize }) => {
   currentPage = Math.max(1, currentPage);
 
   const handleClick = page => {
@@ -69,13 +69,6 @@ Pagination.propTypes = {
   setCurrentPage: PropTypes.func,
   pageSizes: PropTypes.array,
   setPageSize: PropTypes.func
-};
-
-Pagination.defaultProps = {
-  totalCount: 0,
-  currentPage: 1,
-  pageSize: 10,
-  pageSizes: [10, 20, 30, 40, 50]
 };
 
 export default Pagination;

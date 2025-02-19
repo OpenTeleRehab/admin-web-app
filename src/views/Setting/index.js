@@ -42,7 +42,8 @@ import {
   VIEW_DISEASE,
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
-  VIEW_COLOR_SCHEME
+  VIEW_COLOR_SCHEME,
+  VIEW_SURVEY
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -56,6 +57,8 @@ import CreateDisease from 'views/Setting/Disease/create';
 import UploadDisease from './Disease/upload';
 import CreateOrganization from './Organization/create';
 import CreateAssistiveTechnology from './AssistiveTechnology/create';
+import CreateSurvey from './Survey/create';
+import Survey from './Survey';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -94,6 +97,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_ASSISTIVE_TECHNOLOGY);
     } else if (hash.includes('#' + VIEW_COLOR_SCHEME)) {
       setView(VIEW_COLOR_SCHEME);
+    } else if (hash.includes('#' + VIEW_SURVEY)) {
+      setView(VIEW_SURVEY);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -179,6 +184,7 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_DISEASE && <CreateDisease show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_ORGANIZATION && <CreateOrganization show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_ASSISTIVE_TECHNOLOGY && <CreateAssistiveTechnology show={show} editId={editId} handleClose={handleClose} />}
+      {show && view === VIEW_SURVEY && <CreateSurvey show={show} editId={editId} handleClose={handleClose} />}
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
       <Nav variant="tabs" activeKey={view} className="mb-3">
@@ -280,6 +286,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_SURVEY} eventKey={VIEW_SURVEY}>
+              {translate('setting.survey')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -296,6 +309,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
     </>
   );
 };

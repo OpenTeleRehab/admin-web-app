@@ -36,7 +36,7 @@ import TotalPatientPanel from './TotalPatientPanel';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover, showTotalPatient }) => {
+const CustomTable = ({ rows, columns, columnExtensions = [], pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover, showTotalPatient }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -123,10 +123,6 @@ CustomTable.propTypes = {
   onRowClick: PropTypes.func,
   hover: PropTypes.string,
   showTotalPatient: PropTypes.bool
-};
-
-CustomTable.defaultProps = {
-  columnExtensions: []
 };
 
 export default CustomTable;

@@ -11,7 +11,7 @@ const Dialog = (props) => {
     onCancel,
     cancelLabel,
     confirmLabel,
-    disabled,
+    disabled = false,
     children,
     ...rest
   } = props;
@@ -34,11 +34,11 @@ const Dialog = (props) => {
       <Modal.Footer>
         {onConfirm &&
           <Button variant="primary" onClick={onConfirm} disabled={disabled}>
-            {confirmLabel}
+            {confirmLabel || <Translate id="common.create"/>}
           </Button>
         }
         <Button variant="outline-dark" onClick={onCancel}>
-          {cancelLabel}
+          {cancelLabel || <Translate id="common.cancel"/>}
         </Button>
       </Modal.Footer>
     </Modal>
@@ -54,12 +54,6 @@ Dialog.propTypes = {
   cancelLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   disabled: PropTypes.bool,
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node])
-};
-
-Dialog.defaultProps = {
-  confirmLabel: <Translate id="common.create"/>,
-  cancelLabel: <Translate id="common.cancel"/>,
-  disabled: false
 };
 
 export default Dialog;

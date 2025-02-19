@@ -32,7 +32,6 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
   const [errorPlatform, setErrorPlatform] = useState(false);
   const [errorUrl, setErrorUrl] = useState(false);
   const [materialFile, setMaterialFile] = useState(undefined);
-  const [fileError, setFileError] = useState(false);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
 
@@ -178,9 +177,6 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
 
     if (formFields.file !== undefined && toMB(formFields.file.size) > maxFileSize) {
       canSave = false;
-      setFileError(true);
-    } else {
-      setFileError(false);
     }
 
     if (canSave) {
@@ -324,7 +320,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             )}
             <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
               <BsUpload size={15}/> {translate('static_page.media_upload')}
-              <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" isInvalid={fileError} aria-label="Upload" />
+              <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" aria-label="Upload" />
             </div>
           </div>
         </Form.Group>

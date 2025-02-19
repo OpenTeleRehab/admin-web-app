@@ -57,6 +57,8 @@ const CreateQuestionnaire = ({ translate }) => {
   const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '' }, { description: '' }], file: null }]);
   const [questionTitleError, setQuestionTitleError] = useState([]);
   const [answerFieldError, setAnswerFieldError] = useState([]);
+  const [answerValueError, setAnswerValueError] = useState([]);
+  const [answerThresholdError, setAnswerThresholdError] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isUsed, setIsUsed] = useState(false);
   const [editTranslations, setEditTranslations] = useState([]);
@@ -99,7 +101,9 @@ const CreateQuestionnaire = ({ translate }) => {
       if (_.isEmpty(editTranslation)) {
         setFormFields({
           title: questionnaire.title,
-          description: questionnaire.description
+          description: questionnaire.description,
+          include_at_the_start: questionnaire.include_at_the_start,
+          include_at_the_end: questionnaire.include_at_the_end
           // share_to_hi_library: questionnaire.share_to_hi_library
         });
         setQuestions(questionnaire.questions);
@@ -107,7 +111,9 @@ const CreateQuestionnaire = ({ translate }) => {
       } else {
         setFormFields({
           title: editTranslation.title,
-          description: editTranslation.description
+          description: editTranslation.description,
+          include_at_the_start: editTranslation.include_at_the_start,
+          include_at_the_end: editTranslation.include_at_the_end
           // share_to_hi_library: editTranslation.share_to_hi_library
         });
         setQuestions(editTranslation.questions);
@@ -157,6 +163,8 @@ const CreateQuestionnaire = ({ translate }) => {
     let canSave = true;
     const errorQuestionTitle = [];
     const errorAnswerField = [];
+    const errorAnswerValue = [];
+    const errorAnswerThreshold = [];
 
     if (formFields.title === '') {
       canSave = false;
@@ -176,17 +184,35 @@ const CreateQuestionnaire = ({ translate }) => {
 
     for (let i = 0; i < questions.length; i++) {
       errorAnswerField.push([]);
+      errorAnswerValue.push([]);
+      errorAnswerThreshold.push([]);
       for (let j = 0; j < questions[i].answers.length; j++) {
-        if (questions[i].answers[j].description === '') {
+        if (questions[i].type !== 'open-number' && questions[i].answers[j].description === '') {
           canSave = false;
           errorAnswerField[i].push(true);
         } else {
           errorAnswerField[i].push(false);
         }
+
+        if (questions[i].mark_as_countable && questions[i].answers[j].value === '') {
+          canSave = false;
+          errorAnswerValue[i].push(true);
+        } else {
+          errorAnswerValue[i].push(false);
+        }
+
+        if (questions[i].type === 'open-number' && questions[i].mark_as_countable && questions[i].answers[j].threshold === '') {
+          canSave = false;
+          errorAnswerThreshold[i].push(true);
+        } else {
+          errorAnswerThreshold[i].push(false);
+        }
       }
     }
     setQuestionTitleError(errorQuestionTitle);
     setAnswerFieldError(errorAnswerField);
+    setAnswerValueError(errorAnswerValue);
+    setAnswerThresholdError(errorAnswerThreshold);
 
     let serializedSelectedCats = [];
     Object.keys(selectedCategories).forEach(function (key) {
@@ -292,6 +318,8 @@ const CreateQuestionnaire = ({ translate }) => {
     let canSave = true;
     const errorQuestionTitle = [];
     const errorAnswerField = [];
+    const errorAnswerValue = [];
+    const errorAnswerThreshold = [];
 
     if (formFields.title === '') {
       canSave = false;
@@ -311,17 +339,35 @@ const CreateQuestionnaire = ({ translate }) => {
 
     for (let i = 0; i < questions.length; i++) {
       errorAnswerField.push([]);
+      errorAnswerValue.push([]);
+      errorAnswerThreshold.push([]);
       for (let j = 0; j < questions[i].answers.length; j++) {
-        if (questions[i].answers[j].description === '') {
+        if (questions[i].type !== 'open-number' && questions[i].answers[j].description === '') {
           canSave = false;
           errorAnswerField[i].push(true);
         } else {
           errorAnswerField[i].push(false);
         }
+
+        if (questions[i].mark_as_countable && questions[i].answers[j].value === '') {
+          canSave = false;
+          errorAnswerValue[i].push(true);
+        } else {
+          errorAnswerValue[i].push(false);
+        }
+
+        if (questions[i].mark_as_countable && questions[i].answers[j].threshold === '') {
+          canSave = false;
+          errorAnswerThreshold[i].push(true);
+        } else {
+          errorAnswerThreshold[i].push(false);
+        }
       }
     }
     setQuestionTitleError(errorQuestionTitle);
     setAnswerFieldError(errorAnswerField);
+    setAnswerValueError(errorAnswerValue);
+    setAnswerThresholdError(errorAnswerThreshold);
 
     if (canSave) {
       setIsLoading(true);
@@ -454,6 +500,32 @@ const CreateQuestionnaire = ({ translate }) => {
           </Col>
         </Row>
         <Row>
+          <Col sm={3} xs={3}>
+            <Form.Group controlId="formIncludeAtTheStart">
+              <Form.Check
+                name="include_at_the_start"
+                onChange={handleCheck}
+                value={true}
+                checked={formFields.include_at_the_start}
+                label={translate('questionnaire.include_at_the_start')}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={3} xs={3}>
+            <Form.Group controlId="formIncludeAtTheEnd">
+              <Form.Check
+                name="include_at_the_end"
+                onChange={handleCheck}
+                value={true}
+                checked={formFields.include_at_the_end}
+                label={translate('questionnaire.include_at_the_end')}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
           <Col sm={12} xl={11} className="question-wrapper">
             <Question
               questions={questions}
@@ -461,6 +533,8 @@ const CreateQuestionnaire = ({ translate }) => {
               language={language}
               questionTitleError={questionTitleError}
               answerFieldError={answerFieldError}
+              answerValueError={answerValueError}
+              answerThresholdError={answerThresholdError}
               modifiable={!questionnaire.is_used || !id}
               questionnaire={questionnaire}
               showFallbackText={showFallbackText}

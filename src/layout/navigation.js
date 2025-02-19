@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
-
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
+import { Auth } from 'services/auth';
 
 const navItems = [
   {
@@ -61,6 +61,12 @@ const navItems = [
     to: ROUTES.SETTING,
     exact: true,
     roles: SETTING_ROLES
+  },
+  {
+    label: 'audit_logs',
+    to: ROUTES.AUDIT_LOGS,
+    exact: true,
+    roles: [USER_ROLES.ORGANIZATION_ADMIN, USER_ROLES.COUNTRY_ADMIN, USER_ROLES.CLINIC_ADMIN, USER_ROLES.MANAGE_ORGANIZATION_ADMIN]
   }
 ];
 
@@ -71,8 +77,10 @@ const Navigation = ({ translate }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (keycloak.authenticated) {
+      // Audit log for logout
+      await Auth.logUserAuthAction({ type: 'logout' });
       keycloak.logout();
     }
   };

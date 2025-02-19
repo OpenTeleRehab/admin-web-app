@@ -4,6 +4,7 @@ import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { LocalizeProvider } from 'react-localize-redux';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
+import Survey from 'components/Survey';
 
 import RouteSwitch from 'routes';
 import store from 'store';
@@ -28,6 +29,7 @@ const App = () => {
           <LocalizeProvider store={store}>
             <Router history={createBrowserHistory()}>
               <RouteSwitch />
+              <Survey />
             </Router>
           </LocalizeProvider>
         </ConfigurationProvider>

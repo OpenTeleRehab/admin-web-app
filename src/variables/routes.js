@@ -35,6 +35,7 @@ export const SETTING_DISEASE = SETTING + '#disease';
 export const SETTING_ORGANIZATION = SETTING + '#organization';
 export const SETTING_ASSISTIVE_TECHNOLOGY = SETTING + '#assistive_technology';
 export const SETTING_COLOR_SCHEME = SETTING + '#color_scheme';
+export const SETTING_SURVEY = SETTING + '#survey';
 
 export const PROFILE = '/profile';
 export const FAQ = '/faq';
@@ -43,3 +44,5 @@ export const PP = '/privacy-policy';
 export const PROFILE_PASSWORD = PROFILE + '#password';
 
 export const VIEW_TREATMENT_PLAN_DETAIL = VIEW_PATIENT_DETAIL + '/treatment-plan/:id';
+
+export const AUDIT_LOGS = '/audit-logs';

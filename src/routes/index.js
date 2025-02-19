@@ -10,6 +10,7 @@ import AdminPage from 'views/Admin';
 import TranslatorPage from 'views/Translator';
 import CategoryPage from 'views/Category';
 import Setting from 'views/Setting';
+import AuditLog from 'views/AuditLog';
 import ServiceSetupPage from 'views/ServiceSetup';
 import CreateExercise from 'views/ServiceSetup/Exercise/create';
 import CreateEducationMaterial from 'views/ServiceSetup/EducationMaterial/create';
@@ -26,6 +27,7 @@ import { USER_ROLES, SETTING_ROLES, USER_GROUPS } from 'variables/user';
 import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
 import { useSelector } from 'react-redux';
+
 const PRIVATE = 'private';
 const PUBLIC = 'public';
 
@@ -74,7 +76,7 @@ const routes = [
     component: Patient,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST]
+    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST, USER_ROLES.CLINIC_ADMIN]
   },
   {
     title: 'patient.detail',
@@ -187,6 +189,13 @@ const routes = [
     title: 'privacy-policy',
     path: ROUTES.PP,
     component: PrivacyPolicyPage,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'audit_logs',
+    path: ROUTES.AUDIT_LOGS,
+    component: AuditLog,
     exact: true,
     type: PRIVATE
   },

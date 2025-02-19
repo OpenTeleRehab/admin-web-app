@@ -3,7 +3,8 @@ export const USER_GROUPS = {
   ORGANIZATION_ADMIN: 'organization_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
-  TRANSLATOR: 'translator'
+  TRANSLATOR: 'translator',
+  PATIENT: 'patient'
 };
 
 export const USER_ROLES = {
@@ -63,7 +64,8 @@ export const USER_ROLES = {
   TRANSLATE_CATEGORY: 'translate_category',
   TRANSLATE_ASSISTIVE_TECHNOLOGY: 'translate_assistive_technology',
   VIEW_DASHBOARD: 'view_dashboard',
-  SUPER_ADMIN: 'super_admin'
+  SUPER_ADMIN: 'super_admin',
+  MANAGE_SURVEY: 'manage_survey'
 };
 
 export const SETTING_ROLES = [

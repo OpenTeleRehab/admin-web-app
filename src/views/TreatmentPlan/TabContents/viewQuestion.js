@@ -39,7 +39,7 @@ const ViewQuestion = ({ show, handleClose, questionnaire }) => {
           <Card className="mb-3 question-card">
             <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="card-header d-flex justify-content-between">
               <h6>{translate('questionnaire.question_number', { number: index + 1 })}</h6>
-              <ContextAwareToggle eventKey={index + 1} />
+              <ContextAwareToggle eventKey={(index + 1).toString()} />
             </Accordion.Toggle>
             <Accordion.Collapse eventKey={index + 1}>
               <Card.Body>
