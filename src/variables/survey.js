@@ -8,5 +8,6 @@ export const SURVEY_ROLES = [
 
 export const SURVEY_LOCATION = [
   { value: 'rural_area', label: 'rural_area' },
-  { value: 'urban_area', label: 'urban_area' }
+  { value: 'urban_area', label: 'urban_area' },
+  { value: 'n/a', label: 'n/a' }
 ];
