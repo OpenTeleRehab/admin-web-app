@@ -314,6 +314,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               <Col sm={4} xs={4}>
                                 <Form.Group controlId="formMarkAsCountable">
                                   <Form.Check
+                                    id={`mark_as_countable_${index}`}
                                     name="mark_as_countable"
                                     onChange={e => handleMarkAsCountable(index, e)}
                                     value={true}
@@ -495,7 +496,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                             placeholder={translate('question.answer_value')}
                                             onKeyDown={(e) => validateNumberInput(e)}
                                             onChange={(e) => handleAnswerChange(index, 0, e)}
-                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            isInvalid={answerValueError[index] ? answerValueError[index][0] : false}
                                             aria-label="answer value"
                                             disabled={disabledEditAnswerValueThreshold()}
                                             min={0}
