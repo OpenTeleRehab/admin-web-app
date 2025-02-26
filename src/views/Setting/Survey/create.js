@@ -71,11 +71,15 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     value: item.id,
     label: item.name
   }));
-  const clinicOptions = clinics.filter(item => formFields.country.includes(item.country_id))
+  const clinicOptions = (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => formFields.country.includes(item.country_id))
     .map(item => ({
       value: item.id,
       label: item.name
-    }));
+    })) : profile.type === USER_GROUPS.COUNTRY_ADMIN ? clinics.filter(item => profile.country_id.includes(item.country_id))
+    .map(item => ({
+      value: item.id,
+      label: item.name
+    })) : profile.clinic_id;
 
   useEffect(() => {
     if (languages.length && profile) {
@@ -175,11 +179,13 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorRole(false);
     }
 
-    if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.country.length === 0) {
-      canSave = false;
-      setErrorCountry(true);
-    } else {
-      setErrorCountry(false);
+    if (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
+      if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.country.length === 0) {
+        canSave = false;
+        setErrorCountry(true);
+      } else {
+        setErrorCountry(false);
+      }
     }
 
     if (formFields.role === USER_GROUPS.PATIENT && !formFields.gender.length) {
@@ -189,11 +195,13 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorGender(false);
     }
 
-    if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.clinic.length === 0) {
-      canSave = false;
-      setErrorClinic(true);
-    } else {
-      setErrorClinic(false);
+    if (profile.type !== USER_GROUPS.CLINIC_ADMIN) {
+      if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.clinic.length === 0) {
+        canSave = false;
+        setErrorClinic(true);
+      } else {
+        setErrorClinic(false);
+      }
     }
 
     if (formFields.role !== USER_GROUPS.PATIENT && formFields.start_date === '') {
@@ -445,7 +453,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
         </Form.Group>
         {formFields.role && (
           <>
-            {formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && (
+            {(formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN)) && (
               <Form.Group controlId="country">
                 <Form.Label>{translate('common.country')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
@@ -510,7 +518,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             )}
-            {formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && (
+            {formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && profile.type !== USER_GROUPS.CLINIC_ADMIN && (
               <Form.Group controlId="clinic">
                 <Form.Label>{translate('common.clinic')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
@@ -525,7 +533,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                   classNamePrefix="select"
                   isClearable
                   aria-label="clinic"
-                  isDisabled={!formFields.country.length}
+                  isDisabled={(profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) ? !formFields.country.length : false}
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.clinic')}
