@@ -17,6 +17,12 @@ const navItems = [
     roles: [USER_ROLES.VIEW_DASHBOARD]
   },
   {
+    label: 'superset',
+    to: ROUTES.SUPERSET,
+    exact: true,
+    roles: [USER_ROLES.VIEW_DASHBOARD]
+  },
+  {
     label: 'admin',
     to: ROUTES.ADMIN,
     exact: true,

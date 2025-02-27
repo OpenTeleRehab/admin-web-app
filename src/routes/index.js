@@ -5,6 +5,7 @@ import { Spinner } from 'react-bootstrap';
 import PageLayout from 'layout/layout';
 import PrivateRoute from 'routes/privateRoute';
 import DashboardPage from 'views/Dashboard';
+import SupersetDashboard from 'views/Superset';
 import NotFoundPage from 'views/NotFound';
 import AdminPage from 'views/Admin';
 import TranslatorPage from 'views/Translator';
@@ -36,6 +37,14 @@ const routes = [
     title: 'dashboard',
     path: ROUTES.DASHBOARD,
     component: DashboardPage,
+    exact: true,
+    type: PRIVATE,
+    roles: [USER_ROLES.VIEW_DASHBOARD]
+  },
+  {
+    title: 'superset',
+    path: ROUTES.SUPERSET,
+    component: SupersetDashboard,
     exact: true,
     type: PRIVATE,
     roles: [USER_ROLES.VIEW_DASHBOARD]

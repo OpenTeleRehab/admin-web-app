@@ -1,4 +1,5 @@
 export const DASHBOARD = '/';
+export const SUPERSET = '/superset';
 export const ADMIN = '/admin';
 export const TRANSLATOR = '/translator';
 

@@ -3,6 +3,7 @@ export const USER_GROUPS = {
   ORGANIZATION_ADMIN: 'organization_admin',
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
+  THERAPIST_ADMIN: 'therapist_admin',
   TRANSLATOR: 'translator',
   PATIENT: 'patient'
 };
