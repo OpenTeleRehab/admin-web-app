@@ -35,6 +35,7 @@ import { translator } from 'store/translator/reducers';
 import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
 import { auditLog } from 'store/auditLog/reducers';
 import { survey } from 'store/survey/reducers';
+import { superset } from 'store/superset/reducers';
 
 export const rootReducer = {
   auditLog,
@@ -67,7 +68,8 @@ export const rootReducer = {
   therapist,
   translator,
   treatmentPlan,
-  user
+  user,
+  superset
 };
 
 const devTool =
