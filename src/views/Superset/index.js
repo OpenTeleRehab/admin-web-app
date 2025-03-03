@@ -22,6 +22,10 @@ const SupersetDashboard = () => {
     }
   }, [profile, keycloak]);
 
+  if (profile === undefined || dashboardId === null) {
+    return;
+  }
+
   return (
     <>
       <Dashboard dashboardId={dashboardId} />
