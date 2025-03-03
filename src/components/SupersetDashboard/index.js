@@ -6,8 +6,13 @@ import PropTypes from 'prop-types';
 
 const Dashboard = ({ dashboardId }) => {
   const dispatch = useDispatch();
-  const { guestToken } = useSelector(state => state.superset);
+  const { guestToken, exp } = useSelector(state => state.superset);
   const containerRef = useRef(null);
+  const intervalIdRef = useRef(null);
+
+  const refreshToken = () => {
+    dispatch(getGuestToken());
+  };
 
   useEffect(() => {
     if (!guestToken) {
@@ -15,7 +20,23 @@ const Dashboard = ({ dashboardId }) => {
       return;
     }
 
-    if (containerRef.current) {
+    const expirationTime = exp * 1000;
+    const currentTime = Date.now();
+    const timeRemaining = expirationTime - currentTime - 30000;
+
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
+    }
+
+    intervalIdRef.current = setInterval(() => {
+      refreshToken();
+    }, timeRemaining);
+
+    return () => clearInterval(intervalIdRef.current);
+  }, [guestToken]);
+
+  useEffect(() => {
+    if (containerRef.current && guestToken) {
       embedDashboard({
         id: dashboardId,
         supersetDomain: process.env.REACT_APP_SUPERSET_API_BASE_URL,
@@ -30,7 +51,11 @@ const Dashboard = ({ dashboardId }) => {
     }
   }, [guestToken]);
 
-  return <div id="superset-container" ref={containerRef}></div>;
+  return (
+    <div>
+      <div id="superset-container" ref={containerRef}></div>
+    </div>
+  );
 };
 
 Dashboard.propTypes = {

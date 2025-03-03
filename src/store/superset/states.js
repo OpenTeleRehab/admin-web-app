@@ -1,3 +1,4 @@
 export const initialState = {
-  guestToken: ''
+  guestToken: '',
+  exp: 0
 };

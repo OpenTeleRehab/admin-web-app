@@ -4,7 +4,8 @@ export const superset = (state = initialState, action) => {
   switch (action.type) {
     case 'GET_GUEST_TOKEN_SUCCESS': {
       return Object.assign({}, state, {
-        guestToken: action.data
+        guestToken: action.data.guest_token,
+        exp: action.data.expiration_time
       });
     }
     default:
