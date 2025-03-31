@@ -15,6 +15,7 @@ import { useKeycloak } from '@react-keycloak/web';
 const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, therapistsSameClinic, showDeleteDialog, therapistId, numberOfActiveTransfers }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { profile } = useSelector((state) => state.auth);
   const { keycloak } = useKeycloak();
   const therapists = useSelector(state => state.therapist.therapists);
   const [errorTherapist, setErrorTherapist] = useState(false);
@@ -68,7 +69,10 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
     if (patientTherapists.length === 0 || !isTransfer) {
       dispatch(deleteTherapistUser(therapistId, {
         country_code: therapist.country_id,
-        hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)
+        hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN),
+        user_id: profile.id,
+        user_name: `${profile.last_name} ${profile.first_name}`,
+        group: profile.type
       })).then(result => {
         if (result) {
           setShowDeleteDialog(false);
@@ -77,12 +81,15 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
         }
       });
     } else {
-      therapistService.transferPatientToTherapist(lastPatientId, formFields).then(res => {
+      therapistService.transferPatientToTherapist(lastPatientId, { ...formFields, user_id: profile.id, user_name: `${profile.last_name} ${profile.first_name}`, group: profile.type }).then(res => {
         if (res) {
           setFormFields({ ...formFields, therapist_id: '', therapist_identity: '', new_chat_rooms: '', chat_rooms: chatRooms });
           dispatch(deleteTherapistUser(therapistId, {
             country_code: therapist.country_id,
-            hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)
+            hard_delete: keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN),
+            user_id: profile.id,
+            user_name: `${profile.last_name} ${profile.first_name}`,
+            group: profile.type
           })).then(result => {
             if (result) {
               setShowDeleteDialog(false);

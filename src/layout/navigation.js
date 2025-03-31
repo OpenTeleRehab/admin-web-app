@@ -86,7 +86,10 @@ const Navigation = ({ translate }) => {
   const handleConfirm = async () => {
     if (keycloak.authenticated) {
       // Audit log for logout
-      await Auth.logUserAuthAction({ type: 'logout' });
+      await Auth.logUserAuthAction({
+        type: 'logout',
+        log_name: 'admin_service'
+      });
       keycloak.logout();
     }
   };

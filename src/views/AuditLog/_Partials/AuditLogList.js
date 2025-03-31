@@ -22,6 +22,7 @@ const AuditLogList = ({ translate }) => {
     { name: 'after_changed', title: translate('audit_logs.after_changed') }
   ];
   const columnExtensions = [
+    { columnName: 'who', wordWrapEnabled: true, width: 200 },
     { columnName: 'date_time', wordWrapEnabled: true, width: 200 },
     { columnName: 'before_changed', wordWrapEnabled: true, width: 250 },
     { columnName: 'after_changed', wordWrapEnabled: true, width: 250 }
@@ -51,14 +52,14 @@ const AuditLogList = ({ translate }) => {
     }, 500);
   }, [currentPage, pageSize, dispatch, searchValue, filters]);
 
-  console.log(filters);
-
-  const renderChangedItems = item => (
+  const renderChangedItems = (item) => (
     <ul>
       {
-        Object.keys(item).map(key =>
-          <li key={key}>{key} : {item[key]}</li>
-        )
+        Object.keys(item).map(key => (
+          <li key={key}>
+            {key} : {JSON.stringify(item[key])}
+          </li>
+        ))
       }
     </ul>
   );
@@ -77,8 +78,8 @@ const AuditLogList = ({ translate }) => {
       columnExtensions={columnExtensions}
       rows={auditLogs.map(auditLog => {
         return {
-          type_of_changes: auditLog.type_of_changes,
-          user_group: auditLog.user_group,
+          type_of_changes: translate(`common.${auditLog.type_of_changes}`),
+          user_group: translate(`common.${auditLog.user_group}`),
           who: auditLog.who,
           country: auditLog.country,
           clinic: auditLog.clinic,
