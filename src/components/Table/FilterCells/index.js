@@ -11,6 +11,7 @@ import TreatmentStatusFilterCell from 'components/Table/FilterCells/TreatmentSta
 import NumberFilterCell from './NumberFilterCell';
 import GenderFilterCell from './GenderFilterCell';
 import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
+import UserGroupFilterCell from './UserGroupFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -18,7 +19,7 @@ const FilterCell = (props) => {
     return <StatusFilterCell {...props} />;
   } else if (column.name === 'treatment_status') {
     return <TreatmentStatusFilterCell {...props} />;
-  } else if (column.name === 'last_login') {
+  } else if (column.name === 'last_login' || column.name === 'date_time') {
     return <DateRangeFilterCell {...props} />;
   } else if (column.name === 'action' ||
     column.name === 'next_appointment' || column.name === 'treatment_plan' ||
@@ -44,6 +45,8 @@ const FilterCell = (props) => {
     return <GenderFilterCell {...props} />;
   } else if (column.name === 'assistive_technology') {
     return <AssistiveTechnologyFilterCell {...props} />;
+  } else if (column.name === 'user_group') {
+    return <UserGroupFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

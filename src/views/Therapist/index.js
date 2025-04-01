@@ -202,7 +202,7 @@ const Therapist = ({ translate }) => {
   };
 
   const handleSwitchStatusDialogConfirm = () => {
-    dispatch(updateTherapistStatus(id, formFields)).then(result => {
+    dispatch(updateTherapistStatus(id, { ...formFields, user_id: profile.id, user_name: `${profile.last_name} ${profile.first_name}`, group: profile.type })).then(result => {
       if (result) {
         handleSwitchStatusDialogClose();
       }

@@ -206,7 +206,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
     if (canSave) {
       const language = languages.find(item => item.id === formFields.language_id);
-      let data = { ...formFields, language_code: (language ? language.code : null) };
+      let data = { ...formFields, language_code: (language ? language.code : null), user_id: profile.id, user_name: `${profile.last_name} ${profile.first_name}`, group: profile.type };
 
       const phoneValue = formFields.phone;
       const numOnly = phoneValue.split(formFields.dial_code);
