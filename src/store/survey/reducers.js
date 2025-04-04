@@ -14,7 +14,7 @@ export const survey = (state = initialState, action) => {
     }
     case 'GET_PUBLISH_SURVEY_SUCCESS': {
       return Object.assign({}, state, {
-        publishSurvey: action.data
+        publishSurveys: action.data
       });
     }
     default:

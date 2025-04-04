@@ -11,3 +11,13 @@ export const SURVEY_LOCATION = [
   { value: 'urban_area', label: 'urban_area' },
   { value: 'n/a', label: 'n/a' }
 ];
+
+export const SURVEY_FREQUENCY_OPTIONS = [
+  { value: 'weekly', label: 'weekly' },
+  { value: 'daily', label: 'daily' }
+];
+
+export const SURVEY_FREQUENCY = {
+  WEEKLY: 'weekly',
+  DAILY: 'daily'
+};

@@ -33,13 +33,16 @@ const Survey = ({ translate, handleRowEdit }) => {
   const [publishedId, setPublishedId] = useState(null);
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [survey, setSurvey] = useState();
+  const [existingPublishedSurvey, setExistingPublishedSurvey] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getSurveys());
   }, [dispatch]);
 
-  const handlePublish = (id) => {
+  const handlePublish = (id, role) => {
+    const existingSurvey = surveys.find(survey => survey.published_date && survey.role === role);
+    setExistingPublishedSurvey(existingSurvey ? existingSurvey.id : null);
     setPublishedId(id);
     setShowPublishedDialog(true);
   };
@@ -92,7 +95,7 @@ const Survey = ({ translate, handleRowEdit }) => {
                     {!item.published_date && (
                       <EditAction onClick={() => handleRowEdit(item.id)} />
                     )}
-                    <PublishAction className="ml-1" onClick={() => handlePublish(item.id)} disabled={item.published_date} />
+                    <PublishAction className="ml-1" onClick={() => handlePublish(item.id, item.role)} disabled={item.published_date} />
                   </>
                 )}
               </>
@@ -109,7 +112,7 @@ const Survey = ({ translate, handleRowEdit }) => {
               country: getCountryNames(item.country, countries),
               clinic: getClinicNames(item.clinic, clinics),
               location: getLocations(item.location, SURVEY_LOCATION, translate),
-              frequency: item.frequency,
+              frequency: translate(`survey.frequency.${item.frequency}`),
               status: status,
               published_date: item.published_date ? moment(item.published_date).format(settings.date_format) : '',
               action
@@ -126,7 +129,7 @@ const Survey = ({ translate, handleRowEdit }) => {
         confirmLabel={translate('common.yes')}
         onConfirm={handlePublishedDialogConfirm}
       >
-        <p>{translate('survey.publish_confirmation_message')}</p>
+        <p>{existingPublishedSurvey ? translate('survey.publish_overwrite_confirmation_message') : translate('survey.publish_confirmation_message')}</p>
       </Dialog>
       {showViewDialog && <ViewSurvey survey={survey} show={showViewDialog} handleClose={handleCloseViewSurvey}/>}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }

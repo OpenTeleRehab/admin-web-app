@@ -11,7 +11,7 @@ import {
 } from 'store/survey/actions';
 import settings from 'settings';
 import Select from 'react-select';
-import { SURVEY_ROLES, SURVEY_LOCATION } from 'variables/survey';
+import { SURVEY_ROLES, SURVEY_LOCATION, SURVEY_FREQUENCY_OPTIONS } from 'variables/survey';
 
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
@@ -49,7 +49,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     organization: [],
     role: '',
     country: [],
-    gender: '',
+    gender: [],
     location: [],
     clinic: [],
     frequency: ''
@@ -151,11 +151,6 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     }
   }, [endDate]);
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormFields({ ...formFields, [name]: value });
-  };
-
   const handleConfirm = () => {
     let canSave = true;
     const errorQuestionTitle = [];
@@ -255,7 +250,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorLocation(false);
     }
 
-    if (formFields.frequency === '') {
+    if (formFields.frequency === '' || formFields.frequency === undefined) {
       canSave = false;
       setErrorFrequency(true);
     } else {
@@ -345,6 +340,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     setFormFields({
       ...formFields,
       [key]: value,
+      gender: [],
       start_date: '',
       end_date: '',
       location: [],
@@ -365,17 +361,19 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     }));
   };
 
+  const handleSingleSelectChange = (key, value) => {
+    console.log(key, value);
+    setFormFields({
+      ...formFields,
+      [key]: value
+    });
+  };
+
   const handleCheck = e => {
     const { name, checked } = e.target;
     setFormFields({ ...formFields, [name]: checked, start_date: '', end_date: '' });
     setStartDate(null);
     setEndDate(null);
-  };
-
-  const validateNumberInput = (e) => {
-    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      e.preventDefault();
-    }
   };
 
   return (
@@ -600,18 +598,19 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
               </Col>
             </Row>
             <Form.Group controlId="formFrequency">
-              <Form.Label>{translate('survey.frequency') + '(' + translate('survey.in_day') + ')'}</Form.Label>
+              <Form.Label>{translate('survey.frequency')}</Form.Label>
               <span className="text-dark ml-1">*</span>
-              <Form.Control
-                type="number"
+              <Select
                 name="frequency"
+                getOptionLabel={option => translate('survey.frequency.' + option.value)}
+                options={SURVEY_FREQUENCY_OPTIONS}
+                onChange={(e) => handleSingleSelectChange('frequency', e ? e.value : undefined)}
+                value={SURVEY_FREQUENCY_OPTIONS.filter(option => formFields.frequency === option.value)}
                 placeholder={translate('survey.placeholder.frequency')}
-                aria-label="Frequency"
-                value={formFields.frequency}
-                onKeyDown={(e) => validateNumberInput(e)}
-                onChange={handleChange}
                 className={errorFrequency ? 'is-invalid' : ''}
-                min={1}
+                classNamePrefix="select"
+                isClearable
+                aria-label="frequency"
               />
               <Form.Control.Feedback type="invalid">
                 {translate('survey.error.frequency')}
