@@ -264,7 +264,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
         </Form.Row>
 
         <Form.Group controlId="formPhone">
-          <label htmlFor="phone">{translate('common.phone')}</label>
+          <label htmlFor="phone">{translate('common.phone.number')}</label>
           <span className="text-dark ml-1">*</span>
           <PhoneInput
             inputProps={{
@@ -273,6 +273,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             countryCodeEditable={false}
             country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
+            specialLabel=""
             onlyCountries={
               definedCountries.map(country => { return country.iso_code.toLowerCase(); })
             }
