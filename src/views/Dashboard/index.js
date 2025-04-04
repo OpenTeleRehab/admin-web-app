@@ -3,9 +3,12 @@ import { USER_GROUPS } from 'variables/user';
 import { useSelector } from 'react-redux';
 import { useKeycloak } from '@react-keycloak/web';
 import SupersetDashboard from 'components/SupersetDashboard';
+import _ from 'lodash';
+import customColorScheme from '../../utils/customColorScheme';
 
 const Dashboard = () => {
   const { profile } = useSelector(state => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const { keycloak } = useKeycloak();
   const [dashboardId, setDashboardId] = useState(null);
 
@@ -28,6 +31,7 @@ const Dashboard = () => {
   return (
     <>
       <SupersetDashboard dashboardId={dashboardId} />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };
