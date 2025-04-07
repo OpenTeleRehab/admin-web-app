@@ -1,30 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
-import { Button, Col, Form, Row, Accordion, Card } from 'react-bootstrap';
+import { Button, Col, Form, Row, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getQuestionnaire
 } from '../../../../../store/questionnaire/actions';
 import Question from './Question/question';
-import { getCategoryTreeData } from 'store/category/actions';
-import { CATEGORY_TYPES } from 'variables/category';
 import { useKeycloak } from '@react-keycloak/web';
-import _ from 'lodash';
-import CheckboxTree from 'react-checkbox-tree';
 import {
-  BsCaretDownFill,
-  BsCaretRightFill,
-  BsSquare,
-  BsDashSquare, BsPlusCircle
+  BsPlusCircle
 } from 'react-icons/bs';
-import { FaRegCheckSquare } from 'react-icons/fa';
-import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import scssColors from '../../../../../scss/custom.scss';
 import Select from 'react-select';
 import { USER_ROLES } from '../../../../../variables/user';
 import SelectLanguage from '../../../../ServiceSetup/_Partials/SelectLanguage';
 import FallbackText from '../../../../../components/Form/FallbackText';
+import _ from 'lodash';
 
 const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldError, id, questionnaireData, setQuestionnaireData, language, setLanguage, answerValueError, answerThresholdError }) => {
   const dispatch = useDispatch();
@@ -33,9 +25,6 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire } = useSelector(state => state.questionnaire);
-  const { categoryTreeData } = useSelector((state) => state.category);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [expanded, setExpanded] = useState([]);
 
   const [questions, setQuestions] = useState([{ title: '', type: 'checkbox', answers: [{ description: '', value: '', threshold: '' }, { description: '', value: '', threshold: '' }], file: null, mandatory: false }]);
   const [editTranslations, setEditTranslations] = useState([]);
@@ -50,24 +39,10 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
   }, [languages]);
 
   useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
-  }, [language, dispatch]);
-
-  useEffect(() => {
     if (id && language) {
       dispatch(getQuestionnaire(id, language));
     }
   }, [id, language, dispatch]);
-
-  useEffect(() => {
-    if (categoryTreeData.length) {
-      const rootCategoryStructure = {};
-      categoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
-      });
-      setSelectedCategories(rootCategoryStructure);
-    }
-  }, [categoryTreeData]);
 
   useEffect(() => {
     if (id && questionnaire.id) {
@@ -86,20 +61,8 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
         setQuestions(editTranslation.questions);
         setShowFallbackText(true);
       }
-      if (categoryTreeData.length) {
-        const rootCategoryStructure = {};
-        categoryTreeData.forEach(category => {
-          const ids = [];
-          JSON.stringify(category, (key, value) => {
-            if (key === 'value') ids.push(value);
-            return value;
-          });
-          rootCategoryStructure[category.value] = _.intersectionWith(questionnaire.categories, ids);
-        });
-        setSelectedCategories(rootCategoryStructure);
-      }
     }
-  }, [id, questionnaire, categoryTreeData, editTranslation]);
+  }, [id, questionnaire, editTranslation]);
 
   useEffect(() => {
     if (questions) {
@@ -109,19 +72,6 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
       }));
     }
   }, [questions]);
-
-  useEffect(() => {
-    if (selectedCategories) {
-      let serializedSelectedCats = [];
-      Object.keys(selectedCategories).forEach(function (key) {
-        serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
-      });
-      setQuestionnaireData(prev => ({
-        ...prev,
-        categories: serializedSelectedCats
-      }));
-    }
-  }, [selectedCategories]);
 
   useEffect(() => {
     if (!_.isEmpty(editTranslations)) {
@@ -138,10 +88,6 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleSetSelectedCategories = (parent, checked) => {
-    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
   };
 
   const enableButtons = () => {
@@ -247,46 +193,6 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
                 onChange={handleChange}
               />
             </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col sm={12} xl={12}>
-            <Accordion className="mb-3" defaultActiveKey={1}>
-              {
-                categoryTreeData.map((category, index) => (
-                  <Card key={index}>
-                    <Accordion.Toggle eventKey={(index + 1).toString()} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslating}>
-                      {category.label}
-                      <div className="ml-auto">
-                        <span className="mr-3">
-                          {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
-                        </span>
-                        <ContextAwareToggle eventKey={(index + 1).toString()} />
-                      </div>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={!isTranslating ? (index + 1).toString() : ''}>
-                      <Card.Body>
-                        <CheckboxTree
-                          nodes={category.children || []}
-                          checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
-                          expanded={expanded}
-                          onCheck={(checked) => handleSetSelectedCategories(category.value, checked)}
-                          onExpand={expanded => setExpanded(expanded)}
-                          icons={{
-                            check: <FaRegCheckSquare size={40} color="black" />,
-                            uncheck: <BsSquare size={40} color="black" />,
-                            halfCheck: <BsDashSquare size={40} color="black" />,
-                            expandClose: <BsCaretRightFill size={40} color="black" />,
-                            expandOpen: <BsCaretDownFill size={40} color="black" />
-                          }}
-                          showNodeIcon={false}
-                        />
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                ))
-              }
-            </Accordion>
           </Col>
         </Row>
         <Row>
