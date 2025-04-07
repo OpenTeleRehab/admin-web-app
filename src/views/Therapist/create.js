@@ -36,8 +36,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
   const languages = useSelector(state => state.language.languages);
 
   const [errorEmail, setErrorEmail] = useState(false);
-  const [errorClass, setErrorClass] = useState('');
-  const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorLimitPatient, setErrorLimitPatient] = useState(false);
   const [errorLimitPatientMessage, setErrorLimitPatientMessage] = useState('');
@@ -137,15 +135,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       setErrorEmail(true);
     } else {
       setErrorEmail(false);
-    }
-
-    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
-      canSave = false;
-      setErrorClass('d-block text-danger invalid-feedback');
-      setErrorPhoneMessage(translate('error.phone'));
-    } else {
-      setErrorClass('invalid-feedback');
-      setErrorPhoneMessage('');
     }
 
     if (formFields.country === '') {
@@ -276,7 +265,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         </Form.Group>
         <Form.Group controlId="formPhone">
           <label htmlFor="phone">{translate('common.phone')}</label>
-          <span className="text-dark ml-1">*</span>
           <PhoneInput
             inputProps={{
               id: 'phone'
@@ -284,6 +272,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
             countryCodeEditable={false}
             country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
+            specialLabel=""
             onlyCountries={
               definedCountries.map(country => { return country.iso_code.toLowerCase(); })
             }
@@ -291,9 +280,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               setFormFields({ ...formFields, phone: value, dial_code: country.dialCode });
             }}
           />
-          <Form.Control.Feedback type="invalid" class={errorClass}>
-            {errorPhoneMessage}
-          </Form.Control.Feedback>
         </Form.Group>
         <Form.Row>
           <Form.Group as={Col} controlId="formCountry" className="mb-0">
