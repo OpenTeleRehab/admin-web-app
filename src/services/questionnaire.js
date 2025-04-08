@@ -112,12 +112,25 @@ const rejectTranslation = id => {
     });
 };
 
+const downloadQuestionnaireResults = (language) => {
+  return axios.get('/export', { params: { lang: language, type: 'questionnaire_result' } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Questionnaire = {
   getQuestionnaire,
   getQuestionnaires,
   createQuestionnaire,
   updateQuestionnaire,
   deleteQuestionnaire,
+  downloadQuestionnaireResults,
   approveTranslation,
   rejectTranslation
 };
