@@ -2,9 +2,12 @@ import React from 'react';
 import { getTranslate } from 'react-localize-redux';
 import AuditLogList from './_Partials/AuditLogList';
 import { useSelector } from 'react-redux';
+import _ from 'lodash';
+import customColorScheme from '../../utils/customColorScheme';
 
 const AuditLog = () => {
   const localize = useSelector((state) => state.localize);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const translate = getTranslate(localize);
 
   return (
@@ -14,6 +17,7 @@ const AuditLog = () => {
         <div className="btn-toolbar mb-2 mb-md-0"></div>
       </div>
       <AuditLogList translate={translate} />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };
