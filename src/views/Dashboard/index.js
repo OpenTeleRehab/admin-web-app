@@ -36,7 +36,7 @@ const Dashboard = () => {
   }
 
   const handleDownloadQuestionnaireResults = () => {
-    dispatch(downloadQuestionnaireResults(profile.language_id))
+    dispatch(downloadQuestionnaireResults(profile.language_id, profile.country_id))
       .then(res => {
         dispatch(updateDownloadPending([res]));
       });
