@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Dropdown, OverlayTrigger, Button, Tooltip } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
@@ -8,6 +8,8 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
 import { Auth } from 'services/auth';
+import DownloadTracker from '../components/DownloadTracker';
+import { BsCloudDownload } from 'react-icons/bs';
 
 const navItems = [
   {
@@ -74,6 +76,7 @@ const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const [show, setShow] = useState(false);
   const { profile } = useSelector((state) => state.auth);
+  const [showDownloadTrackers, setShowDownloadTrackers] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -106,6 +109,15 @@ const Navigation = ({ translate }) => {
       <span className="portal-name ml-3">
         {translate('portal.name')}
       </span>
+      <OverlayTrigger
+        placement="bottom"
+        overlay={<Tooltip>{translate('common.download.history')}</Tooltip>}
+      >
+        <Button aria-label="Download history" variant="link" className="ml-5 p-0" onClick={() => setShowDownloadTrackers(true)}>
+          <BsCloudDownload size={25} />
+        </Button>
+      </OverlayTrigger>
+      <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
       <Navbar.Toggle aria-controls="basic-navbar-nav ml-auto" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto" variant="pills">

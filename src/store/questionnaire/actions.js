@@ -107,3 +107,17 @@ export const rejectTranslation = (id) => async dispatch => {
     return false;
   }
 };
+
+export const downloadQuestionnaireResults = (language) => async dispatch => {
+  dispatch(mutation.downloadQuestionnaireResultsRequest());
+  const data = await Questionnaire.downloadQuestionnaireResults(language);
+  if (data) {
+    dispatch(mutation.downloadQuestionnaireResultsSuccess());
+    dispatch(showSuccessNotification('toast_title.export', data.message));
+    return data.data;
+  } else {
+    dispatch(mutation.downloadQuestionnaireResultsFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+    return false;
+  }
+};
