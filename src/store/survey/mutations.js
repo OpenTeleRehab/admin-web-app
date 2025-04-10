@@ -100,6 +100,19 @@ const skipSurveyFail = () => ({
   type: 'SKIP_SURVEY_FAIL'
 });
 
+const exportSurveyRequest = () => ({
+  type: 'EXPORT_SURVEY_REQUEST'
+});
+
+const exportSurveySuccess = (data) => ({
+  type: 'EXPORT_SURVEY_SUCCESS',
+  data
+});
+
+const exportSurveyFail = () => ({
+  type: 'EXPORT_SURVEY_FAIL'
+});
+
 export const mutation = {
   getSurveysRequest,
   getSurveysSuccess,
@@ -124,5 +137,8 @@ export const mutation = {
   submitSurveyFail,
   skipSurveyRequest,
   skipSurveySuccess,
-  skipSurveyFail
+  skipSurveyFail,
+  exportSurveyRequest,
+  exportSurveySuccess,
+  exportSurveyFail
 };

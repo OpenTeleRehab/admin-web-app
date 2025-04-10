@@ -117,6 +117,18 @@ const getPublishSurvey = (payload) => {
     });
 };
 
+const exportSurvey = (payload) => {
+  return axios.get('/survey/export', { params: payload, responseType: 'blob' })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Survey = {
   getSurveys,
   getSurvey,
@@ -125,5 +137,6 @@ export const Survey = {
   updateSurvey,
   publishSurvey,
   submitSurvey,
-  skipSurvey
+  skipSurvey,
+  exportSurvey
 };
