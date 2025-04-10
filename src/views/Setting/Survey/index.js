@@ -4,10 +4,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withLocalize } from 'react-localize-redux';
 import { Badge } from 'react-bootstrap';
 import BasicTable from 'components/Table/basic';
-import { EditAction, PublishAction, ViewAction } from 'components/ActionIcons';
+import {
+  DownloadAction,
+  EditAction,
+  PublishAction,
+  ViewAction
+} from 'components/ActionIcons';
 import {
   publishSurvey,
-  getSurveys
+  getSurveys,
+  exportSurvey
 } from '../../../store/survey/actions';
 import Dialog from 'components/Dialog';
 import customColorScheme from '../../../utils/customColorScheme';
@@ -45,6 +51,10 @@ const Survey = ({ translate, handleRowEdit }) => {
     setExistingPublishedSurvey(existingSurvey ? existingSurvey.id : null);
     setPublishedId(id);
     setShowPublishedDialog(true);
+  };
+
+  const handleDownload = (id, role) => {
+    dispatch(exportSurvey({ id, role }));
   };
 
   const handlePublishedDialogConfirm = () => {
@@ -90,13 +100,16 @@ const Survey = ({ translate, handleRowEdit }) => {
             const action = (
               <>
                 <ViewAction onClick={() => handleViewSurvey(item)}/>
-                { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && (
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && (
                   <>
                     {!item.published_date && (
                       <EditAction onClick={() => handleRowEdit(item.id)} />
                     )}
                     <PublishAction className="ml-1" onClick={() => handlePublish(item.id, item.role)} disabled={item.published_date} />
                   </>
+                )}
+                {keycloak.hasRealmRole(USER_ROLES.DOWNLOAD_SURVEY) && item.published_date && (
+                  <DownloadAction className="ml-1" onClick={() => handleDownload(item.id, item.role)} />
                 )}
               </>
             );

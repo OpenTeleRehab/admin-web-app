@@ -66,7 +66,8 @@ export const USER_ROLES = {
   TRANSLATE_ASSISTIVE_TECHNOLOGY: 'translate_assistive_technology',
   VIEW_DASHBOARD: 'view_dashboard',
   SUPER_ADMIN: 'super_admin',
-  MANAGE_SURVEY: 'manage_survey'
+  MANAGE_SURVEY: 'manage_survey',
+  DOWNLOAD_SURVEY: 'download_survey'
 };
 
 export const SETTING_ROLES = [

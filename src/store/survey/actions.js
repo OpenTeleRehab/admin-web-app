@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import { Survey } from 'services/survey';
 import { mutation } from './mutations';
 import { showErrorNotification, showSuccessNotification } from 'store/notification/actions';
@@ -111,6 +112,20 @@ export const skipSurvey = payload => async (dispatch) => {
   } else {
     dispatch(mutation.skipSurveyFail());
     dispatch(showErrorNotification('toast_title.skip_survey', data.message));
+    return false;
+  }
+};
+
+export const exportSurvey = payload => async dispatch => {
+  dispatch(mutation.exportSurveyRequest());
+  const res = await Survey.exportSurvey(payload);
+  if (res) {
+    dispatch(mutation.exportSurveySuccess());
+    saveAs(res, 'Survey_Result_' + Date.now() + '.xlsx');
+    return true;
+  } else {
+    dispatch(mutation.exportSurveyFail());
+    dispatch(showErrorNotification('toast_title.error_message', res.message));
     return false;
   }
 };
