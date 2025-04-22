@@ -199,7 +199,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
       const phoneValue = formFields.phone;
       const numOnly = phoneValue.split(formFields.dial_code);
-      if (numOnly[1].match('^0')) {
+      if (numOnly[1] && numOnly[1].match('^0')) {
         data = { ...data, phone: formFields.dial_code + numOnly[1].slice(1) };
       }
 
