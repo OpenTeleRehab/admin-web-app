@@ -5,6 +5,7 @@ import PatientList from './Partials/patientList';
 import AssistiveTechnologyPatient from 'components/AssistiveTechnologyPatient';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadPatientRawData } from 'store/globalPatient/actions';
+import { updateDownloadPending } from 'store/downloadTracker/actions';
 import { FaDownload } from 'react-icons/fa';
 
 const Patient = ({ translate }) => {
@@ -18,7 +19,10 @@ const Patient = ({ translate }) => {
   };
 
   const handleDownload = () => {
-    dispatch(downloadPatientRawData({ lang: profile.language_id ? profile.language_id : languages.lenght ? languages[0].id : '', ...downloadFilter }));
+    dispatch(downloadPatientRawData({ lang: profile.language_id ? profile.language_id : languages.lenght ? languages[0].id : '', ...downloadFilter }))
+      .then(res => {
+        dispatch(updateDownloadPending([res]));
+      });
   };
 
   return (

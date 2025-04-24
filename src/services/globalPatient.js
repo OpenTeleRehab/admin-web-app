@@ -26,7 +26,7 @@ const deleteGlobalPatient = id => {
 };
 
 const downloadPatientRawData = (payload) => {
-  return axios.get('/patient-raw-data/export', { params: payload, responseType: 'blob' })
+  return axios.get('/export', { params: { ...payload, type: 'patient_raw_data' } })
     .then(
       res => {
         return res.data;

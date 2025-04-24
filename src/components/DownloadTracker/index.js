@@ -18,7 +18,7 @@ const DownloadTracker = ({ showDownloadTrackers, setShowDownloadTrackers }) => {
   const translate = getTranslate(localize);
 
   const handleDownload = useCallback((downloadTracker) => {
-    downloadFile(downloadTracker.file_path);
+    downloadFile(downloadTracker.file_path, downloadTracker.type);
     dispatch(removeDownloadPending(downloadTracker.job_id));
   }, [dispatch]);
 

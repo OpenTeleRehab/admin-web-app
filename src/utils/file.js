@@ -29,10 +29,14 @@ export const base64ToFile = (base64, fileName, fileType) => {
   return new File([u8arr], fileName, { type: fileType });
 };
 
-export const downloadFile = async (path) => {
+export const downloadFile = async (path, type) => {
   if (path) {
     try {
-      const response = await axios.get('/download-file?path=' + path, {
+      const response = await axios.get('/download-file', {
+        params: {
+          path,
+          type
+        },
         responseType: 'blob'
       });
 
