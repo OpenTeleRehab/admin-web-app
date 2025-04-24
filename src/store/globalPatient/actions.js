@@ -1,7 +1,6 @@
 import { GlobalPatient } from 'services/globalPatient';
 import { mutation } from './mutations';
 import { showErrorNotification, showSuccessNotification } from '../notification/actions';
-import { saveAs } from 'file-saver';
 
 export const getGlobalPatients = payload => async (dispatch, getState) => {
   dispatch(mutation.getPatientRequest());
@@ -36,8 +35,8 @@ export const downloadPatientRawData = payload => async dispatch => {
   const res = await GlobalPatient.downloadPatientRawData(payload);
   if (res) {
     dispatch(mutation.downloadPatientRawDataSuccess());
-    saveAs(res, 'Patient_Raw_Data.xlsx');
-    return true;
+    dispatch(showSuccessNotification('toast_title.export', res.message));
+    return res.data;
   } else {
     dispatch(mutation.downloadPatientRawDataFail());
     dispatch(showErrorNotification('toast_title.error_message', res.message));

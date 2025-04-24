@@ -80,9 +80,6 @@ const PatientList = ({ translate, setDownloadfilter }) => {
     setDownloadfilter(prevState => ({
       ...prevState,
       search_value: searchValue,
-      type: profile.type,
-      country: profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
-      clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
       filters
     }));
   }, [profile, currentPage, pageSize, dispatch, filters, searchValue, orderBy]);
