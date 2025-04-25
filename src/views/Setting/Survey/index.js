@@ -28,6 +28,7 @@ import settings from 'settings';
 import _ from 'lodash';
 import moment from 'moment';
 import ViewSurvey from './viewSurvey';
+import { updateDownloadPending } from 'store/downloadTracker/actions';
 
 const Survey = ({ translate, handleRowEdit }) => {
   const { surveys } = useSelector((state) => state.survey);
@@ -53,8 +54,11 @@ const Survey = ({ translate, handleRowEdit }) => {
     setShowPublishedDialog(true);
   };
 
-  const handleDownload = (id, role) => {
-    dispatch(exportSurvey({ id, role }));
+  const handleDownload = (id) => {
+    dispatch(exportSurvey(id))
+      .then(res => {
+        dispatch(updateDownloadPending([res]));
+      });
   };
 
   const handlePublishedDialogConfirm = () => {
