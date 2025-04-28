@@ -117,8 +117,8 @@ const getPublishSurvey = (payload) => {
     });
 };
 
-const exportSurvey = (payload) => {
-  return axios.get('/survey/export', { params: payload, responseType: 'blob' })
+const exportSurvey = (id) => {
+  return axios.get('/export', { params: { id, type: 'survey_result' } })
     .then(
       res => {
         return res.data;

@@ -109,19 +109,15 @@ const Navigation = ({ translate }) => {
       <span className="portal-name ml-3">
         {translate('portal.name')}
       </span>
-      {keycloak.hasRealmRole(USER_ROLES.VIEW_DASHBOARD) && (
-        <>
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip>{translate('common.download.history')}</Tooltip>}
-          >
-            <Button aria-label="Download history" variant="link" className="ml-5 p-0" onClick={() => setShowDownloadTrackers(true)}>
-              <BsCloudDownload size={25} />
-            </Button>
-          </OverlayTrigger>
-          <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
-        </>
-      )}
+      <OverlayTrigger
+        placement="bottom"
+        overlay={<Tooltip>{translate('common.download.history')}</Tooltip>}
+      >
+        <Button aria-label="Download history" variant="link" className="ml-5 p-0" onClick={() => setShowDownloadTrackers(true)}>
+          <BsCloudDownload size={25} />
+        </Button>
+      </OverlayTrigger>
+      <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
       <Navbar.Toggle aria-controls="basic-navbar-nav ml-auto" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto" variant="pills">
