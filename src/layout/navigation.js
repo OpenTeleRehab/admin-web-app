@@ -7,7 +7,6 @@ import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { USER_ROLES, SETTING_ROLES } from 'variables/user';
-import { Auth } from 'services/auth';
 import DownloadTracker from '../components/DownloadTracker';
 
 const navItems = [
@@ -81,11 +80,6 @@ const Navigation = ({ translate }) => {
   const handleShow = () => setShow(true);
   const handleConfirm = async () => {
     if (keycloak.authenticated) {
-      // Audit log for logout
-      await Auth.logUserAuthAction({
-        type: 'logout',
-        log_name: 'admin_service'
-      });
       keycloak.logout();
     }
   };
