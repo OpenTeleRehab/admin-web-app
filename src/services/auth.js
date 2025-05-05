@@ -36,21 +36,8 @@ const updateUserProfile = (payload) => {
     });
 };
 
-const logUserAuthAction = (payload) => {
-  return axios.post('/audit-logs', payload)
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
 export const Auth = {
   getProfile,
   updatePassword,
-  updateUserProfile,
-  logUserAuthAction
+  updateUserProfile
 };

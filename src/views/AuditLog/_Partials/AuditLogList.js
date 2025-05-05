@@ -5,6 +5,7 @@ import settings from 'settings';
 import * as moment from 'moment';
 import PropTypes from 'prop-types';
 import { getAuditLogs } from 'store/auditLog/actions';
+import { USER_GROUPS } from 'variables/user';
 
 let timer = null;
 const AuditLogList = ({ translate }) => {
@@ -79,10 +80,10 @@ const AuditLogList = ({ translate }) => {
       rows={auditLogs.map(auditLog => {
         return {
           type_of_changes: translate(`common.${auditLog.type_of_changes}`),
-          user_group: translate(`common.${auditLog.user_group}`),
-          who: auditLog.who,
-          country: auditLog.country,
-          clinic: auditLog.clinic,
+          user_group: auditLog.user_group ? translate(`common.${auditLog.user_group}`) : translate('common.unknown'),
+          who: auditLog.who ? auditLog.who : translate('common.unknown'),
+          country: auditLog.country ? auditLog.country : (auditLog.user_group === USER_GROUPS.ORGANIZATION_ADMIN || auditLog.user_group === USER_GROUPS.SUPER_ADMIN) ? '' : translate('common.unknown'),
+          clinic: auditLog.clinic ? auditLog.clinic : (auditLog.user_group === USER_GROUPS.ORGANIZATION_ADMIN || auditLog.user_group === USER_GROUPS.SUPER_ADMIN || auditLog.user_group === USER_GROUPS.COUNTRY_ADMIN) ? '' : translate('common.unknown'),
           subject_type: auditLog.subject_type,
           date_time: auditLog.date_time ? moment.utc(auditLog.date_time).local().format(settings.datetime_format) : '',
           before_changed: auditLog.before_changed ? renderChangedItems(auditLog.before_changed) : '',
