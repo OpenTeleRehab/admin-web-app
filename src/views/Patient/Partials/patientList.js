@@ -145,7 +145,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             country: getCountryName(patient.country_id, countries),
             clinic: getClinicName(patient.clinic_id, clinics),
             region: getClinicRegion(patient.clinic_id, clinics),
-            treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.lastTreatmentPlan),
+            treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.upcomingTreatmentPlan ? patient.upcomingTreatmentPlan : patient.lastTreatmentPlan),
             action
           };
         })}
