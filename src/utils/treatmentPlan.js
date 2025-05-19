@@ -6,15 +6,20 @@ import settings from '../settings';
 import { Translate } from 'react-localize-redux';
 
 export const renderStatusBadge = (treatmentPlan) => {
-  if (!treatmentPlan || !treatmentPlan.id) {
+  if (!treatmentPlan) {
     return '';
   }
 
-  let status = STATUS.planned;
-  if (moment().startOf('day').diff(moment(treatmentPlan.end_date, settings.date_format), 'days', true) > 0) {
-    status = STATUS.finished;
-  } else if (moment().startOf('day').diff(moment(treatmentPlan.start_date, settings.date_format), 'days', true) >= 0) {
+  const today = moment().startOf('day');
+  const start = moment(treatmentPlan.start_date, settings.date_format);
+  const end = moment(treatmentPlan.end_date, settings.date_format);
+  let status = '';
+  if (start.isSameOrBefore(today) && end.isSameOrAfter(today)) {
     status = STATUS.on_going;
+  } else if (start.isAfter(today) && end.isAfter(today)) {
+    status = STATUS.planned;
+  } else if (start.isBefore(today) && end.isBefore(today)) {
+    status = STATUS.finished;
   }
 
   return (
