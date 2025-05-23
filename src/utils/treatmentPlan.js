@@ -16,9 +16,9 @@ export const renderStatusBadge = (treatmentPlan) => {
   let status = '';
   if (start.isSameOrBefore(today) && end.isSameOrAfter(today)) {
     status = STATUS.on_going;
-  } else if (start.isAfter(today) && end.isAfter(today)) {
+  } else if (start.isAfter(today)) {
     status = STATUS.planned;
-  } else if (start.isBefore(today) && end.isBefore(today)) {
+  } else if (end.isBefore(today)) {
     status = STATUS.finished;
   }
 
