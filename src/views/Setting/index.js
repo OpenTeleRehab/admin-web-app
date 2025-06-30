@@ -43,7 +43,7 @@ import {
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
-  VIEW_SURVEY
+  VIEW_SURVEY, VIEW_HEALTH_CONDITION
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -59,6 +59,7 @@ import CreateOrganization from './Organization/create';
 import CreateAssistiveTechnology from './AssistiveTechnology/create';
 import CreateSurvey from './Survey/create';
 import Survey from './Survey';
+import HealthCondition from './HealthCondition';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -99,6 +100,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_COLOR_SCHEME);
     } else if (hash.includes('#' + VIEW_SURVEY)) {
       setView(VIEW_SURVEY);
+    } else if (hash.includes('#' + VIEW_HEALTH_CONDITION)) {
+      setView(VIEW_HEALTH_CONDITION);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -160,7 +163,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
-                    (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (
+                    (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
                     <Button variant="primary" onClick={handleShow}>
                       <BsPlus size={20} className="mr-1" />
                       { translate(`${view}.new`) }
@@ -294,6 +297,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_HEALTH_CONDITION} eventKey={VIEW_HEALTH_CONDITION}>
+              {translate('setting.health_conditions')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -311,6 +321,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
     </>
   );
 };

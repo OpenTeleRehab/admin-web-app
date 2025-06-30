@@ -13,6 +13,7 @@ export const VIEW_ORGANIZATION = 'organization';
 export const VIEW_ASSISTIVE_TECHNOLOGY = 'assistive_technology';
 export const VIEW_COLOR_SCHEME = 'color_scheme';
 export const VIEW_SURVEY = 'survey';
+export const VIEW_HEALTH_CONDITION = 'health_condition';
 
 export const SETTINGS = [
   VIEW_COUNTRY,
@@ -29,7 +30,8 @@ export const SETTINGS = [
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
-  VIEW_SURVEY
+  VIEW_SURVEY,
+  VIEW_HEALTH_CONDITION
 ];
 
 export const TEXT_MAX_LENGTH = {

@@ -37,6 +37,8 @@ import { auditLog } from 'store/auditLog/reducers';
 import { survey } from 'store/survey/reducers';
 import { superset } from 'store/superset/reducers';
 import { downloadTracker } from 'store/downloadTracker/reducers';
+import { healthConditionGroup } from 'store/healthConditionGroup/reducers';
+import { healthCondition } from 'store/healthCondition/reducers';
 
 export const rootReducer = {
   auditLog,
@@ -53,6 +55,8 @@ export const rootReducer = {
   educationMaterial,
   exercise,
   guidancePage,
+  healthCondition,
+  healthConditionGroup,
   language,
   localization,
   localize: localizeReducer,
