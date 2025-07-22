@@ -2,7 +2,7 @@ import axios from 'utils/gAdminAxios';
 
 const getTermAndCondition = (id, language) => {
   const langParam = language ? `?lang=${language}` : '';
-  return axios.get(`/term-condition/${id}` + langParam)
+  return axios.get(`/public/term-condition/${id}` + langParam)
     .then(
       res => {
         return res.data;
@@ -14,7 +14,7 @@ const getTermAndCondition = (id, language) => {
 };
 
 const getTermAndConditions = () => {
-  return axios.get('/term-condition')
+  return axios.get('/public/term-condition')
     .then(
       res => {
         return res.data;
@@ -26,7 +26,7 @@ const getTermAndConditions = () => {
 };
 
 const getPublishTermConditionPage = payload => {
-  return axios.get('/user-term-condition', { params: payload })
+  return axios.get('/public/user-term-condition', { params: payload })
     .then(
       res => {
         return res.data;

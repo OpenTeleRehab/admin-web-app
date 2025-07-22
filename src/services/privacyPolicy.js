@@ -1,7 +1,7 @@
 import axios from 'utils/gAdminAxios';
 
 const getPrivacyPolicies = () => {
-  return axios.get('/privacy-policy')
+  return axios.get('/public/privacy-policy')
     .then(
       res => {
         return res.data;
@@ -14,7 +14,7 @@ const getPrivacyPolicies = () => {
 
 const getPrivacyPolicy = (id, language) => {
   const langParam = language ? `?lang=${language}` : '';
-  return axios.get(`/privacy-policy/${id}` + langParam)
+  return axios.get(`/public/privacy-policy/${id}` + langParam)
     .then(
       res => {
         return res.data;
@@ -26,7 +26,7 @@ const getPrivacyPolicy = (id, language) => {
 };
 
 const getPublishPrivacyPolicy = payload => {
-  return axios.get('/user-privacy-policy', { params: payload })
+  return axios.get('/public/user-privacy-policy', { params: payload })
     .then(
       res => {
         return res.data;
