@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Dialog from 'components/Dialog';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
@@ -8,27 +8,36 @@ import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 import moment from 'moment';
 import settings from 'settings';
+import { getSurvey } from 'store/survey/actions';
 
-const ViewSurvey = ({ show, handleClose, survey }) => {
+const ViewSurvey = ({ show, handleClose, id }) => {
+  const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { survey } = useSelector(state => state.survey);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getSurvey(id));
+    }
+  }, [id, dispatch]);
 
   return (
     <Dialog
       show={show}
       size="lg"
       scrollable={true}
-      title={survey.questionnaire.title}
+      title={survey.questionnaire && survey.questionnaire.title}
       onCancel={handleClose}
       cancelLabel={translate('common.close')}
     >
       <div className="d-flex flex-column mb-2">
         <span className="font-weight-bold">{translate('questionnaire.description')}</span>
-        <span>{survey.questionnaire.description}</span>
+        <span>{survey.questionnaire && survey.questionnaire.description}</span>
       </div>
       <div className="d-flex flex-column mb-3">
         <span className="font-weight-bold">{translate('questionnaire.number_of_question')}</span>
-        <span>{survey.questionnaire.questions.length}</span>
+        <span>{survey.questionnaire && survey.questionnaire.questions && survey.questionnaire.questions.length}</span>
       </div>
       {survey.start_date && survey.end_date && (
         <>
@@ -55,7 +64,7 @@ const ViewSurvey = ({ show, handleClose, survey }) => {
         </div>
       )}
 
-      {survey.questionnaire.questions.map((question, index) => (
+      {survey.questionnaire && survey.questionnaire.questions && survey.questionnaire.questions.map((question, index) => (
         <Accordion key={index}>
           <Card className="mb-3 question-card">
             <Accordion.Toggle eventKey={index + 1} className="card-header view-question-card-header d-flex justify-content-between border-0">
@@ -132,7 +141,7 @@ const ViewSurvey = ({ show, handleClose, survey }) => {
         </Accordion>
       ))
       }
-      { survey.questionnaire.auto_translated === true && (
+      { survey.questionnaire && survey.questionnaire.auto_translated === true && (
         <GoogleTranslationAttribute />
       )}
     </Dialog>
@@ -142,7 +151,7 @@ const ViewSurvey = ({ show, handleClose, survey }) => {
 ViewSurvey.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  survey: PropTypes.object
+  id: PropTypes.string
 };
 
 export default ViewSurvey;

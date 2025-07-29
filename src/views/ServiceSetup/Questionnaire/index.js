@@ -306,7 +306,7 @@ const Questionnaire = ({ translate }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
-      {viewQuestionnaire && <ViewQuestionnaire questionnaire={questionnaire} show={viewQuestionnaire} handleClose={handleQuestionnaireViewClose}/>}
+      {viewQuestionnaire && <ViewQuestionnaire id={questionnaire.id} show={viewQuestionnaire} handleClose={handleQuestionnaireViewClose}/>}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );

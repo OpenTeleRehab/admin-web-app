@@ -106,7 +106,7 @@ const ListExerciseCard = ({ translate, exerciseObjs, lang, customExercises }) =>
           </Card>
         </div>
       ))}
-      { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
+      { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} id={exercise.activity_id} /> }
     </>
   );
 };
