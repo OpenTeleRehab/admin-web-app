@@ -89,7 +89,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
   }, [pageSize, searchValue, filters]);
 
   const handleRowClick = (row) => {
-    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id).replace(':countryId', row.country_id));
+    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.patient_id).replace(':countryId', row.country_id));
   };
 
   const handleDelete = (id) => {

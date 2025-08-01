@@ -28,6 +28,7 @@ const ViewTreatmentPlan = () => {
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
+  const { countries } = useSelector((state) => state.country);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
@@ -51,10 +52,11 @@ const ViewTreatmentPlan = () => {
   }, []);
 
   useEffect(() => {
-    if (id) {
+    if (id && countries.length) {
+      // Fetch treatment plan details
       dispatch(getTreatmentPlansDetail({ id, lang: profile && profile.language_id, therapist_id: profile && profile.id, country_id: countryId }));
     }
-  }, [id, patientId, dispatch, profile, countryId]);
+  }, [id, patientId, dispatch, profile, countryId, countries]);
 
   useEffect(() => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {

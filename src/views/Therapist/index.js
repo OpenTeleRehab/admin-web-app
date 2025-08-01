@@ -127,7 +127,7 @@ const Therapist = ({ translate }) => {
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
   useEffect(() => {
-    if (therapists && therapists.length > 0 && totalCount) {
+    if (therapists && therapists.length > 0 && totalCount && profile && countries.length) {
       const therapistIds = _.map(therapists, 'id');
       therapistService.getPatientByTherapistIds(therapistIds, { country_code: getCountryIsoCode(profile.country_id) }).then(res => {
         if (res.data) {
@@ -135,7 +135,7 @@ const Therapist = ({ translate }) => {
         }
       });
     }
-  }, [therapists, totalCount, profile]);
+  }, [therapists, totalCount, profile, countries]);
 
   useEffect(() => {
     if (profile !== undefined && profile.type === USER_GROUPS.CLINIC_ADMIN) {
