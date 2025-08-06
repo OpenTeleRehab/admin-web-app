@@ -1,19 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getTranslate } from 'react-localize-redux';
 import { Form } from 'react-bootstrap';
 import Carousel from 'react-bootstrap/Carousel';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Dialog from 'components/Dialog';
+import { getExercise } from 'store/exercise/actions';
 
-const ViewExercise = ({ showView, handleViewClose, exercise }) => {
+const ViewExercise = ({ showView, handleViewClose, id }) => {
+  const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [index, setIndex] = useState(0);
+  const { profile } = useSelector((state) => state.auth);
+  const { exercise, filters } = useSelector(state => state.exercise);
+  const { languages } = useSelector(state => state.language);
+  const [language, setLanguage] = useState(languages[0].id);
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
   };
+
+  useEffect(() => {
+    if (filters && filters.lang) {
+      setLanguage(filters.lang);
+    } else if (profile && profile.language_id) {
+      setLanguage(profile.language_id);
+    }
+  }, [filters, profile]);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getExercise(id, language));
+    }
+  }, [id, language, dispatch]);
 
   return (
     <Dialog
@@ -23,8 +43,8 @@ const ViewExercise = ({ showView, handleViewClose, exercise }) => {
       onCancel={handleViewClose}
     >
       <Form>
-        <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files.length > 1} indicators={exercise.files.length > 1} className="view-exercise-carousel">
-          { exercise.files.map((file, index) => (
+        <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files && exercise.files.length > 1} indicators={exercise.files && exercise.files.length > 1} className="view-exercise-carousel">
+          { exercise.files && exercise.files.map((file, index) => (
             <Carousel.Item key={index}>
               { file.fileType === 'audio/mpeg' &&
               <div className="img-thumbnail w-100 pt-2 pl-5 pr-5 bg-light audio-wrapper">
@@ -78,7 +98,7 @@ const ViewExercise = ({ showView, handleViewClose, exercise }) => {
 ViewExercise.propTypes = {
   showView: PropTypes.bool,
   handleViewClose: PropTypes.func,
-  exercise: PropTypes.object
+  id: PropTypes.string
 };
 
 export default ViewExercise;

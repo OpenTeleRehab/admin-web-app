@@ -148,7 +148,7 @@ const Survey = ({ translate, handleRowEdit }) => {
       >
         <p>{existingPublishedSurvey ? translate('survey.publish_overwrite_confirmation_message') : translate('survey.publish_confirmation_message')}</p>
       </Dialog>
-      {showViewDialog && <ViewSurvey survey={survey} show={showViewDialog} handleClose={handleCloseViewSurvey}/>}
+      {showViewDialog && <ViewSurvey id={survey.id} show={showViewDialog} handleClose={handleCloseViewSurvey}/>}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
