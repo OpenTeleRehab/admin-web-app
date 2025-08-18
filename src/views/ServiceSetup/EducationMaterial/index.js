@@ -266,10 +266,10 @@ const EducationMaterial = ({ translate }) => {
             totalCount={totalCount}
             columns={columns}
             hideSearchFilter={true}
-            rows={educationMaterials.map(educationMaterial => {
+            rows={educationMaterials && educationMaterials.map(educationMaterial => {
               const action = (
                 <>
-                  { isTranslating && !!educationMaterial.children.length &&
+                  { isTranslating && educationMaterial.children && educationMaterial.children.length > 0 &&
                       <TranslateAction className="mr-1" onClick={() => {}} tooltip={'common.translation_suggested'} />
                   }
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />

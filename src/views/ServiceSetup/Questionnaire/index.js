@@ -268,7 +268,7 @@ const Questionnaire = ({ translate }) => {
             rows={questionnaires.map(questionnaire => {
               const action = (
                 <>
-                  { isTranslating && !!questionnaire.children.length &&
+                  { isTranslating && questionnaire.children && questionnaire.children.length &&
                     <TranslateAction className="mr-1" onClick={() => {}} tooltip={'common.translation_suggested'} />
                   }
                   <ViewAction onClick={() => handleView(questionnaire)} />
