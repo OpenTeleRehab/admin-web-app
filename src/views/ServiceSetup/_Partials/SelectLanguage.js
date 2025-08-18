@@ -25,7 +25,9 @@ const SelectLanguage = ({ translate, resource, language, setLanguage, setEditTra
     if (languages && resource) {
       const languageData = [];
       _.forEach(languages, (lang) => {
-        const translations = !_.isEmpty(resource) && resource.children.filter(item => item.suggested_lang === lang.code);
+        const translations = !_.isEmpty(resource) && resource.children
+          ? resource.children.filter((item) => item.suggested_lang === lang.code)
+          : [];
 
         languageData.push({
           id: lang.id,
@@ -56,7 +58,9 @@ const SelectLanguage = ({ translate, resource, language, setLanguage, setEditTra
 
   useEffect(() => {
     if (resource && languageObj) {
-      const translations = !_.isEmpty(resource) && resource.children.filter(item => item.suggested_lang === languageObj.code);
+      const translations = !_.isEmpty(resource) && resource.children
+        ? resource.children.filter((item) => item.suggested_lang === languageObj.code)
+        : [];
       setEditings(translations);
       setEditTranslations(translations);
       handleResetIndex();
