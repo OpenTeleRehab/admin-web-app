@@ -10,6 +10,7 @@ import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import { getTranslate } from 'react-localize-redux';
+import { checkFederatedUser } from 'utils/user';
 
 let timer = null;
 const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => {
@@ -83,16 +84,17 @@ const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
         columns={columns}
         columnExtensions={columnExtensions}
         rows={users.map(user => {
+          const isFederatedUser = checkFederatedUser(user.email);
           const action = (
-            <>
+            <div className='d-flex justify-content-start'>
               {user.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} disabled={parseInt(user.id) === parseInt(profile.id)}/>
                 : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} disabled={parseInt(user.id) === parseInt(profile.id)} />
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={parseInt(user.id) === parseInt(profile.id) || user.enabled} />
-              <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
-            </>
+              {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
+            </div>
           );
 
           return {

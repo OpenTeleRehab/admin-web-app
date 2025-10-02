@@ -11,6 +11,7 @@ import { getClinicName } from 'utils/clinic';
 import * as moment from 'moment';
 import settings from 'settings';
 import { getTranslate } from 'react-localize-redux';
+import { checkFederatedUser } from 'utils/user';
 
 let timer = null;
 const ClinicAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => {
@@ -85,16 +86,17 @@ const ClinicAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
         columns={columns}
         columnExtensions={columnExtensions}
         rows={users.map(user => {
+          const isFederatedUser = checkFederatedUser(user.email);
           const action = (
-            <>
+            <div className='d-flex justify-content-start'>
               {user.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} />
                 : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} />
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={user.enabled} />
-              <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
-            </>
+              {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
+            </div>
           );
 
           return {
