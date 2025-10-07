@@ -29,6 +29,7 @@ import { Clinic as clinicService } from 'services/clinic';
 import { getProfessionName } from 'utils/profession';
 import { getChatRooms } from 'utils/therapist';
 import customColorScheme from '../../utils/customColorScheme';
+import { checkFederatedUser } from 'utils/user';
 
 let timer = null;
 
@@ -239,8 +240,10 @@ const Therapist = ({ translate }) => {
         columns={columns}
         columnExtensions={columnExtensions}
         rows={therapists.map(user => {
+          const isFederatedUser = checkFederatedUser(user.email);
+
           const action = (
-            <>
+            <div className='d-flex justify-content-start'>
               {keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
                 <>
                   {user.enabled
@@ -249,13 +252,13 @@ const Therapist = ({ translate }) => {
                   }
                   <EditAction onClick={() => handleEdit(user.id)} />
                   <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
-                  <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
+                  {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
                 </>
               )}
               {keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
                 <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
               )}
-            </>
+            </div>
           );
 
           return {
