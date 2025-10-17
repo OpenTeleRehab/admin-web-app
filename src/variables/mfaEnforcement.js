@@ -1,0 +1,5 @@
+export const MFA_ENFORCEMENT = {
+  DISABLE: 'DISABLE',
+  RECOMMEND: 'RECOMMEND',
+  ENFORCE: 'FORCE'
+};

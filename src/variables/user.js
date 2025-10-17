@@ -68,7 +68,8 @@ export const USER_ROLES = {
   SUPER_ADMIN: 'super_admin',
   MANAGE_SURVEY: 'manage_survey',
   DOWNLOAD_SURVEY: 'download_survey',
-  MANAGE_HEALTH_CONDITION: 'manage_health_condition'
+  MANAGE_HEALTH_CONDITION: 'manage_health_condition',
+  MANAGE_MFA_POLICY: 'manage_mfa_policy'
 };
 
 export const SETTING_ROLES = [
