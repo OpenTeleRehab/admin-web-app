@@ -31,6 +31,7 @@ const Select = ({ control, label, name, rules, options = [], isMulti = false, ..
               inputId={sanitizedControlId}
               options={options}
               value={selectedValue}
+              closeMenuOnSelect={!isMulti}
               onChange={(val) => {
                 if (isMulti) {
                   field.onChange(val ? val.map(v => v.value) : []);

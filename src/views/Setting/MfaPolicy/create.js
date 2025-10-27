@@ -4,7 +4,7 @@ import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
 import 'react-datetime/css/react-datetime.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { USER_GROUPS } from 'variables/user';
 import { Row, Col, Form } from 'react-bootstrap';
 import CustomSelect from 'components/Form/Select';
@@ -13,18 +13,20 @@ import { useForm } from 'react-hook-form';
 import Radio from 'components/Form/Radio';
 import Input from 'components/Form/Input';
 import { MFA_ENFORCEMENT } from 'variables/mfaEnforcement';
+import { createMfaSetting, updateMfaSetting } from 'store/mfaSetting/actions';
 
-const CreateMfaPolicy = ({ show, handleClose }) => {
+const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const organizations = useSelector((state) => state.organization.organizations);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
-  const { control, watch, handleSubmit, setValue } = useForm();
+  const dispatch = useDispatch();
+  const { control, watch, handleSubmit, setValue } = useForm({ defaultValues: initialData || {} });
   const role = watch('role');
-  const country = watch('country') || [];
-  const clinicOptions = (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => watch('country') && watch('country').includes(item.country_id))
+  const country = watch('country_ids') || [];
+  const clinicOptions = (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => watch('country_ids') && watch('country_ids').includes(item.country_id))
     .map(item => ({
       value: item.id,
       label: item.name
@@ -63,18 +65,25 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
 
   useEffect(() => {
     if (watch('role') === USER_GROUPS.ORGANIZATION_ADMIN) {
-      setValue('country', '');
+      setValue('country_ids', '');
     }
   }, [role, setValue]);
 
   const onConfirm = handleSubmit(async (data) => {
-    const payload = {
-      attributes: {
-        ...data
-      }
-    };
-    console.log(payload);
+    if (initialData && initialData.id) {
+      dispatch(updateMfaSetting(initialData.id, data));
+    } else {
+      dispatch(createMfaSetting(data));
+    }
+    handleClose();
   });
+
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onConfirm();
+    }
+  };
 
   return (
     <Dialog
@@ -85,7 +94,7 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
       confirmLabel={translate('common.create')}
       size="xl"
     >
-      <Form>
+      <Form onKeyDown={(e) => handleFormSubmit(e)}>
         <CustomSelect
           aria-label="role"
           control={control}
@@ -100,7 +109,7 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
         {profile.type === USER_GROUPS.SUPER_ADMIN && (
           <CustomSelect
             control={control}
-            name="organization"
+            name="organizations"
             options={organizationOptions}
             rules={{ required: translate('survey.error.oranization') }}
             isMulti
@@ -115,7 +124,7 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
             {(role !== USER_GROUPS.ORGANIZATION_ADMIN && (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN)) && (
               <CustomSelect
                 control={control}
-                name="country"
+                name="country_ids"
                 options={countryOptions}
                 rules={{ required: translate('error.country') }}
                 isMulti
@@ -128,7 +137,7 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
             {role !== USER_GROUPS.ORGANIZATION_ADMIN && role !== USER_GROUPS.COUNTRY_ADMIN && profile.type !== USER_GROUPS.CLINIC_ADMIN && (
               <CustomSelect
                 control={control}
-                name="clinic"
+                name="clinic_ids"
                 options={clinicOptions}
                 rules={{ required: translate('error.clinic') }}
                 isDisabled={(profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) ? !country.length : false}
@@ -143,8 +152,8 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
         )}
         <Radio
           control={control}
-          label={translate('mfa.enforcement')}
-          name="mfa_enforcement"
+          label={translate('mfa.mfa_enforcement.label')}
+          name="attributes.mfa_enforcement"
           options={[
             {
               label: translate('mfa.enforcement.disable'),
@@ -162,14 +171,19 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
         />
         <Row>
           <Col md={6}>
-            <Input control={control} type="number" name="mfa_expiration_duration" label={translate('mfa.expiration.duration')} />
+            <Input
+              control={control}
+              type="number"
+              name="attributes.mfa_expiration_duration"
+              label={`${translate('mfa.mfa_expiration_duration.label')} - (${'mfa.second'})`}
+            />
           </Col>
           <Col md={6}>
             <Input
               control={control}
               type="number"
-              name="skip_mfa_setup_duration"
-              label={translate('skip.mfa.setup.duration')}
+              name="attributes.skip_mfa_setup_duration"
+              label={`${translate('mfa.skip_mfa_setup_duration.label')} - (${'mfa.second'})`}
             />
           </Col>
         </Row>
@@ -180,7 +194,8 @@ const CreateMfaPolicy = ({ show, handleClose }) => {
 
 CreateMfaPolicy.propTypes = {
   show: PropTypes.bool,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func,
+  initialData: PropTypes.object
 };
 
 export default CreateMfaPolicy;
