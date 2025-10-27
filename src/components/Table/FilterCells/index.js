@@ -13,6 +13,7 @@ import GenderFilterCell from './GenderFilterCell';
 import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 import UserGroupFilterCell from './UserGroupFilterCell';
 import ProvinceFilterCell from './ProvinceFilterCell';
+import ProfessionTypeFilterCell from './ProfessionTypeFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -27,7 +28,8 @@ const FilterCell = (props) => {
     column.name === 'treatment_status' || column.name === 'region' ||
     column.name === 'storage_used' || column.name === 'on_going_treatment' ||
     column.name === 'total_patient' || column.name === 'assigned_patient' ||
-    column.name === 'identity') {
+    column.name === 'identity' ||
+    column.name === 'profession_name') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'therapist_country') {
     return <CountryFilterCell {...props} />;
@@ -51,6 +53,8 @@ const FilterCell = (props) => {
     return <UserGroupFilterCell {...props} />;
   } else if (column.name === 'province') {
     return <ProvinceFilterCell {...props} />;
+  } else if (column.name === 'profession_type') {
+    return <ProfessionTypeFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

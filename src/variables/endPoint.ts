@@ -9,5 +9,6 @@ export const END_POINTS = {
   PROVINCE_BY_REGION: 'provinces-by-region',
   PHC_SERVICES: 'phc-services',
   PROVINCES_LIMITATION: 'provinces-limitation',
-  COUNT_THERAPIST_BY_CLINIC: 'clinic/therapist/count/by-clinic'
+  COUNT_THERAPIST_BY_CLINIC: 'clinic/therapist/count/by-clinic',
+  PROFESSION_LIST: 'profession/list'
 };
