@@ -126,7 +126,8 @@ const CreateExercise = ({ translate }) => {
         show_sets_reps: showSetsReps,
         sets: exercise.sets,
         reps: exercise.reps,
-        share_to_hi_library: exercise.share_to_hi_library
+        share_to_hi_library: exercise.share_to_hi_library,
+        share_with_phc_worker: exercise.share_with_phc_worker
       };
       if (_.isEmpty(editTranslation)) {
         setAdditionalFields(exercise.additional_fields);
@@ -742,6 +743,16 @@ const CreateExercise = ({ translate }) => {
                   <div className="sticky-btn d-flex justify-content-end">
                     <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
                       {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                        <>
+                          <Form.Group controlId="shareWithPhcWorker" className="mb-0 mr-4">
+                            <Form.Check
+                              name="share_with_phc_worker"
+                              label={translate('common.share_with_phc_worker')}
+                              checked={formFields.share_with_phc_worker}
+                              onChange={handleCheck}
+                              disabled={isTranslating}
+                            />
+                          </Form.Group>
                           <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
                             <Form.Check
                               name="share_to_hi_library"
@@ -752,6 +763,7 @@ const CreateExercise = ({ translate }) => {
                               disabled={isTranslating}
                             />
                           </Form.Group>
+                        </>
                       }
                       {enableRejectApprove() &&
                           <>

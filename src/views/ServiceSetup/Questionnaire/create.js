@@ -103,7 +103,8 @@ const CreateQuestionnaire = ({ translate }) => {
           title: questionnaire.title,
           description: questionnaire.description,
           include_at_the_start: questionnaire.include_at_the_start,
-          include_at_the_end: questionnaire.include_at_the_end
+          include_at_the_end: questionnaire.include_at_the_end,
+          share_with_phc_worker: questionnaire.share_with_phc_worker
           // share_to_hi_library: questionnaire.share_to_hi_library
         });
         setQuestions(questionnaire.questions);
@@ -554,6 +555,16 @@ const CreateQuestionnaire = ({ translate }) => {
                 </div>
                 <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
                   {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                    <>
+                      <Form.Group controlId="shareWithPhcWorker" className="mb-0 mr-4">
+                        <Form.Check
+                          name="share_with_phc_worker"
+                          label={translate('common.share_with_phc_worker')}
+                          checked={formFields.share_with_phc_worker}
+                          onChange={handleCheck}
+                          disabled={isTranslating}
+                        />
+                      </Form.Group>
                       <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
                         <Form.Check
                           name="share_to_hi_library"
@@ -564,6 +575,7 @@ const CreateQuestionnaire = ({ translate }) => {
                           disabled={isTranslating}
                         />
                       </Form.Group>
+                    </>
                   }
                   <Button
                     aria-label="Save"

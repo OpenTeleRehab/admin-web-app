@@ -96,7 +96,8 @@ const CreateEducationMaterial = ({ translate }) => {
     if (id && educationMaterial.id) {
       setFormFields({
         title: _.isEmpty(editTranslation) ? educationMaterial.title : editTranslation.title,
-        share_to_hi_library: educationMaterial.share_to_hi_library
+        share_to_hi_library: educationMaterial.share_to_hi_library,
+        share_with_phc_worker: educationMaterial.share_with_phc_worker
       });
       setShowFallbackText(!_.isEmpty(editTranslation));
       setMaterialFile(educationMaterial.file);
@@ -403,6 +404,16 @@ const CreateEducationMaterial = ({ translate }) => {
             <div className="sticky-btn d-flex justify-content-end">
               <div className="d-flex align-items-center py-2 px-3 questionnaire-save-cancel-wrapper">
                 {keycloak.hasRealmRole(USER_ROLES.SUPER_ADMIN) &&
+                  <>
+                    <Form.Group controlId="shareWithPhcWorker" className="mb-0 mr-4">
+                      <Form.Check
+                        name="share_with_phc_worker"
+                        label={translate('common.share_with_phc_worker')}
+                        checked={formFields.share_with_phc_worker}
+                        onChange={handleCheck}
+                        disabled={isTranslating}
+                      />
+                    </Form.Group>
                     <Form.Group controlId="shareToHiLibrary" className="mb-0 mr-4">
                       <Form.Check
                         name="share_to_hi_library"
@@ -413,6 +424,7 @@ const CreateEducationMaterial = ({ translate }) => {
                         disabled={isTranslating}
                       />
                     </Form.Group>
+                  </>
                 }
                 {enableRejectApprove() &&
                   <>
