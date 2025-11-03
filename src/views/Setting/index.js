@@ -43,7 +43,8 @@ import {
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
-  VIEW_SURVEY, VIEW_HEALTH_CONDITION
+  VIEW_SURVEY, VIEW_HEALTH_CONDITION,
+  VIEW_MFA_POLICY
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -60,6 +61,8 @@ import CreateAssistiveTechnology from './AssistiveTechnology/create';
 import CreateSurvey from './Survey/create';
 import Survey from './Survey';
 import HealthCondition from './HealthCondition';
+import MfaPolicy from './MfaPolicy';
+import CreateMfaPolicy from './MfaPolicy/create';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -100,6 +103,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_COLOR_SCHEME);
     } else if (hash.includes('#' + VIEW_SURVEY)) {
       setView(VIEW_SURVEY);
+    } else if (hash.includes('#' + VIEW_MFA_POLICY)) {
+      setView(VIEW_MFA_POLICY);
     } else if (hash.includes('#' + VIEW_HEALTH_CONDITION)) {
       setView(VIEW_HEALTH_CONDITION);
     } else {
@@ -161,6 +166,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_COUNTRY && keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY)) ||
                     (view === VIEW_CLINIC && keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC)) ||
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
+                    (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
                     (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
@@ -189,6 +195,7 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_ORGANIZATION && <CreateOrganization show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_ASSISTIVE_TECHNOLOGY && <CreateAssistiveTechnology show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_SURVEY && <CreateSurvey show={show} editId={editId} handleClose={handleClose} />}
+      {show && view === VIEW_MFA_POLICY && <CreateMfaPolicy show={show} handleClose={handleClose} />}
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
       <Nav variant="tabs" activeKey={view} className="mb-3">
@@ -304,6 +311,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_MFA_POLICY} eventKey={VIEW_MFA_POLICY}>
+              {translate('setting.mfa.policy')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -322,6 +336,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
     </>
   );
 };

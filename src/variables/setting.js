@@ -13,6 +13,7 @@ export const VIEW_ORGANIZATION = 'organization';
 export const VIEW_ASSISTIVE_TECHNOLOGY = 'assistive_technology';
 export const VIEW_COLOR_SCHEME = 'color_scheme';
 export const VIEW_SURVEY = 'survey';
+export const VIEW_MFA_POLICY = 'mfa_policy';
 export const VIEW_HEALTH_CONDITION = 'health_condition';
 
 export const SETTINGS = [
@@ -31,6 +32,7 @@ export const SETTINGS = [
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
   VIEW_SURVEY,
+  VIEW_MFA_POLICY,
   VIEW_HEALTH_CONDITION
 ];
 

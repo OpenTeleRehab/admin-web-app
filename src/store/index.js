@@ -39,6 +39,7 @@ import { superset } from 'store/superset/reducers';
 import { downloadTracker } from 'store/downloadTracker/reducers';
 import { healthConditionGroup } from 'store/healthConditionGroup/reducers';
 import { healthCondition } from 'store/healthCondition/reducers';
+import { mfaSetting } from 'store/mfaSetting/reducers';
 
 export const rootReducer = {
   auditLog,
@@ -75,7 +76,8 @@ export const rootReducer = {
   treatmentPlan,
   user,
   superset,
-  downloadTracker
+  downloadTracker,
+  mfaSetting
 };
 
 const devTool =
