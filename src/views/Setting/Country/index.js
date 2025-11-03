@@ -7,15 +7,22 @@ import BasicTable from 'components/Table/basic';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getLanguageName } from 'utils/language';
 import Dialog from 'components/Dialog';
-import { deleteCountry, getCountries } from 'store/country/actions';
+import { getCountries } from 'store/country/actions';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
+import { Spinner } from 'react-bootstrap';
+import { useInvalidate } from 'hooks/useInvalidate';
+import { useDelete } from 'hooks/useDelete';
 
 const Country = ({ translate, handleRowEdit }) => {
-  const countries = useSelector(state => state.country.countries);
+  const { data: countries, isLoading } = useList(END_POINTS.COUNTRY);
   const languages = useSelector(state => state.language.languages);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
+  const { mutate: deleteCountry } = useDelete();
+  const invalidate = useInvalidate();
 
   const columns = [
     { name: 'id', title: translate('common.id') },
@@ -24,6 +31,7 @@ const Country = ({ translate, handleRowEdit }) => {
     { name: 'phone_code', title: translate('common.phone_code') },
     { name: 'language', title: translate('common.language') },
     { name: 'therapist_limit', title: translate('common.therapist_limit') },
+    { name: 'phc_worker_limit', title: translate('common.phc_worker_limit') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -45,17 +53,22 @@ const Country = ({ translate, handleRowEdit }) => {
   };
 
   const handleDeleteDialogConfirm = () => {
-    dispatch(deleteCountry(deleteId)).then(result => {
-      if (result) {
+    deleteCountry(deleteId, {
+      onSuccess: () => {
+        invalidate(END_POINTS.COUNTRY_LIMITATION);
         handleDeleteDialogClose();
       }
     });
   };
 
+  if (isLoading) {
+    return <Spinner className="loading-icon" animation="border" variant="primary"/>;
+  }
+
   return (
     <div className="card">
       <BasicTable
-        rows={countries.map(country => {
+        rows={countries.data.map(country => {
           const action = (
             <>
               <EditAction onClick={() => handleRowEdit(country.id)} />
@@ -69,6 +82,7 @@ const Country = ({ translate, handleRowEdit }) => {
             phone_code: country.phone_code,
             language: getLanguageName(country.language_id, languages),
             therapist_limit: country.therapist_limit,
+            phc_worker_limit: country.phc_worker_limit,
             action
           };
         })}

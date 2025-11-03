@@ -13,6 +13,9 @@ import keycloak from 'utils/keycloak';
 import 'scss/app.scss';
 import SplashScreen from 'components/SplashScreen';
 import ConfigurationProvider from './ConfigurationProvider';
+import { DialogProvider } from 'components/V2/Dialog';
+import ReactQueryProvider from 'ReactQueryProvider';
+import { ToastProvider } from 'components/V2/Toast';
 
 const App = () => {
   return (
@@ -25,14 +28,20 @@ const App = () => {
       LoadingComponent={<SplashScreen />}
     >
       <Provider store={store}>
-        <ConfigurationProvider>
-          <LocalizeProvider store={store}>
-            <Router history={createBrowserHistory()}>
-              <RouteSwitch />
-              <Survey />
-            </Router>
-          </LocalizeProvider>
-        </ConfigurationProvider>
+        <ToastProvider>
+          <ReactQueryProvider>
+            <ConfigurationProvider>
+              <LocalizeProvider store={store}>
+                <DialogProvider>
+                  <Router history={createBrowserHistory()}>
+                    <RouteSwitch />
+                    <Survey />
+                  </Router>
+                </DialogProvider>
+              </LocalizeProvider>
+            </ConfigurationProvider>
+          </ReactQueryProvider>
+        </ToastProvider>
       </Provider>
     </ReactKeycloakProvider>
   );

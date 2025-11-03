@@ -1,0 +1,14 @@
+import React from 'react';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Translate } from 'react-localize-redux';
+import { FaTrashAlt } from 'react-icons/fa';
+
+export const DeleteAction = ({ className, ...rest }: any) => (
+  <OverlayTrigger
+    overlay={<Tooltip id="delete-tooltip"><Translate id="common.delete" /></Tooltip>}
+  >
+    <Button aria-label="Delete" variant="link" className={`text-danger p-0 ${className}`} {...rest}>
+      <FaTrashAlt size={20} />
+    </Button>
+  </OverlayTrigger>
+);

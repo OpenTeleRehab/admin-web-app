@@ -21,7 +21,8 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   const [errorName, setErrorName] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorSubDomainName, setErrorSubDomainName] = useState(false);
-  const [errorMaxNumberOfTherapist, setErrorMaxNumberOfTherapist] = useState(false);
+  const [errorMaxNumberOfTherapist, setErrorMaxNumberOfTherapist] = useState(null);
+  const [errorMaxNumberOfPhcWorker, setErrorMaxNumberOfPhcWorker] = useState(null);
   const [errorMaxOngoingTreatmentPlan, setErrorMaxOngoingTreatmentPlan] = useState(false);
   const [errorMaxSmsPerWeek, setErrorMaxSmsPerWeek] = useState(false);
 
@@ -30,7 +31,8 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     type: '',
     admin_email: '',
     sub_domain_name: '',
-    max_number_of_therapist: 0,
+    max_number_of_therapist: '',
+    max_number_of_phc_worker: '',
     max_ongoing_treatment_plan: 0,
     max_sms_per_week: 0
   });
@@ -49,6 +51,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         admin_email: organization.admin_email,
         sub_domain_name: organization.sub_domain_name,
         max_number_of_therapist: organization.max_number_of_therapist,
+        max_number_of_phc_worker: organization.max_number_of_phc_worker,
         max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
         max_sms_per_week: organization.max_sms_per_week
       });
@@ -96,16 +99,31 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
 
     if (formFields.max_number_of_therapist === '') {
       canSave = false;
-      setErrorMaxNumberOfTherapist(true);
+      setErrorMaxNumberOfTherapist('error.organization.max_number_of_therapist');
+    } else if (Number(formFields.max_number_of_therapist) <= 0) {
+      canSave = false;
+      setErrorMaxNumberOfTherapist('error.organization.max_number_of_therapist.equal_to.zero');
     } else {
-      setErrorMaxNumberOfTherapist(false);
+      setErrorMaxNumberOfTherapist(null);
     }
-    if (formFields.max_ongoing_treatment_plan === '') {
+
+    if (formFields.max_number_of_phc_worker === '') {
+      canSave = false;
+      setErrorMaxNumberOfPhcWorker('error.organization.max_number_of_phc_worker');
+    } else if (Number(formFields.max_number_of_therapist) <= 0) {
+      canSave = false;
+      setErrorMaxNumberOfPhcWorker('error.organization.max_number_of_phc_worker.equal_to.zero');
+    } else {
+      setErrorMaxNumberOfPhcWorker(null);
+    }
+
+    if (!formFields.max_ongoing_treatment_plan) {
       canSave = false;
       setErrorMaxOngoingTreatmentPlan(true);
     } else {
       setErrorMaxOngoingTreatmentPlan(false);
     }
+
     if (formFields.max_sms_per_week === '') {
       canSave = false;
       setErrorMaxSmsPerWeek(true);
@@ -114,9 +132,13 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     }
 
     if (canSave) {
+      const { organization_name: orgName, ...rest } = formFields;
+
       const payload = {
-        ...formFields
+        ...rest,
+        name: orgName
       };
+
       if (editId) {
         dispatch(updateOrganization(editId, payload)).then(result => {
           if (result) {
@@ -222,7 +244,25 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
               value={formFields.max_number_of_therapist}
             />
             <Form.Control.Feedback type="invalid">
-              {translate('error.organization.max_number_of_therapist')}
+              {translate(errorMaxNumberOfTherapist || '')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="maxNumberOfPhcWorker">
+            <Form.Label>{translate('organization.max_number_of_phc_worker')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Form.Control
+              name="max_number_of_phc_worker"
+              onChange={handleChange}
+              type="number"
+              min={0}
+              placeholder={translate('placeholder.organization.max_number_of_phc_worker')}
+              isInvalid={errorMaxNumberOfPhcWorker}
+              value={formFields.max_number_of_phc_worker}
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate(errorMaxNumberOfPhcWorker || '')}
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>

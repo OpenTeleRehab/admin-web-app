@@ -69,7 +69,8 @@ export const USER_ROLES = {
   MANAGE_SURVEY: 'manage_survey',
   DOWNLOAD_SURVEY: 'download_survey',
   MANAGE_HEALTH_CONDITION: 'manage_health_condition',
-  MANAGE_MFA_POLICY: 'manage_mfa_policy'
+  MANAGE_MFA_POLICY: 'manage_mfa_policy',
+  MANAGE_REGION: 'manage_region'
 };
 
 export const SETTING_ROLES = [

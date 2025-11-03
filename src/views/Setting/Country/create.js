@@ -1,178 +1,126 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
-import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
-import { createCountry, updateCountry, getDefinedCountries } from 'store/country/actions';
-import { Clinic as clinicService } from 'services/clinic';
-import Select from 'react-select';
-import scssColors from '../../../scss/custom.scss';
-import _ from 'lodash';
+import { getDefinedCountries } from 'store/country/actions';
+import { useForm } from 'react-hook-form';
+import Input from 'components/V2/Form/Input';
+import CustomSelect from 'components/V2/Form/Select';
+import { useCreate } from 'hooks/useCreate';
+import useToast from 'components/V2/Toast';
+import { useTranslate } from 'hooks/useTranslate';
+import { useOne } from 'hooks/useOne';
+import { useUpdate } from 'hooks/useUpdate';
+import { END_POINTS } from 'variables/endPoint';
+import { showSpinner } from 'store/spinnerOverlay/actions';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 const CreateCountry = ({ show, editId, handleClose }) => {
-  const localize = useSelector((state) => state.localize);
-  const translate = getTranslate(localize);
+  const translate = useTranslate();
   const dispatch = useDispatch();
-
-  const [errorTherapistLimit, setErrorTherapistLimit] = useState(false);
-  const [errorName, setErrorName] = useState(false);
-  const languages = useSelector(state => state.language.languages);
-  const countries = useSelector(state => state.country.countries);
-  const definedCountries = useSelector(state => state.country.definedCountries);
-  const orgTherapistLimit = useSelector(state => state.organization.orgTherapistLimit);
-  const [totalTherapistLimitByCountry, setTotalTherapistLimitByCountry] = useState(0);
-  const [errorTherapistLimitMessage, setErrorTherapistLimitMessage] = useState('');
-  const [errorOrgTherapistLimitMessage, setErrorOrgTherapistLimitMessage] = useState('');
-  const [overOrgLimit, setOverOrgLimit] = useState(false);
-
-  const [formFields, setFormFields] = useState({
-    name: '',
-    country_code: '',
-    iso_code: '',
-    phone_code: '',
-    language: '',
-    therapist_limit: 50
+  const invalidate = useInvalidate();
+  const { showToast } = useToast();
+  const { control, handleSubmit, watch, reset, setValue } = useForm({
+    defaultValues: {
+      name: '',
+      language_id: '',
+      therapist_limit: 50
+    }
   });
+  const { data: country } = useOne(END_POINTS.COUNTRY, editId);
+  const selectedCountry = watch(END_POINTS.COUNTRY);
+  const { data: orgLimitation } = useOne(
+    END_POINTS.ORGANIZATION_LIMITATION,
+    null,
+    { enabled: true }
+  );
+  const { data: countryLimitation } = useOne(
+    END_POINTS.COUNTRY_LIMITATION,
+    null,
+    {
+      params: { country_id: editId },
+      enabled: !!editId
+    }
+  );
+  const { mutate: createCountry } = useCreate(END_POINTS.COUNTRY);
+  const { mutate: updateCountry } = useUpdate(END_POINTS.COUNTRY);
+  const languages = useSelector(state => state.language.languages);
+  const definedCountries = useSelector(state => state.country.definedCountries);
 
   useEffect(() => {
     dispatch(getDefinedCountries());
   }, [dispatch]);
 
   useEffect(() => {
-    if (editId && countries.length) {
-      const country = countries.find(country => country.id === editId);
-      setFormFields({
-        name: country.name,
-        country_code: country.iso_code,
-        iso_code: country.iso_code,
-        phone_code: country.phone_code,
-        language: country.language_id,
-        therapist_limit: country.therapist_limit
-      });
+    const country = definedCountries.find((c) => c.iso_code === selectedCountry);
 
-      clinicService.countTherapistLimitByCountry(country.id).then(res => {
-        if (res.data) {
-          setTotalTherapistLimitByCountry(res.data.total);
-        }
-      });
+    if (country) {
+      setValue('iso_code', country.iso_code, { shouldValidate: true });
+      setValue('phone_code', country.phone_code, { shouldValidate: true });
+      setValue('name', country.name, { shouldValidate: true });
     }
-  }, [editId, countries]);
+  }, [selectedCountry, definedCountries, setValue]);
 
   useEffect(() => {
-    if (countries.length) {
-      if (editId) {
-        const otherCountries = _.filter(countries, country => country.id !== editId);
-        const totalTherapistLimit = _.sumBy(otherCountries, country => {
-          return country.therapist_limit;
-        });
-        const total = parseInt(totalTherapistLimit) + parseInt(formFields.therapist_limit);
-        if (total > parseInt(orgTherapistLimit)) {
-          setOverOrgLimit(true);
-        } else {
-          setOverOrgLimit(false);
-        }
-      } else {
-        const totalTherapistLimitOfAllCountry = _.sumBy(countries, country => {
-          return country.therapist_limit;
-        });
-        const total = parseInt(totalTherapistLimitOfAllCountry) + parseInt(formFields.therapist_limit);
-        if (total === parseInt(orgTherapistLimit)) {
-          setOverOrgLimit(false);
-        } else if (total > parseInt(orgTherapistLimit)) {
-          setOverOrgLimit(true);
-        } else {
-          setOverOrgLimit(false);
-        }
-      }
-    }
-  }, [countries, editId, formFields.therapist_limit, orgTherapistLimit]);
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormFields({ ...formFields, [name]: value });
-  };
-
-  const handleCountryChange = (value) => {
-    const definedCountry = definedCountries.find(definedCountry => definedCountry.iso_code === value);
-    if (definedCountry) {
-      setFormFields({
-        ...formFields,
-        iso_code: definedCountry.iso_code,
-        phone_code: definedCountry.phone_code,
-        country_code: definedCountry.iso_code,
-        name: definedCountry.name
+    if (editId && country) {
+      reset({
+        ...country,
+        country: country.iso_code,
+        language: country.language_id
       });
     }
-  };
+  }, [editId, country]);
 
-  const handleSingleSelectChange = (key, value) => {
-    setFormFields({ ...formFields, [key]: value });
-  };
+  const onSubmit = handleSubmit(async (data) => {
+    dispatch(showSpinner(true));
+    if (editId) {
+      updateCountry({ id: editId, payload: data }, {
+        onSuccess: async (res) => {
+          dispatch(showSpinner(false));
+          invalidate(END_POINTS.ORGANIZATION_LIMITATION);
+          invalidate(END_POINTS.COUNTRY_LIMITATION);
+          showToast({
+            title: translate('success_message.country_update'),
+            message: translate(res.data.message),
+            color: 'success'
+          });
+          handleClose();
+        },
+        onError: () => {
+          invalidate(END_POINTS.ORGANIZATION_LIMITATION);
+          invalidate(END_POINTS.COUNTRY_LIMITATION);
+          dispatch(showSpinner(false));
+        }
+      });
 
-  const handleConfirm = () => {
-    let canSave = true;
-
-    if (formFields.country_code === '') {
-      canSave = false;
-      setErrorName(true);
-    } else {
-      setErrorName(false);
+      return;
     }
 
-    const pattern = new RegExp(/^[0-9\b]+$/);
-    if (formFields.therapist_limit === '') {
-      canSave = false;
-      setErrorTherapistLimit(true);
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit'));
-    } else if (!pattern.test(formFields.therapist_limit)) {
-      canSave = false;
-      setErrorTherapistLimit(true);
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit.format'));
-    } else if (editId && parseInt(formFields.therapist_limit) < parseInt(totalTherapistLimitByCountry)) {
-      canSave = false;
-      setErrorTherapistLimit(true);
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit.lessthan.theraist_limit_clinic'));
-    } else if (overOrgLimit) {
-      canSave = false;
-      setErrorOrgTherapistLimitMessage(true);
-      setErrorOrgTherapistLimitMessage(translate('error.country.therapist_limit.more_than.org_therapist_limit'));
-    } else {
-      setErrorTherapistLimit(false);
-    }
-
-    if (canSave) {
-      if (editId) {
-        dispatch(updateCountry(editId, formFields)).then(result => {
-          if (result) {
-            handleClose();
-          }
+    createCountry(data, {
+      onSuccess: async (res) => {
+        dispatch(showSpinner(false));
+        invalidate(END_POINTS.ORGANIZATION_LIMITATION);
+        invalidate(END_POINTS.COUNTRY_LIMITATION);
+        showToast({
+          title: translate('success_message.country_add'),
+          message: translate(res.data.message),
+          color: 'success'
         });
-      } else {
-        dispatch(createCountry(formFields)).then(result => {
-          if (result) {
-            handleClose();
-          }
-        });
+        handleClose();
+      },
+      onError: () => {
+        invalidate(END_POINTS.ORGANIZATION_LIMITATION);
+        invalidate(END_POINTS.COUNTRY_LIMITATION);
+        dispatch(showSpinner(false));
       }
-    }
-  };
-
-  const customSelectStyles = {
-    option: (provided) => ({
-      ...provided,
-      color: 'black',
-      backgroundColor: 'white',
-      '&:hover': {
-        backgroundColor: scssColors.infoLight
-      }
-    })
-  };
+    });
+  });
 
   const handleFormSubmit = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleConfirm();
+      onSubmit();
     }
   };
 
@@ -181,81 +129,110 @@ const CreateCountry = ({ show, editId, handleClose }) => {
       show={show}
       title={translate(editId ? 'country.edit' : 'country.new')}
       onCancel={handleClose}
-      onConfirm={handleConfirm}
+      onConfirm={onSubmit}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
-      <Form onKeyPress={(e) => handleFormSubmit(e)}>
+      <Form onKeyDown={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Form.Group as={Col} controlId="name">
-            <Form.Label>{translate('country.name')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Select
-              placeholder={translate('placeholder.country')}
-              classNamePrefix="filter"
-              className={errorName ? 'is-invalid' : ''}
-              value={definedCountries.filter(option => option.iso_code === formFields.country_code)}
-              getOptionLabel={option => option.name}
-              options={definedCountries}
-              onChange={(e) => handleCountryChange(e.iso_code)}
-              styles={customSelectStyles}
-              aria-label="Country"
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.country.name')}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} controlId="patient">
-            <Form.Label>{translate('country.iso_code')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Form.Control
-              name="iso_code"
-              placeholder={translate('placeholder.country.iso_code')}
-              value={formFields.iso_code}
-              disabled={true}
-            />
-          </Form.Group>
-        </Form.Row>
-        <Form.Row>
-          <Form.Group as={Col} controlId="phone_code">
-            <Form.Label>{translate('country.phone_code')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Form.Control
-              name="phone_code"
-              type="text"
-              placeholder={translate('placeholder.country.phone_code')}
-              value={formFields.phone_code}
-              disabled={true}
-            />
-          </Form.Group>
-          <Form.Group as={Col} controlId="formLanguage">
-            <Form.Label>{translate('common.language')}</Form.Label>
-            <Select
-              classNamePrefix="filter"
-              value={languages.filter(option => option.id === parseInt(formFields.language))}
-              getOptionLabel={option => option.name}
-              options={languages}
-              onChange={(e) => handleSingleSelectChange('language', e.id)}
-              styles={customSelectStyles}
-              aria-label="Language"
-            />
-          </Form.Group>
-        </Form.Row>
-        <Form.Group controlId="formTherapistLimit">
-          <Form.Label>{translate('common.therapist_limit')}</Form.Label>
-          <span className="text-dark ml-1">*</span>
-          <Form.Control
-            name="therapist_limit"
-            onChange={handleChange}
-            type="text"
-            placeholder={translate('placeholder.country.therapist_limit')}
-            isInvalid={errorTherapistLimit || errorOrgTherapistLimitMessage}
-            value={formFields.therapist_limit}
+          <CustomSelect
+            as={Col}
+            control={control}
+            name='country'
+            rules={{ required: translate('error.country.name') }}
+            label={translate('country.name')}
+            options={definedCountries.map((c) => ({ label: c.name, value: c.iso_code }))}
+            placeholder={translate('placeholder.country')}
           />
-          <Form.Control.Feedback type="invalid">
-            { errorTherapistLimitMessage }
-            { errorOrgTherapistLimitMessage }
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Input
+            as={Col}
+            control={control}
+            name='iso_code'
+            label={translate('country.iso_code')}
+            disabled
+            rules={{ required: true }}
+            placeholder={translate('placeholder.country.iso_code')}
+          />
+        </Form.Row>
+        <Form.Row>
+          <Input
+            as={Col}
+            control={control}
+            name='phone_code'
+            label={translate('country.phone_code')}
+            disabled
+            rules={{ required: true }}
+            placeholder={translate('placeholder.country.phone_code')}
+          />
+          <CustomSelect
+            as={Col}
+            control={control}
+            name='language_id'
+            label={translate('common.language')}
+            options={languages.map((lang) => ({ label: lang.name, value: lang.id }))}
+          />
+        </Form.Row>
+        <Input
+          control={control}
+          name='therapist_limit'
+          rules={{
+            required: translate('error.organization.max_number_of_therapist'),
+            validate: (value) => {
+              const numValue = Number(value);
+              const orgLimit = orgLimitation ? orgLimitation.remaining_therapist_limit : 0;
+              const countryUsed = countryLimitation ? countryLimitation.therapist_limit_used : 0;
+              const exceedsOrgLimit = editId ? numValue > orgLimit + country.therapist_limit : numValue > orgLimit;
+
+              if (value <= 0) {
+                return translate('error.country.therapist_limit.equal_to.zero');
+              }
+
+              if (exceedsOrgLimit) {
+                return translate('error.country.therapist_limit.more_than.org_therapist_limit');
+              }
+
+              const belowUsedLimit = editId && numValue < countryUsed;
+
+              if (belowUsedLimit) {
+                return translate('error.country.therapist_limit.lessthan.therapist_limit_clinic');
+              }
+
+              return true;
+            }
+          }}
+          label={translate('common.therapist_limit')}
+          placeholder={translate('placeholder.country.therapist_limit')}
+        />
+        <Input
+          control={control}
+          name='phc_worker_limit'
+          rules={{
+            required: translate('error.organization.max_number_of_phc_worker'),
+            validate: (value) => {
+              const numValue = Number(value);
+              const orgLimit = orgLimitation ? orgLimitation.remaining_phc_worker_limit : 0;
+              const countryUsed = countryLimitation ? countryLimitation.phc_worker_limit_used : 0;
+              const exceedsOrgLimit = editId ? numValue > orgLimit + country.phc_worker_limit : numValue > orgLimit;
+
+              if (value <= 0) {
+                return translate('error.country.phc_worker_limit.equal_to.zero');
+              }
+
+              if (exceedsOrgLimit) {
+                return translate('error.country.phc_worker_limit.more_than.org_phc_worker_limit');
+              }
+
+              const belowUsedLimit = editId && numValue < countryUsed;
+
+              if (belowUsedLimit) {
+                return translate('error.country.phc_worker_limit.lessthan.phc_worker_limit_clinic');
+              }
+
+              return true;
+            }
+          }}
+          label={translate('common.phc_worker_limit')}
+          placeholder={translate('placeholder.country.phc_worker_limit')}
+        />
       </Form>
     </Dialog>
   );

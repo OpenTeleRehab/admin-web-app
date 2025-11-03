@@ -43,8 +43,10 @@ import {
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
-  VIEW_SURVEY, VIEW_HEALTH_CONDITION,
-  VIEW_MFA_POLICY
+  VIEW_SURVEY,
+  VIEW_HEALTH_CONDITION,
+  VIEW_MFA_POLICY,
+  VIEW_REGION
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -63,6 +65,9 @@ import Survey from './Survey';
 import HealthCondition from './HealthCondition';
 import MfaPolicy from './MfaPolicy';
 import CreateMfaPolicy from './MfaPolicy/create';
+import useDialog from 'components/V2/Dialog';
+import CreateRegion from './Region/_Partials/createOrEdit';
+import Region from './Region';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -73,6 +78,7 @@ const Setting = ({ translate }) => {
   const [show, setShow] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [editId, setEditId] = useState();
+  const { openDialog } = useDialog();
 
   useEffect(() => {
     if (hash.includes('#' + VIEW_TRANSLATION)) {
@@ -107,6 +113,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_MFA_POLICY);
     } else if (hash.includes('#' + VIEW_HEALTH_CONDITION)) {
       setView(VIEW_HEALTH_CONDITION);
+    } else if (hash.includes('#' + VIEW_REGION)) {
+      setView(VIEW_REGION);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -121,7 +129,23 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    setShow(true);
+    if (view !== VIEW_REGION) {
+      setShow(true);
+
+      return;
+    }
+
+    switch (view) {
+      case VIEW_REGION:
+        openDialog({
+          title: translate('region.new.title'),
+          content: <CreateRegion />,
+          props: { size: 'lg' }
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   const handleEdit = (id) => {
@@ -168,6 +192,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
                     (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
+                    (view === VIEW_REGION && keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
                     (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
                     <Button variant="primary" onClick={handleShow}>
@@ -318,6 +343,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_REGION} eventKey={VIEW_REGION}>
+              {translate('setting.region')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -337,6 +369,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
     </>
   );
 };
