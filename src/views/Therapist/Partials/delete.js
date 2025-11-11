@@ -184,7 +184,7 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
           {(patientTherapists.length === 0 || isLastPatient || (isTransfer === false && confirmTransfer === false)) &&
             <p>{translate('common.delete_confirmation_message')}</p>
           }
-          { confirmTransfer &&
+          {confirmTransfer &&
             <>
               <p>{translate('common.transfer_confirmation_message')}</p>
               {!!numberOfOnGoingTreatmentPlans &&
@@ -210,33 +210,28 @@ const DeleteTherapist = ({ setShowDeleteDialog, chatRooms, patientTherapists, th
             </>
           }
         </Modal.Body>
-        <Modal.Footer className="justify-content-between">
-          <div className="action">
-            {isLastPatient || patientTherapists.length === 0 || isTransfer === false ? (
-              <Button
-                className="ml-1"
-                variant="primary"
-                onClick={handleDeleteConfirm}
-              >
-                <Translate id='common.yes'/>
-              </Button>
-            ) : (
-              <Button
-                className="ml-1"
-                variant="primary"
-                onClick={() => isTransfer ? handleNextPatient(patientTherapists[currentIndex].id) : handleConfirmTransfer()}
-              >
-                <Translate id={ isTransfer ? 'common.transfer' : 'common.yes'}/>
-              </Button>
-            )}
+        <Modal.Footer>
+          {isLastPatient || patientTherapists.length === 0 || isTransfer === false ? (
             <Button
-              className="ml-1"
-              variant="outline-dark"
-              onClick={ confirmTransfer ? handleNotTransfer : handleDeleteConfirmClose}
+              variant="primary"
+              onClick={handleDeleteConfirm}
             >
-              <Translate id={(isLastPatient || patientTherapists.length === 0 || confirmTransfer || !isTransfer) ? 'common.no' : 'common.close'} />
+              <Translate id='common.yes'/>
             </Button>
-          </div>
+          ) : (
+            <Button
+              variant="primary"
+              onClick={() => isTransfer ? handleNextPatient(patientTherapists[currentIndex].id) : handleConfirmTransfer()}
+            >
+              <Translate id={isTransfer ? 'common.transfer' : 'common.yes'}/>
+            </Button>
+          )}
+          <Button
+            variant="outline-dark"
+            onClick={confirmTransfer ? handleNotTransfer : handleDeleteConfirmClose}
+          >
+            <Translate id={(isLastPatient || patientTherapists.length === 0 || confirmTransfer || !isTransfer) ? 'common.no' : 'common.close'}/>
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
