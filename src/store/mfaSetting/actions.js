@@ -32,6 +32,7 @@ export const createMfaSetting = (payload) => async (dispatch) => {
   if (res.success) {
     dispatch(showSpinner(false));
     dispatch(getMfaSettings());
+    dispatch(getMfaSettingsUserResources());
     dispatch(showSuccessNotification('toast_title.edit_mfa_setting', res.message));
     return res.data;
   } else {
@@ -47,11 +48,24 @@ export const updateMfaSetting = (id, payload) => async (dispatch) => {
   if (res.success) {
     dispatch(showSpinner(false));
     dispatch(getMfaSettings());
+    dispatch(getMfaSettingsUserResources());
     dispatch(showSuccessNotification('toast_title.edit_mfa_setting', res.message));
     return res.data;
   } else {
     dispatch(showSpinner(false));
     dispatch(showErrorNotification('toast_title.edit_mfa_setting', res.message));
     return false;
+  }
+};
+
+export const getMfaSettingsUserResources = () => async dispatch => {
+  const res = await MfaSetting.getMfaSettingsUserResources();
+  if (res.success) {
+    dispatch(mutation.getMfaSettingsUserResourcesSuccess(res.data));
+    return res.info;
+  } else {
+    if (res.message) {
+      dispatch(showErrorNotification('toast_title.error_message', res.message));
+    }
   }
 };

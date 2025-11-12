@@ -3,6 +3,12 @@ const getMfaSettingsSuccess = (data) => ({
   data
 });
 
+const getMfaSettingsUserResourcesSuccess = (data) => ({
+  type: 'GET_USER_MFA_ATTRIBUTES_SUCCESS',
+  data
+});
+
 export const mutation = {
-  getMfaSettingsSuccess
+  getMfaSettingsSuccess,
+  getMfaSettingsUserResourcesSuccess
 };

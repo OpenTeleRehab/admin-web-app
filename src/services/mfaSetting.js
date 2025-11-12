@@ -41,8 +41,21 @@ const updateMfaSetting = (id, payload) => {
     });
 };
 
+const getMfaSettingsUserResources = () => {
+  return axios.get(`${endPoint}/user-resources`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const MfaSetting = {
   getMfaSettings,
   createMfaSetting,
-  updateMfaSetting
+  updateMfaSetting,
+  getMfaSettingsUserResources
 };

@@ -1,3 +1,4 @@
 export const initialState = {
-  mfaSettings: []
+  mfaSettings: [],
+  mfaUserResources: []
 };

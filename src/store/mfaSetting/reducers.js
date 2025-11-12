@@ -7,6 +7,11 @@ export const mfaSetting = (state = initialState, action) => {
         mfaSettings: action.data,
         loading: false
       });
+    case 'GET_USER_MFA_ATTRIBUTES_SUCCESS':
+      return Object.assign({}, state, {
+        mfaUserResources: action.data,
+        loading: false
+      });
     default:
       return state;
   }

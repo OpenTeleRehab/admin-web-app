@@ -36,6 +36,7 @@ const Radio = ({ control, name, label, rules, options = [], ...props }) => {
                   checked={field.value === opt.value}
                   onChange={() => field.onChange(opt.value)}
                   isInvalid={!!fieldState.error}
+                  disabled={!!opt.disabled}
                 />
               );
             })}

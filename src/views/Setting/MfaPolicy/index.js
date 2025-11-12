@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMfaSettings } from 'store/mfaSetting/actions';
+import { getMfaSettings, getMfaSettingsUserResources } from 'store/mfaSetting/actions';
 import PropTypes from 'prop-types';
 import { Translate } from 'react-localize-redux';
 import { useJobStatuses } from 'hook/useJobStatus';
@@ -47,6 +47,7 @@ const MfaPolicy = ({ translate }) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getMfaSettings());
+      dispatch(getMfaSettingsUserResources());
     }, 500);
   }, [dispatch]);
 
