@@ -314,13 +314,13 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
 
     if (canSave) {
       if (editId) {
-        dispatch(updateSurvey(editId, { ...formFields, questionnaire: JSON.stringify(questionnaire), lang: language })).then(result => {
+        dispatch(updateSurvey(editId, { ...formFields, questionnaire, lang: language })).then(result => {
           if (result) {
             handleClose();
           }
         });
       } else {
-        dispatch(createSurvey({ ...formFields, questionnaire: JSON.stringify({ ...questionnaire, is_survey: true }), lang: language })).then(result => {
+        dispatch(createSurvey({ ...formFields, questionnaire: { ...questionnaire, is_survey: true }, lang: language })).then(result => {
           if (result) {
             handleClose();
           }
