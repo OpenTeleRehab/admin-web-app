@@ -12,6 +12,7 @@ import TermAndCondition from 'views/Setting/TermAndCondition';
 import PrivacyPolicy from 'views/Setting/PrivacyPolicy';
 import SystemLimit from 'views/Setting/SystemLimit';
 import Clinic from 'views/Setting/Clinic';
+import PhcService from 'views/Setting/PhcService';
 import Profession from 'views/Setting/Profession';
 import Language from 'views/Setting/Language';
 import StaticPage from 'views/Setting/StaticPage';
@@ -47,7 +48,8 @@ import {
   VIEW_HEALTH_CONDITION,
   VIEW_MFA_POLICY,
   VIEW_REGION,
-  VIEW_PROVINCE
+  VIEW_PROVINCE,
+  VIEW_PHC_SERVICE
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -71,6 +73,7 @@ import CreateRegion from './Region/_Partials/createOrEdit';
 import CreateProvince from './Province/_Partials/createOrEdit';
 import Region from './Region';
 import Province from './Province';
+import CreateEditPhcService from './PhcService/_Partials/createEdit';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -94,6 +97,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_SYSTEM_LIMIT);
     } else if (hash.includes('#' + VIEW_CLINIC)) {
       setView(VIEW_CLINIC);
+    } else if (hash.includes('#' + VIEW_PHC_SERVICE)) {
+      setView(VIEW_PHC_SERVICE);
     } else if (hash.includes('#' + VIEW_PROFESSION)) {
       setView(VIEW_PROFESSION);
     } else if (hash.includes('#' + VIEW_LANGUAGE)) {
@@ -134,7 +139,7 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    if (view !== VIEW_REGION && view !== VIEW_PROVINCE) {
+    if (view !== VIEW_REGION && view !== VIEW_PROVINCE && view !== VIEW_PHC_SERVICE) {
       setShow(true);
 
       return;
@@ -153,6 +158,12 @@ const Setting = ({ translate }) => {
           title: translate('province.new'),
           content: <CreateProvince />,
           props: { size: 'lg' }
+        });
+        break;
+      case VIEW_PHC_SERVICE:
+        openDialog({
+          title: translate('phc_service.new'),
+          content: <CreateEditPhcService />
         });
         break;
       default:
@@ -201,6 +212,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_PRIVACY_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
                     (view === VIEW_COUNTRY && keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY)) ||
                     (view === VIEW_CLINIC && keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC)) ||
+                    (view === VIEW_PHC_SERVICE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE)) ||
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
                     (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
@@ -279,10 +291,24 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_PROVINCE} eventKey={VIEW_PROVINCE}>
+              {translate('setting.province')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_CLINIC} eventKey={VIEW_CLINIC}>
               {translate('setting.clinics')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_PHC_SERVICE} eventKey={VIEW_PHC_SERVICE}>
+              {translate('setting.phc_service')}
             </Nav.Link>
           </Nav.Item>
         )}
@@ -363,13 +389,6 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && (
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.SETTING_PROVINCE} eventKey={VIEW_PROVINCE}>
-              {translate('setting.province')}
-            </Nav.Link>
-          </Nav.Item>
-        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -378,6 +397,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.VIEW_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TERM_CONDITION)) && view === VIEW_TERM_AND_CONDITION && <TermAndCondition handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SYSTEM_LIMIT) && view === VIEW_SYSTEM_LIMIT && <SystemLimit /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && view === VIEW_CLINIC && <Clinic handleRowEdit={handleEdit} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE) && view === VIEW_PHC_SERVICE && <PhcService /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION) && view === VIEW_PROFESSION && <Profession handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.VIEW_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PRIVACY_POLICY)) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }

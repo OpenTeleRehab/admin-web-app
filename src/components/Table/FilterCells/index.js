@@ -12,6 +12,7 @@ import NumberFilterCell from './NumberFilterCell';
 import GenderFilterCell from './GenderFilterCell';
 import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 import UserGroupFilterCell from './UserGroupFilterCell';
+import ProvinceFilterCell from './ProvinceFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -25,7 +26,8 @@ const FilterCell = (props) => {
     column.name === 'next_appointment' || column.name === 'treatment_plan' ||
     column.name === 'treatment_status' || column.name === 'region' ||
     column.name === 'storage_used' || column.name === 'on_going_treatment' ||
-    column.name === 'total_patient' || column.name === 'assigned_patient') {
+    column.name === 'total_patient' || column.name === 'assigned_patient' ||
+    column.name === 'identity') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'therapist_country') {
     return <CountryFilterCell {...props} />;
@@ -39,7 +41,7 @@ const FilterCell = (props) => {
     return <ClinicFilterCell {...props} />;
   } else if (column.name === 'profession') {
     return <ProfessionFilterCell {...props} />;
-  } else if (column.name === 'age' || column.name === 'limit_patient') {
+  } else if (column.name === 'age' || column.name === 'limit_patient' || column.name === 'phc_worker_limit') {
     return <NumberFilterCell {...props} />;
   } else if (column.name === 'gender') {
     return <GenderFilterCell {...props} />;
@@ -47,6 +49,8 @@ const FilterCell = (props) => {
     return <AssistiveTechnologyFilterCell {...props} />;
   } else if (column.name === 'user_group') {
     return <UserGroupFilterCell {...props} />;
+  } else if (column.name === 'province') {
+    return <ProvinceFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

@@ -27,6 +27,7 @@ export const SETTING_TERM_AND_CONDITION = SETTING + '#term_and_condition';
 export const SETTING_PRIVACY_POLICY = SETTING + '#privacy_policy';
 export const SETTING_SYSTEM_LIMIT = SETTING + '#system_limit';
 export const SETTING_CLINIC = SETTING + '#clinic';
+export const SETTING_PHC_SERVICE = SETTING + '#phc_service';
 export const SETTING_PROFESSION = SETTING + '#profession';
 export const SETTING_STATIC_PAGE = SETTING + '#static_page';
 export const SETTING_GUIDANCE_PAGE = SETTING + '#guidance_page';
