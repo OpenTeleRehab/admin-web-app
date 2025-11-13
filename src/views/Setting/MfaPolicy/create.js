@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dialog from 'components/Dialog';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
@@ -22,24 +22,30 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const organizations = useSelector((state) => state.organization.organizations);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
+  const mfaUserResources = useSelector(state => state.mfaSetting.mfaUserResources);
   const dispatch = useDispatch();
   const { control, watch, handleSubmit, setValue } = useForm({ defaultValues: initialData || {} });
   const role = watch('role');
   const country = watch('country_ids') || [];
-  const clinicOptions = (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => watch('country_ids') && watch('country_ids').includes(item.country_id))
-    .map(item => ({
+  const [clinicOptions, setClinicOptions] = useState(
+    (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => watch('country_ids') && watch('country_ids').includes(item.country_id))
+      .map(item => ({
+        value: item.id,
+        label: item.name
+      })) : profile.type === USER_GROUPS.COUNTRY_ADMIN ? clinics.filter(item => profile.country_id.includes(item.country_id))
+      .map(item => ({
+        value: item.id,
+        label: item.name
+      })) : profile.clinic_id
+  );
+  const [countryOptions, setCountryOptions] = useState(
+    countries.map(item => ({
       value: item.id,
       label: item.name
-    })) : profile.type === USER_GROUPS.COUNTRY_ADMIN ? clinics.filter(item => profile.country_id.includes(item.country_id))
-    .map(item => ({
-      value: item.id,
-      label: item.name
-    })) : profile.clinic_id;
+    }))
+  );
+
   const organizationOptions = organizations.map(item => ({
-    value: item.id,
-    label: item.name
-  }));
-  const countryOptions = countries.map(item => ({
     value: item.id,
     label: item.name
   }));
@@ -64,10 +70,69 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         : MFA_ROLES;
 
   useEffect(() => {
-    if (watch('role') === USER_GROUPS.ORGANIZATION_ADMIN) {
-      setValue('country_ids', '');
+    if (profile.type === USER_GROUPS.COUNTRY_ADMIN) {
+      setValue('country_ids', profile.country_id ? [Number(profile.country_id)] : []);
+    } else if (profile.type === USER_GROUPS.CLINIC_ADMIN) {
+      setValue('country_ids', profile.country_id ? [Number(profile.country_id)] : []);
+      setValue('clinic_ids', profile.clinic_id ? [Number(profile.clinic_id)] : []);
     }
-  }, [role, setValue]);
+  }, [profile, setValue]);
+
+  useEffect(() => {
+    if (
+      mfaUserResources &&
+      mfaUserResources.user_attributes &&
+      profile.type !== USER_GROUPS.ORGANIZATION_ADMIN
+    ) {
+      const userAttributes = mfaUserResources.user_attributes;
+
+      if (mfaUserResources && userAttributes.mfa_expiration_duration != null) {
+        setValue('attributes.mfa_expiration_duration', userAttributes.mfa_expiration_duration[0]);
+      }
+
+      if (mfaUserResources && userAttributes.skip_mfa_setup_duration != null) {
+        setValue('attributes.skip_mfa_setup_duration', userAttributes.skip_mfa_setup_duration[0]);
+      }
+    }
+  }, [mfaUserResources, profile.type, setValue]);
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (!['role', 'country_ids'].includes(name)) return;
+
+      const _role = value.role;
+      const _country = value.country_ids;
+
+      const usedIds = (mfaUserResources && mfaUserResources.used_ids && mfaUserResources.used_ids[_role])
+        ? mfaUserResources.used_ids[_role]
+        : { used_clinic_ids: [], used_country_ids: [] };
+
+      const filteredCountryOptions = countries
+        .filter(c => !usedIds.used_country_ids.includes(c.id))
+        .map(c => ({ value: c.id, label: c.name }));
+
+      setCountryOptions(filteredCountryOptions);
+
+      let clinicOptionsBase = [];
+
+      if ([USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN].includes(profile.type)) {
+        clinicOptionsBase = clinics.filter(c => _country && _country.length && _country.includes(c.country_id));
+      } else if (profile.type === USER_GROUPS.COUNTRY_ADMIN) {
+        clinicOptionsBase = clinics.filter(c => profile.country_id && profile.country_id.includes(c.country_id));
+      } else if (profile.type === USER_GROUPS.CLINIC_ADMIN) {
+        const clinic = clinics.find(c => c.id === profile.clinic_id);
+        clinicOptionsBase = clinic ? [clinic] : [];
+      }
+
+      const filteredClinicOptions = clinicOptionsBase
+        .filter(c => !usedIds.used_clinic_ids.includes(c.id))
+        .map(c => ({ value: c.id, label: c.name }));
+
+      setClinicOptions(filteredClinicOptions);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, countries, clinics, profile, mfaUserResources]);
 
   const onConfirm = handleSubmit(async (data) => {
     if (initialData && initialData.id) {
@@ -157,11 +222,21 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
           options={[
             {
               label: translate('mfa.enforcement.disable'),
-              value: MFA_ENFORCEMENT.DISABLE
+              value: MFA_ENFORCEMENT.DISABLE,
+              disabled: mfaUserResources &&
+                        mfaUserResources.user_attributes &&
+                        mfaUserResources.user_attributes.mfa_enforcement &&
+                        [MFA_ENFORCEMENT.RECOMMEND, MFA_ENFORCEMENT.ENFORCE]
+                          .includes(mfaUserResources.user_attributes.mfa_enforcement[0])
             },
             {
               label: translate('mfa.enforcement.recommend'),
-              value: MFA_ENFORCEMENT.RECOMMEND
+              value: MFA_ENFORCEMENT.RECOMMEND,
+              disabled: mfaUserResources &&
+                        mfaUserResources.user_attributes &&
+                        mfaUserResources.user_attributes.mfa_enforcement &&
+                        [MFA_ENFORCEMENT.ENFORCE]
+                          .includes(mfaUserResources.user_attributes.mfa_enforcement[0])
             },
             {
               label: translate('mfa.enforcement.force'),
@@ -169,24 +244,26 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             }
           ]}
         />
-        <Row>
-          <Col md={6}>
-            <Input
-              control={control}
-              type="number"
-              name="attributes.mfa_expiration_duration"
-              label={`${translate('mfa.mfa_expiration_duration.label')} - (${'mfa.second'})`}
-            />
-          </Col>
-          <Col md={6}>
-            <Input
-              control={control}
-              type="number"
-              name="attributes.skip_mfa_setup_duration"
-              label={`${translate('mfa.skip_mfa_setup_duration.label')} - (${'mfa.second'})`}
-            />
-          </Col>
-        </Row>
+        {profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN && (
+          <Row>
+            <Col md={6}>
+              <Input
+                control={control}
+                type="number"
+                name="attributes.mfa_expiration_duration"
+                label={`${translate('mfa.mfa_expiration_duration.label')} - (${'mfa.second'})`}
+              />
+            </Col>
+            <Col md={6}>
+              <Input
+                control={control}
+                type="number"
+                name="attributes.skip_mfa_setup_duration"
+                label={`${translate('mfa.skip_mfa_setup_duration.label')} - (${'mfa.second'})`}
+              />
+            </Col>
+          </Row>
+        )}
       </Form>
     </Dialog>
   );
