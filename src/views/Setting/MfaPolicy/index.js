@@ -84,11 +84,11 @@ const MfaPolicy = ({ translate }) => {
                 .map(org => org.name)
                 .join(', '),
               countries: countries
-                .filter(c => Array.isArray(mfaSetting.countries) && mfaSetting.countries.includes(c.id))
+                .filter(c => Array.isArray(mfaSetting.country_ids) && mfaSetting.country_ids.includes(c.id))
                 .map(c => c.name)
                 .join(', '),
               clinics: clinics
-                .filter(c => Array.isArray(mfaSetting.clinics) && mfaSetting.clinics.includes(c.id))
+                .filter(c => Array.isArray(mfaSetting.clinic_ids) && mfaSetting.clinic_ids.includes(c.id))
                 .map(c => c.name)
                 .join(', '),
               attributes: (

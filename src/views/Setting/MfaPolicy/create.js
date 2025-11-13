@@ -135,6 +135,15 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   }, [watch, countries, clinics, profile, mfaUserResources]);
 
   const onConfirm = handleSubmit(async (data) => {
+    if (data.role) {
+      if (data.role === USER_GROUPS.COUNTRY_ADMIN) {
+        data.clinic_ids = null;
+      } else if (data.role === USER_GROUPS.ORGANIZATION_ADMIN) {
+        data.country_ids = null;
+        data.clinic_ids = null;
+      }
+    }
+
     if (initialData && initialData.id) {
       dispatch(updateMfaSetting(initialData.id, data));
     } else {
@@ -227,16 +236,16 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                         mfaUserResources.user_attributes &&
                         mfaUserResources.user_attributes.mfa_enforcement &&
                         [MFA_ENFORCEMENT.RECOMMEND, MFA_ENFORCEMENT.ENFORCE]
-                          .includes(mfaUserResources.user_attributes.mfa_enforcement[0])
+                          .includes(mfaUserResources.user_attributes.available_enforcement[0])
             },
             {
               label: translate('mfa.enforcement.recommend'),
               value: MFA_ENFORCEMENT.RECOMMEND,
               disabled: mfaUserResources &&
                         mfaUserResources.user_attributes &&
-                        mfaUserResources.user_attributes.mfa_enforcement &&
+                        mfaUserResources.user_attributes.available_enforcement &&
                         [MFA_ENFORCEMENT.ENFORCE]
-                          .includes(mfaUserResources.user_attributes.mfa_enforcement[0])
+                          .includes(mfaUserResources.user_attributes.available_enforcement[0])
             },
             {
               label: translate('mfa.enforcement.force'),
