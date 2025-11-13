@@ -27,13 +27,19 @@ const getSurvey = (id) => {
 
 const createSurvey = payload => {
   const formData = new FormData();
-  formData.append('lang', payload.lang);
+
   _.forIn(payload, (value, key) => {
-    if (Array.isArray(value)) {
+    if (Array.isArray(value) || key === 'questionnaire') {
       formData.append(key, JSON.stringify(value));
     } else {
       formData.append(key, value);
     }
+
+    _.forEach(payload?.questionnaire?.questions, (question, index) => {
+      if (question.file) {
+        formData.append(index, question.file);
+      }
+    });
   });
 
   return axios.post('/survey', formData, {
@@ -49,12 +55,26 @@ const createSurvey = payload => {
 
 const updateSurvey = (id, payload) => {
   const formData = new FormData();
-  formData.append('lang', payload.lang);
+
   _.forIn(payload, (value, key) => {
-    if (Array.isArray(value)) {
+    if (Array.isArray(value) || key === 'questionnaire') {
       formData.append(key, JSON.stringify(value));
     } else {
       formData.append(key, value);
+    }
+  });
+
+  _.forEach(payload?.questionnaire?.questions, (question, index) => {
+    const { file, id } = question;
+
+    // Skip if an existing file already has an ID
+    if (file?.id) return;
+
+    // Append either new file or mark as having no file
+    if (file instanceof File) {
+      formData.append(index, file);
+    } else {
+      formData.append('no_file_questions[]', id);
     }
   });
 
