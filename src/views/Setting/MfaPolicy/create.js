@@ -86,12 +86,12 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
     ) {
       const userAttributes = mfaUserResources.user_attributes;
 
-      if (mfaUserResources && userAttributes.mfa_expiration_duration != null) {
-        setValue('attributes.mfa_expiration_duration', userAttributes.mfa_expiration_duration[0]);
+      if (mfaUserResources && userAttributes.trustedDeviceMaxAge != null) {
+        setValue('attributes.mfa_expiration_duration', userAttributes.trustedDeviceMaxAge[0]);
       }
 
-      if (mfaUserResources && userAttributes.skip_mfa_setup_duration != null) {
-        setValue('attributes.skip_mfa_setup_duration', userAttributes.skip_mfa_setup_duration[0]);
+      if (mfaUserResources && userAttributes.skipMfaMaxAge != null) {
+        setValue('attributes.skip_mfa_setup_duration', userAttributes.skipMfaMaxAge[0]);
       }
     }
   }, [mfaUserResources, profile.type, setValue]);
@@ -234,7 +234,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
               value: MFA_ENFORCEMENT.DISABLE,
               disabled: mfaUserResources &&
                         mfaUserResources.user_attributes &&
-                        mfaUserResources.user_attributes.mfa_enforcement &&
+                        mfaUserResources.user_attributes.available_enforcement &&
                         [MFA_ENFORCEMENT.RECOMMEND, MFA_ENFORCEMENT.ENFORCE]
                           .includes(mfaUserResources.user_attributes.available_enforcement[0])
             },
