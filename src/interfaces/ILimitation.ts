@@ -1,4 +1,4 @@
-export interface ICountryLimitation {
+export interface ILimitation {
   therapist_limit_used: number;
   remaining_therapist_limit: number;
   phc_worker_limit_used: number;

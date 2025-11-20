@@ -46,7 +46,8 @@ import {
   VIEW_SURVEY,
   VIEW_HEALTH_CONDITION,
   VIEW_MFA_POLICY,
-  VIEW_REGION
+  VIEW_REGION,
+  VIEW_PROVINCE
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -67,7 +68,9 @@ import MfaPolicy from './MfaPolicy';
 import CreateMfaPolicy from './MfaPolicy/create';
 import useDialog from 'components/V2/Dialog';
 import CreateRegion from './Region/_Partials/createOrEdit';
+import CreateProvince from './Province/_Partials/createOrEdit';
 import Region from './Region';
+import Province from './Province';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -115,6 +118,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_HEALTH_CONDITION);
     } else if (hash.includes('#' + VIEW_REGION)) {
       setView(VIEW_REGION);
+    } else if (hash.includes('#' + VIEW_PROVINCE)) {
+      setView(VIEW_PROVINCE);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -129,7 +134,7 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    if (view !== VIEW_REGION) {
+    if (view !== VIEW_REGION && view !== VIEW_PROVINCE) {
       setShow(true);
 
       return;
@@ -140,6 +145,13 @@ const Setting = ({ translate }) => {
         openDialog({
           title: translate('region.new.title'),
           content: <CreateRegion />,
+          props: { size: 'lg' }
+        });
+        break;
+      case VIEW_PROVINCE:
+        openDialog({
+          title: translate('province.new'),
+          content: <CreateProvince />,
           props: { size: 'lg' }
         });
         break;
@@ -193,6 +205,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
                     (view === VIEW_REGION && keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION)) ||
+                    (view === VIEW_PROVINCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
                     (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
                     <Button variant="primary" onClick={handleShow}>
@@ -350,6 +363,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_PROVINCE} eventKey={VIEW_PROVINCE}>
+              {translate('setting.province')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -370,6 +390,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && view === VIEW_PROVINCE && <Province /> }
     </>
   );
 };

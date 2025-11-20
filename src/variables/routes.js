@@ -39,6 +39,7 @@ export const SETTING_SURVEY = SETTING + '#survey';
 export const SETTING_MFA_POLICY = SETTING + '#mfa_policy';
 export const SETTING_HEALTH_CONDITION = SETTING + '#health_condition';
 export const SETTING_REGION = SETTING + '#region';
+export const SETTING_PROVINCE = SETTING + '#province';
 
 export const PROFILE = '/profile';
 export const FAQ = '/faq';

@@ -70,7 +70,8 @@ export const USER_ROLES = {
   DOWNLOAD_SURVEY: 'download_survey',
   MANAGE_HEALTH_CONDITION: 'manage_health_condition',
   MANAGE_MFA_POLICY: 'manage_mfa_policy',
-  MANAGE_REGION: 'manage_region'
+  MANAGE_REGION: 'manage_region',
+  MANAGE_PROVINCE: 'manage_province'
 };
 
 export const SETTING_ROLES = [
@@ -90,5 +91,6 @@ export const SETTING_ROLES = [
   USER_ROLES.TRANSLATE_PRIVACY_POLICY,
   USER_ROLES.TRANSLATE_GUIDANCE_PAGE,
   USER_ROLES.MANAGE_SURVEY,
-  USER_ROLES.MANAGE_HEALTH_CONDITION
+  USER_ROLES.MANAGE_HEALTH_CONDITION,
+  USER_ROLES.MANAGE_PROVINCE
 ];

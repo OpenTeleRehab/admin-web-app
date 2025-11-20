@@ -1,8 +1,7 @@
 import { EditAction, DeleteAction } from 'components/V2/ActionIcons';
 import useDialog from 'components/V2/Dialog';
 import { useTranslate } from 'hooks/useTranslate';
-import EditRegion from './_Partials/createOrEdit';
-import BasicTable from 'components/Table/basic';
+import EditProvince from './_Partials/createOrEdit';
 import { useList } from 'hooks/useList';
 import { useDelete } from 'hooks/useDelete';
 import { useDispatch } from 'react-redux';
@@ -11,10 +10,11 @@ import { showSpinner } from 'store/spinnerOverlay/actions';
 import { useAlertDialog } from 'components/V2/AlertDialog';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { END_POINTS } from 'variables/endPoint';
-import { IRegionResource } from 'interfaces/IRegion';
+import { IProvinceResource } from 'interfaces/IProvince';
 import { useEffect, useMemo, useState } from 'react';
+import BasicTable from 'components/Table/basic';
 
-const Region = () => {
+const Province = () => {
   const dispatch = useDispatch();
   const t = useTranslate();
   const { showToast } = useToast();
@@ -24,44 +24,44 @@ const Region = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
-  const { data: regions } = useList<IRegionResource>(END_POINTS.REGION, { page_size: pageSize, search_value: searchValue });
-  const { mutate: deleteRegion } = useDelete(END_POINTS.REGION);
+  const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE, { page_size: pageSize, search_value: searchValue });
+  const { mutate: deleteProvince } = useDelete(END_POINTS.PROVINCE);
   const invalidate = useInvalidate();
 
   useEffect(() => {
-    if (regions) {
-      setTotalCount(regions.total);
+    if (provinces) {
+      setTotalCount(provinces.total);
     }
-  }, [regions, pageSize, currentPage, searchValue]);
+  }, [provinces, pageSize, currentPage, searchValue]);
 
   const columns = useMemo(() => [
-    { name: 'id', title: t('common.id') },
+    { name: 'identity', title: t('common.id') },
     { name: 'name', title: t('common.name') },
-    { name: 'country', title: t('common.country') },
-    { name: 'therapist_limit', title: t('region.therapist_limit') },
-    { name: 'phc_worker_limit', title: t('region.phc_worker_limit') },
+    { name: 'region_name', title: t('common.region') },
+    { name: 'therapist_limit', title: t('common.therapist_limit') },
+    { name: 'phc_worker_limit', title: t('common.phc_worker_limit') },
     { name: 'action', title: t('common.action') }
   ], [t]);
 
-  const handleEdit = (regionData: IRegionResource) => {
+  const handleEdit = (provinceData: IProvinceResource) => {
     openDialog({
-      title: t('region.edit.title'),
-      content: <EditRegion regionData={regionData} />,
+      title: t('province.edit'),
+      content: <EditProvince provinceData={provinceData} />,
       props: { size: 'lg' }
     });
   };
 
-  const handleDelete = async (regionId: number) => {
-    if (regionId) {
+  const handleDelete = async (provinceId: number) => {
+    if (provinceId) {
       dispatch(showSpinner(true));
-      deleteRegion(
-        regionId,
+      deleteProvince(
+        provinceId,
         {
           onSuccess: async (res) => {
             dispatch(showSpinner(false));
-            invalidate(END_POINTS.COUNTRY_LIMITATION);
+            invalidate(END_POINTS.REGION_LIMITATION);
             showToast({
-              title: t('region.toast_title.delete'),
+              title: t('province.toast_title.delete'),
               message: t(res.data?.message),
               color: 'success'
             });
@@ -75,39 +75,37 @@ const Region = () => {
     }
   };
 
-  const showConfirmDelete = (regionId: number) => {
+  const showConfirmDelete = (provinceId: number) => {
     showAlert({
-      title: t('region.delete_confirmation.title'),
-      message: t('region.delete_confirmation.message'),
-      onConfirm: () => handleDelete(regionId)
+      title: t('province.delete_confirmation.title'),
+      message: t('province.delete_confirmation.message'),
+      onConfirm: () => handleDelete(provinceId)
     });
   };
 
   const rows = useMemo(() =>
-    (regions?.data || []).map((region) => {
+    (provinces?.data || []).map((province) => {
       const action = (
         <>
-          <EditAction onClick={() => handleEdit(region)} />
-          <DeleteAction onClick={() => showConfirmDelete(region.id)} />
+          <EditAction onClick={() => handleEdit(province)} />
+          <DeleteAction onClick={() => showConfirmDelete(province.id)} />
         </>
       );
 
       return {
-        id: region.id,
-        name: region.name,
-        therapist_limit: region.therapist_limit,
-        phc_worker_limit: region.phc_worker_limit,
-        country: region?.country?.name,
+        identity: province.identity,
+        name: province.name,
+        therapist_limit: province.therapist_limit,
+        phc_worker_limit: province.phc_worker_limit,
+        region_name: province.region_name,
         action
       };
     }),
-    [regions, handleEdit, showConfirmDelete]
+    [provinces, handleEdit, showConfirmDelete]
   );
 
   return (
     <BasicTable
-      rows={rows}
-      columns={columns}
       showSearch={true}
       showPagination={true}
       pageSize={pageSize}
@@ -116,8 +114,10 @@ const Region = () => {
       setCurrentPage={setCurrentPage}
       totalCount={totalCount}
       setSearchValue={setSearchValue}
+      columns={columns}
+      rows={rows}
     />
   );
 };
 
-export default Region;
+export default Province;

@@ -16,6 +16,7 @@ export const VIEW_SURVEY = 'survey';
 export const VIEW_MFA_POLICY = 'mfa_policy';
 export const VIEW_HEALTH_CONDITION = 'health_condition';
 export const VIEW_REGION = 'region';
+export const VIEW_PROVINCE = 'province';
 
 export const SETTINGS = [
   VIEW_COUNTRY,
@@ -35,7 +36,8 @@ export const SETTINGS = [
   VIEW_SURVEY,
   VIEW_MFA_POLICY,
   VIEW_HEALTH_CONDITION,
-  VIEW_REGION
+  VIEW_REGION,
+  VIEW_PROVINCE
 ];
 
 export const TEXT_MAX_LENGTH = {
