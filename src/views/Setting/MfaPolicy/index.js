@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMfaSettings, getMfaSettingsUserResources } from 'store/mfaSetting/actions';
 import PropTypes from 'prop-types';
 import { Translate } from 'react-localize-redux';
 import { useJobStatuses } from 'hook/useJobStatus';
@@ -9,16 +8,11 @@ import BasicTable from 'components/Table/basic';
 import { JOB_STATUS } from 'variables/jobStatus';
 import CreateMfaPolicy from './create';
 import { EditAction } from 'components/ActionIcons';
-
-let timer = null;
+import { getMfaSettings } from 'store/mfaSetting/actions';
 
 const MfaPolicy = ({ translate }) => {
   const dispatch = useDispatch();
   const mfaSettings = useSelector(state => state.mfaSetting.mfaSettings);
-  const organizations = useSelector((state) => state.organization.organizations);
-  const countries = useSelector(state => state.country.countries);
-  const clinics = useSelector(state => state.clinic.clinics);
-
   const [showEdit, setShowEdit] = useState(false);
   const [editingMfa, setEditingMfa] = useState(null);
   const [rows, setRows] = useState([]);
@@ -29,6 +23,10 @@ const MfaPolicy = ({ translate }) => {
   );
 
   const jobStatuses = useJobStatuses(jobIds);
+
+  useEffect(() => {
+    dispatch(getMfaSettings());
+  }, []);
 
   useEffect(() => {
     if (mfaSettings && mfaSettings.length) {
@@ -43,15 +41,7 @@ const MfaPolicy = ({ translate }) => {
     }
   }, [mfaSettings, jobStatuses]);
 
-  useEffect(() => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getMfaSettings());
-      dispatch(getMfaSettingsUserResources());
-    }, 500);
-  }, [dispatch]);
-
-  const columns = [
+  const columns = useMemo(() => [
     { name: 'role', title: translate('mfa.user_type') },
     { name: 'organizations', title: translate('mfa.organizations') },
     { name: 'countries', title: translate('mfa.countries') },
@@ -59,7 +49,7 @@ const MfaPolicy = ({ translate }) => {
     { name: 'attributes', title: translate('mfa.configs') },
     { name: 'progress_status', title: translate('mfa.status') },
     { name: 'action', title: translate('common.action') }
-  ];
+  ], [translate]);
 
   const handleEdit = (record) => {
     setEditingMfa(record);
@@ -79,29 +69,25 @@ const MfaPolicy = ({ translate }) => {
 
             return {
               role: <Translate id={`common.${mfaSetting.role}`} />,
-              organizations: organizations
-                .filter(org => Array.isArray(mfaSetting.organizations) && mfaSetting.organizations.includes(org.id))
-                .map(org => org.name)
-                .join(', '),
-              countries: countries
-                .filter(c => Array.isArray(mfaSetting.country_ids) && mfaSetting.country_ids.includes(c.id))
-                .map(c => c.name)
-                .join(', '),
-              clinics: clinics
-                .filter(c => Array.isArray(mfaSetting.clinic_ids) && mfaSetting.clinic_ids.includes(c.id))
-                .map(c => c.name)
-                .join(', '),
+              organizations: mfaSetting.organizations_name.join(', '),
+              countries: mfaSetting.countries.join(', '),
+              clinics: mfaSetting.clinics.join(', '),
               attributes: (
                 <ul style={{ paddingLeft: '1rem', marginTop: 0, marginBottom: 0 }}>
-                  {mfaSetting.attributes &&
-                    Object.entries(mfaSetting.attributes).map(([key, value]) => (
-                      <li key={key}>
-                        <strong>{translate(`mfa.${key}`)}</strong>:{' '}
-                        {key === 'mfa_enforcement'
-                          ? <Translate id={`mfa.enforcement.${value}`} />
-                          : String(value)}
-                      </li>
-                    ))}
+                  <li>
+                    <strong>{translate('mfa.mfa_enforcement')}</strong>:{' '}
+                    <Translate id={`mfa.enforcement.${mfaSetting.mfa_enforcement}`} />
+                  </li>
+                  {mfaSetting && mfaSetting.mfa_expiration_duration && (
+                    <li>
+                      <strong>{translate('mfa.mfa_expiration_duration')}</strong>: {mfaSetting.mfa_expiration_duration}
+                    </li>
+                  )}
+                  {mfaSetting && mfaSetting.skip_mfa_setup_duration && (
+                    <li>
+                      <strong>{translate('mfa.skip_mfa_setup_duration')}</strong>: {mfaSetting.skip_mfa_setup_duration}
+                    </li>
+                  )}
                 </ul>
               ),
               progress_status: mfaSetting.progress_status === JOB_STATUS.COMPLETED ? (

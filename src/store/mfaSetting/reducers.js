@@ -7,9 +7,14 @@ export const mfaSetting = (state = initialState, action) => {
         mfaSettings: action.data,
         loading: false
       });
-    case 'GET_USER_MFA_ATTRIBUTES_SUCCESS':
+    case 'GET_MFA_ENFORCEMENT_VALIDATION_SUCCESS':
       return Object.assign({}, state, {
-        mfaUserResources: action.data,
+        mfaEnforcementValidation: action.data,
+        loading: false
+      });
+    case 'CLEAR_MFA_ENFORCEMENT_VALIDATION':
+      return Object.assign({}, state, {
+        mfaEnforcementValidation: null,
         loading: false
       });
     default:

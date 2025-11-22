@@ -41,8 +41,8 @@ const updateMfaSetting = (id, payload) => {
     });
 };
 
-const getMfaSettingsUserResources = () => {
-  return axios.get(`${endPoint}/user-resources`)
+const getMfaEnforcementValidation = (role) => {
+  return axios.get(`${endPoint}-validation?role=${role}`)
     .then(
       res => {
         return res.data;
@@ -57,5 +57,5 @@ export const MfaSetting = {
   getMfaSettings,
   createMfaSetting,
   updateMfaSetting,
-  getMfaSettingsUserResources
+  getMfaEnforcementValidation
 };

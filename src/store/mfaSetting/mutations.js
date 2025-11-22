@@ -3,12 +3,17 @@ const getMfaSettingsSuccess = (data) => ({
   data
 });
 
-const getMfaSettingsUserResourcesSuccess = (data) => ({
-  type: 'GET_USER_MFA_ATTRIBUTES_SUCCESS',
+const getMfaEnforcementValidationSuccess = (data) => ({
+  type: 'GET_MFA_ENFORCEMENT_VALIDATION_SUCCESS',
   data
+});
+
+const clearMfaEnforcementValidation = () => ({
+  type: 'CLEAR_MFA_ENFORCEMENT_VALIDATION'
 });
 
 export const mutation = {
   getMfaSettingsSuccess,
-  getMfaSettingsUserResourcesSuccess
+  getMfaEnforcementValidationSuccess,
+  clearMfaEnforcementValidation
 };

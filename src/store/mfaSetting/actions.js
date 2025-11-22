@@ -11,7 +11,7 @@ import {
 import { MfaSetting } from 'services/mfaSetting';
 
 // Actions
-export const getMfaSettings = payload => async dispatch => {
+export const getMfaSettings = (payload) => async (dispatch) => {
   dispatch(showSpinner(true));
   const res = await MfaSetting.getMfaSettings(payload);
   if (res.success) {
@@ -32,7 +32,6 @@ export const createMfaSetting = (payload) => async (dispatch) => {
   if (res.success) {
     dispatch(showSpinner(false));
     dispatch(getMfaSettings());
-    dispatch(getMfaSettingsUserResources());
     dispatch(showSuccessNotification('toast_title.edit_mfa_setting', res.message));
     return res.data;
   } else {
@@ -48,7 +47,6 @@ export const updateMfaSetting = (id, payload) => async (dispatch) => {
   if (res.success) {
     dispatch(showSpinner(false));
     dispatch(getMfaSettings());
-    dispatch(getMfaSettingsUserResources());
     dispatch(showSuccessNotification('toast_title.edit_mfa_setting', res.message));
     return res.data;
   } else {
@@ -58,11 +56,11 @@ export const updateMfaSetting = (id, payload) => async (dispatch) => {
   }
 };
 
-export const getMfaSettingsUserResources = () => async dispatch => {
-  const res = await MfaSetting.getMfaSettingsUserResources();
+export const getMfaEnforcementValidation = (role) => async (dispatch) => {
+  const res = await MfaSetting.getMfaEnforcementValidation(role);
   if (res.success) {
-    dispatch(mutation.getMfaSettingsUserResourcesSuccess(res.data));
-    return res.info;
+    dispatch(mutation.getMfaEnforcementValidationSuccess(res.data));
+    return res.data;
   } else {
     if (res.message) {
       dispatch(showErrorNotification('toast_title.error_message', res.message));
