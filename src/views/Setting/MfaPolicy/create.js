@@ -229,24 +229,32 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             }
           ]}
         />
-        {profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN && (
+        {watch('mfa_enforcement') && watch('mfa_enforcement') !== MFA_ENFORCEMENT.DISABLE && (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) && (
           <Row>
             <Col md={6}>
               <Input
                 control={control}
                 type="number"
                 name="mfa_expiration_duration"
-                label={`${translate('mfa.mfa_expiration_duration.label')}`}
+                rules={{ required: 'This field is required' }}
+                label={translate('mfa.mfa_expiration_duration.label')}
+                placeholder={translate('mfa.expiration.duration.placeholder')}
+                endIcon={translate('common.seconds')}
               />
             </Col>
-            <Col md={6}>
-              <Input
-                control={control}
-                type="number"
-                name="skip_mfa_setup_duration"
-                label={`${translate('mfa.skip_mfa_setup_duration.label')}`}
-              />
-            </Col>
+            {watch('mfa_enforcement') === MFA_ENFORCEMENT.RECOMMEND && (
+              <Col md={6}>
+                <Input
+                  control={control}
+                  type="number"
+                  name="skip_mfa_setup_duration"
+                  rules={{ required: 'This field is required' }}
+                  label={translate('mfa.skip_mfa_setup_duration.label')}
+                  placeholder={translate('mfa.skip.setup.duration.placeholder')}
+                  endIcon={translate('common.seconds')}
+                />
+              </Col>
+            )}
           </Row>
         )}
       </Form>

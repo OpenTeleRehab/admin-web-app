@@ -1,9 +1,9 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, InputGroup } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
-const Input = ({ control, name, rules, label, type, ...props }) => {
+const Input = ({ control, name, rules, label, startIcon, endIcon, ...props }) => {
   const sanitizedControlId = name.replace(/\./g, '_');
 
   return (
@@ -19,23 +19,21 @@ const Input = ({ control, name, rules, label, type, ...props }) => {
               {rules && rules.required && <span className="text-dark ml-1">*</span>}
             </Form.Label>
           )}
-          <Form.Control
-            {...props}
-            {...field}
-            type={type}
-            onKeyDown={(e) => {
-              if (
-                ['-', '+', 'e', 'E'].includes(e.key) &&
-                type === 'number'
-              ) {
-                e.preventDefault();
-              }
-            }}
-            onChange={(e) => {
-              field.onChange(e);
-            }}
-            isInvalid={!!fieldState.error}
-          />
+          <InputGroup>
+            {startIcon && <InputGroup.Text>{startIcon}</InputGroup.Text>}
+            <Form.Control
+              {...props}
+              {...field}
+              onChange={(e) => field.onChange(e)}
+              isInvalid={!!fieldState.error}
+            />
+            {endIcon && <InputGroup.Text style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderLeft: 0 }}>{endIcon}</InputGroup.Text>}
+            {fieldState.error && (
+              <Form.Control.Feedback type="invalid">
+                {fieldState.error.message}
+              </Form.Control.Feedback>
+            )}
+          </InputGroup>
 
           {fieldState.error && (
             <Form.Control.Feedback type="invalid">
@@ -53,7 +51,8 @@ Input.propTypes = {
   name: PropTypes.string.isRequired,
   rules: PropTypes.object,
   label: PropTypes.string,
-  type: PropTypes.string
+  startIcon: PropTypes.node,
+  endIcon: PropTypes.node
 };
 
 export default Input;
