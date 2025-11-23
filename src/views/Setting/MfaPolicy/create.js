@@ -26,7 +26,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
   const dispatch = useDispatch();
-  const { control, watch, handleSubmit, reset, setValue } = useForm();
+  const { control, watch, handleSubmit, reset } = useForm();
   const role = watch('role');
 
   const roleOptions = useMemo(
@@ -63,12 +63,6 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
       skip_mfa_setup_duration: initialData ? initialData.skip_mfa_setup_duration : ''
     });
   }, [initialData, reset]);
-
-  useEffect(() => {
-    if (mfaEnforcementValidation) {
-      setValue('mfa_enforcement', mfaEnforcementValidation);
-    }
-  }, [mfaEnforcementValidation]);
 
   useEffect(() => {
     if (role) {
@@ -151,7 +145,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
       title={translate('mfa_policy.new')}
       onCancel={handleClose}
       onConfirm={onConfirm}
-      confirmLabel={translate('common.create')}
+      confirmLabel={initialData ? translate('common.save') : translate('common.create')}
       size="xl"
     >
       <Form onKeyDown={(e) => handleFormSubmit(e)}>
