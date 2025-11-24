@@ -1,8 +1,8 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { IApiResponse } from 'interfaces/IApiResponse';
 import axiosInstance from 'utils/axios';
 
-export const useList = <T = any>(resource: string, params: any = {}): UseQueryResult<IApiResponse<T>, unknown> => {
+export const useList = <T = any>(resource: string, params: any = {}, options: Partial<UseQueryOptions<IApiResponse<T>>> = {}): UseQueryResult<IApiResponse<T>, unknown> => {
   return useQuery<IApiResponse<T>>({
     queryKey: [resource, params],
     queryFn: async ({ signal }) => {
@@ -12,6 +12,7 @@ export const useList = <T = any>(resource: string, params: any = {}): UseQueryRe
         ...response.data,
         data: response?.data?.data ?? response.data
       };
-    }
+    },
+    ...options
   });
 };

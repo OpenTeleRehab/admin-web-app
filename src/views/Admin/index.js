@@ -14,6 +14,9 @@ import PropTypes from 'prop-types';
 import { USER_GROUPS, USER_ROLES } from 'variables/user';
 import Dialog from 'components/Dialog';
 import customColorScheme from '../../utils/customColorScheme';
+import PhcServiceAdmin from './TabContents/phcServiceAdmin';
+import CreatePhcServiceAdmin from './_Partials/createEdit';
+import useDialog from 'components/V2/Dialog';
 import _ from 'lodash';
 
 const Admin = ({ translate }) => {
@@ -32,6 +35,7 @@ const Admin = ({ translate }) => {
     enabled: 0,
     type: undefined
   });
+  const { openDialog } = useDialog();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -71,7 +75,16 @@ const Admin = ({ translate }) => {
     setEditId('');
     setShow(false);
   };
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    if (type !== USER_GROUPS.PHC_SERVICE_ADMIN) {
+      setShow(true);
+    } else {
+      openDialog({
+        title: translate('phc_service_admin.new'),
+        content: <CreatePhcServiceAdmin />
+      });
+    }
+  };
 
   const handleDelete = (id) => {
     setId(id);
@@ -158,6 +171,11 @@ const Admin = ({ translate }) => {
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN) && (
           <Tab eventKey={USER_GROUPS.CLINIC_ADMIN} title={translate('clinic_admin')}>
             <ClinicAdmin handleEdit={handleEdit} type={type} handleDelete={handleDelete} handleSwitchStatus={handleSwitchStatus} />
+          </Tab>
+        )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE_ADMIN) && (
+          <Tab eventKey={USER_GROUPS.PHC_SERVICE_ADMIN} title={translate('common.phc_service_admin')} onSelect={() => setType(USER_GROUPS.PHC_SERVICE_ADMIN)}>
+            <PhcServiceAdmin />
           </Tab>
         )}
       </Tabs>

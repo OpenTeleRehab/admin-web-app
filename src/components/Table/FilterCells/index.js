@@ -14,6 +14,7 @@ import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 import UserGroupFilterCell from './UserGroupFilterCell';
 import ProvinceFilterCell from './ProvinceFilterCell';
 import ProfessionTypeFilterCell from './ProfessionTypeFilterCell';
+import PhcServiceFilterCell from './PhcServiceFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -55,6 +56,8 @@ const FilterCell = (props) => {
     return <ProvinceFilterCell {...props} />;
   } else if (column.name === 'profession_type') {
     return <ProfessionTypeFilterCell {...props} />;
+  } else if (column.name === 'phc_service') {
+    return <PhcServiceFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
