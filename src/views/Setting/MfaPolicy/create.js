@@ -33,20 +33,20 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
     () =>
       profile.type === USER_GROUPS.ORGANIZATION_ADMIN
         ? MFA_ROLES.filter(
-          (option) => option.value !== USER_GROUPS.ORGANIZATION_ADMIN
+          (option) => option.value !== USER_GROUPS.ORGANIZATION_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
         )
         : profile.type === USER_GROUPS.COUNTRY_ADMIN
           ? MFA_ROLES.filter(
             (option) =>
               option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
-              option.value !== USER_GROUPS.COUNTRY_ADMIN
+              option.value !== USER_GROUPS.COUNTRY_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
           )
           : profile.type === USER_GROUPS.CLINIC_ADMIN
             ? MFA_ROLES.filter(
               (option) =>
                 option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
               option.value !== USER_GROUPS.COUNTRY_ADMIN &&
-              option.value !== USER_GROUPS.CLINIC_ADMIN
+              option.value !== USER_GROUPS.CLINIC_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
             )
             : MFA_ROLES,
     [profile.type]
