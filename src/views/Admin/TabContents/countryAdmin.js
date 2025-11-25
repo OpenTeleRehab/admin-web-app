@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import settings from 'settings';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import { getTranslate } from 'react-localize-redux';
+import { checkFederatedUser } from 'utils/user';
 
 let timer = null;
 
@@ -87,16 +88,17 @@ const CountryAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) =>
         columns={columns}
         columnExtensions={columnExtensions}
         rows={users.map(user => {
+          const isFederatedUser = checkFederatedUser(user.email);
           const action = (
-            <>
+            <div className='d-flex justify-content-start'>
               {user.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0, user.country_id)} />
                 : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1, user.country_id)} />
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={user.enabled} />
-              <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />
-            </>
+              {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
+            </div>
           );
 
           return {

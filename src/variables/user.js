@@ -67,7 +67,9 @@ export const USER_ROLES = {
   VIEW_DASHBOARD: 'view_dashboard',
   SUPER_ADMIN: 'super_admin',
   MANAGE_SURVEY: 'manage_survey',
-  DOWNLOAD_SURVEY: 'download_survey'
+  DOWNLOAD_SURVEY: 'download_survey',
+  MANAGE_HEALTH_CONDITION: 'manage_health_condition',
+  MANAGE_MFA_POLICY: 'manage_mfa_policy'
 };
 
 export const SETTING_ROLES = [
@@ -86,5 +88,6 @@ export const SETTING_ROLES = [
   USER_ROLES.TRANSLATE_STATIC_PAGE,
   USER_ROLES.TRANSLATE_PRIVACY_POLICY,
   USER_ROLES.TRANSLATE_GUIDANCE_PAGE,
-  USER_ROLES.MANAGE_SURVEY
+  USER_ROLES.MANAGE_SURVEY,
+  USER_ROLES.MANAGE_HEALTH_CONDITION
 ];

@@ -165,23 +165,23 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
           <Form.Label>{translate(editId ? 'category.title' : 'category.category')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           {!allowNew && !editId &&
-          <Select
-            placeholder={translate('placeholder.category')}
-            isDisabled={!allowNew}
-            classNamePrefix="filter"
-            value={selectableCategories.filter(option => option.id === formFields.current_category)}
-            getOptionLabel={option => option.title}
-            options={[
-              {
-                id: '',
-                title: translate('placeholder.category')
-              },
-              ...selectableCategories
-            ]}
-            onChange={(e) => handleSingleSelectChange('current_category', e.id)}
-            styles={customSelectStyles}
-            aria-label="Category"
-          />
+            <Select
+              placeholder={translate('placeholder.category')}
+              isDisabled={!allowNew}
+              classNamePrefix="filter"
+              value={selectableCategories.filter(option => option.id === formFields.current_category)}
+              getOptionLabel={option => option.title}
+              options={[
+                {
+                  id: '',
+                  title: translate('placeholder.category')
+                },
+                ...selectableCategories
+              ]}
+              onChange={(e) => handleSingleSelectChange('current_category', e.id)}
+              styles={customSelectStyles}
+              aria-label="Category"
+            />
           }
           {allowNew &&
             <Form.Control
