@@ -290,20 +290,21 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
         )}
         {(formFields.type === USER_GROUPS.CLINIC_ADMIN) && (
           <Form.Group controlId="formCountry">
-            <Form.Label>{translate('common.country')}</Form.Label>
+            <Form.Label>{translate('common.region')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Select
-              isDisabled={true}
-              placeholder={profile !== undefined && getCountryName(profile.country_id, countries)}
+              isDisabled
               classNamePrefix="filter"
               className={errorCountry ? 'is-invalid' : ''}
-              value={profile !== undefined && getCountryName(profile.country_id, countries)}
-              getOptionLabel={option => option.label}
+              value={{
+                value: profile?.region_id,
+                label: profile?.region_name
+              }}
               styles={customSelectStyles}
-              aria-label="Country"
+              aria-label="Region"
             />
             <Form.Control.Feedback type="invalid">
-              { translate('error.country') }
+              { translate('error.region') }
             </Form.Control.Feedback>
           </Form.Group>
         )}
