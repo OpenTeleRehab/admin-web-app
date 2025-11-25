@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,80 +6,79 @@ import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { createClinic, updateClinic } from 'store/clinic/actions';
 import settings from 'settings';
-import { getCountryISO, getCountryIsoCode, getTotalTherapistLimit } from 'utils/country';
-import { Clinic as clinicService } from 'services/clinic';
+import { getCountryISO, getCountryIsoCode } from 'utils/country';
 import PhoneInput from 'react-phone-input-2';
+import { useList } from 'hooks/useList';
+import { useOne } from 'hooks/useOne';
+import { END_POINTS } from 'variables/endPoint';
+import Select from 'react-select';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 const CreateClinic = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const invalidate = useInvalidate();
 
   const [errorName, setErrorName] = useState(false);
   const [errorCity, setErrorCity] = useState(false);
   const [errorRegion, setErrorRegion] = useState(false);
   const [errorClass, setErrorClass] = useState('');
   const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
-  const [errorTherapistLimitMessage, setErrorTherapistLimitMessage] = useState('');
-  const [errorTherapistLimit, setErrorTherapistLimit] = useState(false);
-  const [therapistLimit, setTherapistLimit] = useState(0);
-  const [totalTherapistLimitByCountry, setTotalTherapistLimitByCountry] = useState(0);
-  const [totalTherapistByClinic, setTotalTherapistByClinic] = useState(0);
+  const [errorTherapistLimit, setErrorTherapistLimit] = useState('');
+  const [errorProvince, setErrorProvince] = useState(false);
 
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
   const profile = useSelector(state => state.auth.profile);
+  const { data: regions } = useList(END_POINTS.REGION);
+  const { data: provinces } = useList(END_POINTS.PROVINCE);
+  const { data: provincesLimitation } = useList(END_POINTS.PROVINCES_LIMITATION);
   const definedCountries = useSelector(state => state.country.definedCountries);
+  const { data: totalTherapist } = useOne(END_POINTS.COUNT_THERAPIST_BY_CLINIC, null, {
+    enabled: !!editId,
+    params: {
+      clinic_id: editId
+    }
+  });
 
   const [formFields, setFormFields] = useState({
     name: '',
     country: '',
-    region: '',
-    province: '',
+    region_id: '',
+    province_id: '',
     city: '',
     country_iso: '',
     phone: '',
     therapist_limit: 0
   });
 
-  useEffect(() => {
-    if (profile !== undefined) {
-      clinicService.countTherapistLimitByCountry(profile.country_id).then(res => {
-        if (res.data) {
-          setTotalTherapistLimitByCountry(res.data.total);
-        }
-      });
+  const provinceOptions = useMemo(() => provinces?.data?.filter((province) => province.region_id === formFields.region_id) || [], [provinces, formFields.region_id]);
 
-      if (countries.length) {
-        setTherapistLimit(getTotalTherapistLimit(profile.country_id, countries));
-      }
-    }
-  }, [profile, countries]);
+  const remainingTherapistLimit = useMemo(() => {
+    const provinceLimitation = provincesLimitation?.data?.find(province => province.id === formFields.province_id);
+    return provinceLimitation;
+  }, [provincesLimitation, formFields.province_id]);
 
   useEffect(() => {
     if (editId && clinics.length) {
       const clinic = clinics.find(clinic => clinic.id === editId);
       setFormFields({
         name: clinic.name,
-        country: clinic.country_id,
-        region: clinic.region,
-        province: clinic.province,
+        country_id: clinic.country_id,
+        region_id: profile.region_id,
+        province_id: clinic.province?.id,
         city: clinic.city,
         country_iso: getCountryISO(profile.country_id, countries),
         phone: clinic.phone || '',
         therapist_limit: clinic.therapist_limit,
         dial_code: clinic.dial_code
       });
-
-      clinicService.countTherapistByClinic(clinic.id).then(res => {
-        if (res.data) {
-          setTotalTherapistByClinic(res.data.therapistTotal);
-        }
-      });
     } else if (profile) {
       setFormFields({
         ...formFields,
-        country: profile.country_id,
+        region_id: profile.region_id,
+        country_id: profile.country_id,
         country_iso: getCountryISO(profile.country_id, countries)
       });
     }
@@ -89,6 +88,10 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleSingleSelectChange = (key, value) => {
+    setFormFields({ ...formFields, [key]: value });
   };
 
   const handleConfirm = () => {
@@ -101,11 +104,18 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       setErrorName(false);
     }
 
-    if (formFields.region === '') {
+    if (formFields.region_id === '') {
       canSave = false;
       setErrorRegion(true);
     } else {
       setErrorRegion(false);
+    }
+
+    if (!formFields.province_id) {
+      canSave = false;
+      setErrorProvince(true);
+    } else {
+      setErrorProvince(false);
     }
 
     if (formFields.city === '') {
@@ -124,34 +134,30 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       setErrorPhoneMessage('');
     }
 
-    const pattern = new RegExp(/^[0-9\b]+$/);
-    if (formFields.therapist_limit === '') {
-      canSave = false;
-      setErrorTherapistLimit(true);
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit'));
-    } else if (!pattern.test(formFields.therapist_limit)) {
-      canSave = false;
-      setErrorTherapistLimit(true);
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit.format'));
-    } else if (editId && clinics.length) {
-      const clinic = clinics.find(clinic => clinic.id === editId);
-      if ((parseInt(totalTherapistLimitByCountry) + parseInt(formFields.therapist_limit) - parseInt(clinic.therapist_limit)) > therapistLimit) {
-        setErrorTherapistLimitMessage(translate('error.country.therapist_limit.reached'));
-        canSave = false;
-        setErrorTherapistLimit(true);
-      } else if (parseInt(formFields.therapist_limit) < totalTherapistByClinic) {
-        setErrorTherapistLimitMessage(translate('error.country.therapist_limit.lessthan.therapist'));
-        canSave = false;
-        setErrorTherapistLimit(true);
-      } else {
-        setErrorTherapistLimit(false);
+    const numValue = Number(formFields.therapist_limit);
+    const remaining = remainingTherapistLimit ? remainingTherapistLimit.remaining_therapist_limit : 0;
+
+    let exceedRemainingLimit = numValue > remaining;
+
+    if (editId && clinics.length) {
+      const clinic = clinics.find(c => c.id === editId);
+      if (clinic) {
+        exceedRemainingLimit = numValue > remaining + Number(clinic.therapist_limit);
       }
-    } else if ((parseInt(totalTherapistLimitByCountry) + parseInt(formFields.therapist_limit)) > therapistLimit) {
-      setErrorTherapistLimitMessage(translate('error.country.therapist_limit.reached'));
+    }
+
+    if (numValue <= 0) {
       canSave = false;
-      setErrorTherapistLimit(true);
+      setErrorTherapistLimit('error.clinic.therapist_limit');
+    } else if (numValue < totalTherapist?.therapistTotal) {
+      canSave = false;
+      setErrorTherapistLimit('error.clinic.therapist_limit.less_than.total.therapist');
+    } else if (exceedRemainingLimit) {
+      canSave = false;
+      setErrorTherapistLimit('error.clinic.therapist_limit.greater_than.province.therapist_limit');
     } else {
-      setErrorTherapistLimit(false);
+      canSave = canSave && true;
+      setErrorTherapistLimit('');
     }
 
     if (canSave) {
@@ -165,12 +171,14 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       if (editId) {
         dispatch(updateClinic(editId, data)).then(result => {
           if (result) {
+            invalidate(END_POINTS.PROVINCE_LIMITATION);
             handleClose();
           }
         });
       } else {
         dispatch(createClinic(data)).then(result => {
           if (result) {
+            invalidate(END_POINTS.PROVINCE_LIMITATION);
             handleClose();
           }
         });
@@ -193,7 +201,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
-      <Form onKeyPress={(e) => handleFormSubmit(e)}>
+      <Form onKeyDown={(e) => handleFormSubmit(e)}>
         <Form.Row>
           <Form.Group as={Col} controlId="countryIso">
             <Form.Label>{translate('clinic.country.iso_code')}: {formFields.country_iso}</Form.Label>
@@ -219,14 +227,14 @@ const CreateClinic = ({ show, editId, handleClose }) => {
           <Form.Group as={Col} controlId="region">
             <Form.Label>{translate('clinic.region')}</Form.Label>
             <span className="text-dark ml-1">*</span>
-            <Form.Control
-              name="region"
-              onChange={handleChange}
-              type="text"
+            <Select
+              isDisabled
               placeholder={translate('placeholder.clinic.region')}
-              isInvalid={errorRegion}
-              value={formFields.region}
-              maxLength={settings.textMaxLength}
+              classNamePrefix="filter"
+              className={errorRegion ? 'is-invalid' : ''}
+              value={regions?.data?.find((region) => region.id === formFields.region_id)}
+              getOptionLabel={(option) => option.name}
+              aria-label="Region"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.clinic.region')}
@@ -252,14 +260,21 @@ const CreateClinic = ({ show, editId, handleClose }) => {
           </Form.Group>
           <Form.Group as={Col} controlId="province">
             <Form.Label>{translate('clinic.province')}</Form.Label>
-            <Form.Control
-              name="province"
-              onChange={handleChange}
-              type="text"
+            <span className="text-dark ml-1">*</span>
+            <Select
               placeholder={translate('placeholder.clinic.province')}
-              value={formFields.province}
-              maxLength={settings.textMaxLength}
+              classNamePrefix="filter"
+              className={errorProvince ? 'is-invalid' : ''}
+              value={provinceOptions.find(region => region.id === formFields.province_id)}
+              options={provinceOptions}
+              onChange={(e) => handleSingleSelectChange('province_id', e.id)}
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
+              aria-label="Region"
             />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.clinic.region')}
+            </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
 
@@ -292,13 +307,13 @@ const CreateClinic = ({ show, editId, handleClose }) => {
           <Form.Control
             name="therapist_limit"
             onChange={handleChange}
-            type="text"
+            type="number"
             placeholder={translate('placeholder.country.therapist_limit')}
-            isInvalid={errorTherapistLimit}
+            isInvalid={!!errorTherapistLimit}
             value={formFields.therapist_limit}
           />
           <Form.Control.Feedback type="invalid">
-            { errorTherapistLimitMessage }
+            {translate(errorTherapistLimit)}
           </Form.Control.Feedback>
         </Form.Group>
       </Form>

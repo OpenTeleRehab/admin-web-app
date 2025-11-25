@@ -63,8 +63,8 @@ const Clinic = ({ translate, handleRowEdit }) => {
             id: clinic.identity,
             name: clinic.name,
             country_iso: getCountryISO(clinic.country_id, countries),
-            region: clinic.region,
-            province: clinic.province,
+            region: clinic.region?.name,
+            province: clinic.province?.name,
             city: clinic.city,
             therapist_limit: clinic.therapist_limit,
             action

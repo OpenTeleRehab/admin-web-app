@@ -74,6 +74,8 @@ import CreateProvince from './Province/_Partials/createOrEdit';
 import Region from './Region';
 import Province from './Province';
 import CreateEditPhcService from './PhcService/_Partials/createEdit';
+import { END_POINTS } from 'variables/endPoint';
+import { useList } from 'hooks/useList';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -85,6 +87,7 @@ const Setting = ({ translate }) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [editId, setEditId] = useState();
   const { openDialog } = useDialog();
+  useList(END_POINTS.PROVINCES_LIMITATION);
 
   useEffect(() => {
     if (hash.includes('#' + VIEW_TRANSLATION)) {
