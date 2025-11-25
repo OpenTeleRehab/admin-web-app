@@ -5,12 +5,13 @@ import Input from 'components/V2/Form/Input';
 import useToast from 'components/V2/Toast';
 import { useCreate } from 'hooks/useCreate';
 import { useInvalidate } from 'hooks/useInvalidate';
+import { useList } from 'hooks/useList';
 import { useOne } from 'hooks/useOne';
 import { useTranslate } from 'hooks/useTranslate';
 import { useUpdate } from 'hooks/useUpdate';
 import { ILimitation } from 'interfaces/ILimitation';
 import { IProvinceResource } from 'interfaces/IProvince';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +33,11 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
   const { mutate: createProvinceMutation } = useCreate(END_POINTS.PROVINCE);
   const { mutate: updateProvinceMutation } = useUpdate(END_POINTS.PROVINCE);
   const { data: regionLimitation } = useOne<ILimitation>(END_POINTS.REGION_LIMITATION, null, { enabled: true });
+  const { data: provincesLimitation } = useList(END_POINTS.PROVINCES_LIMITATION);
+  const provinceLimitation = useMemo(() => {
+    const provinceLimitation = provincesLimitation?.data?.find((province) => province.id === provinceData?.id);
+    return provinceLimitation;
+  }, [provincesLimitation, provinceData?.id]);
 
   useEffect(() => {
     if (provinceData) {
@@ -49,6 +55,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
         onSuccess: async (res) => {
           dispatch(showSpinner(false));
           invalidate(END_POINTS.REGION_LIMITATION);
+          invalidate(END_POINTS.COUNT_THERAPIST_BY_CLINIC);
           showToast({
             title: t('province.toast_title.edit'),
             message: t(res.message),
@@ -58,6 +65,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
         },
         onError: () => {
           invalidate(END_POINTS.REGION_LIMITATION);
+          invalidate(END_POINTS.COUNT_THERAPIST_BY_CLINIC);
           dispatch(showSpinner(false));
         }
       });
@@ -130,6 +138,10 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                     return t('error.province.therapist_limit.greater_than.region.therapist_limit');
                   }
 
+                  if (provinceLimitation?.therapist_limit_used > numValue) {
+                    return t('error.province.therapist_limit.less_than.total.clinic.therapist_limit');
+                  }
+
                   return true;
                 }
               }}
@@ -155,6 +167,10 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
 
                   if (exceedremainingPhcWorkerLimit) {
                     return t('error.province.phc_worker_limit.greater_than.region.phc_worker_limit');
+                  }
+
+                  if (provinceLimitation?.phc_worker_limit_used > numValue) {
+                    return t('error.province.phc_worker_limit.less_than.total.clinic.phc_worker_limit');
                   }
 
                   return true;
