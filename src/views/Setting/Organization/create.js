@@ -36,7 +36,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     max_number_of_phc_worker: '',
     max_ongoing_treatment_plan: 0,
     max_sms_per_week: 0,
-    phc_worker_max_sms_per_week: 0
+    max_phc_sms_per_week: 0
   });
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         max_number_of_phc_worker: organization.max_number_of_phc_worker,
         max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
         max_sms_per_week: organization.max_sms_per_week,
-        phc_worker_max_sms_per_week: organization.phc_worker_max_sms_per_week
+        max_phc_sms_per_week: organization.max_phc_sms_per_week
       });
     }
     // eslint-disable-next-line
@@ -132,6 +132,13 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
       setErrorMaxSmsPerWeek(true);
     } else {
       setErrorMaxSmsPerWeek(false);
+    }
+
+    if (!formFields.max_phc_sms_per_week) {
+      canSave = false;
+      setErrorPhcWorkerMaxSmsPerWeek(true);
+    } else {
+      setErrorPhcWorkerMaxSmsPerWeek(false);
     }
 
     if (canSave) {
@@ -310,13 +317,13 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
             <Form.Label>{translate('organization.phc_worker_max_sms_per_week')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Form.Control
-              name="phc_worker_max_sms_per_week"
+              name="max_phc_sms_per_week"
               onChange={handleChange}
               type="number"
               min={0}
               placeholder={translate('placeholder.organization.phc_worker_max_sms_per_week')}
               isInvalid={errorPhcWorkerMaxSmsPerWeek}
-              value={formFields.phc_worker_max_sms_per_week}
+              value={formFields.max_phc_sms_per_week}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.phc_worker_max_sms_per_week')}

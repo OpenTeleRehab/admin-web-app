@@ -43,7 +43,7 @@ const Organization = ({ translate, handleRowEdit }) => {
     { name: 'max_number_of_phc_worker', title: translate('organization.max_number_of_phc_worker') },
     { name: 'max_ongoing_treatment_plan', title: translate('organization.max_ongoing_treatment_plan') },
     { name: 'max_sms_per_week', title: translate('organization.max_sms_per_week') },
-    { name: 'phc_worker_max_sms_per_week', title: translate('organization.phc_worker_max_sms_per_week') },
+    { name: 'max_phc_sms_per_week', title: translate('organization.max_phc_sms_per_week') },
     { name: 'status', title: translate('common.status') },
     { name: 'action', title: translate('common.action') }
   ]);
@@ -63,7 +63,7 @@ const Organization = ({ translate, handleRowEdit }) => {
             max_number_of_phc_worker: organization.max_number_of_phc_worker,
             max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
             max_sms_per_week: organization.max_sms_per_week,
-            phc_worker_max_sms_per_week: organization.phc_worker_max_sms_per_week,
+            max_phc_sms_per_week: organization.max_phc_sms_per_week,
             status: renderStatusBadge(organization.status),
             action
           };
