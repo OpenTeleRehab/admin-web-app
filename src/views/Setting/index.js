@@ -252,6 +252,13 @@ const Setting = ({ translate }) => {
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
       <Nav variant="tabs" activeKey={view} className="mb-3">
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_REGION} eventKey={VIEW_REGION}>
+              {translate('setting.region')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING} eventKey={VIEW_COUNTRY}>
@@ -382,13 +389,6 @@ const Setting = ({ translate }) => {
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_MFA_POLICY} eventKey={VIEW_MFA_POLICY}>
               {translate('setting.mfa.policy')}
-            </Nav.Link>
-          </Nav.Item>
-        )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && (
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.SETTING_REGION} eventKey={VIEW_REGION}>
-              {translate('setting.region')}
             </Nav.Link>
           </Nav.Item>
         )}

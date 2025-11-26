@@ -82,7 +82,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
           invalidate(END_POINTS.COUNTRY_LIMITATION);
           showToast({
             title: translate('success_message.country_update'),
-            message: translate(res.data.message),
+            message: translate(res?.message),
             color: 'success'
           });
           handleClose();
@@ -104,7 +104,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
         invalidate(END_POINTS.COUNTRY_LIMITATION);
         showToast({
           title: translate('success_message.country_add'),
-          message: translate(res.data.message),
+          message: translate(res?.message),
           color: 'success'
         });
         handleClose();
@@ -205,6 +205,7 @@ const CreateCountry = ({ show, editId, handleClose }) => {
         <Input
           control={control}
           name='phc_worker_limit'
+          min={0}
           rules={{
             required: translate('error.organization.max_number_of_phc_worker'),
             validate: (value) => {
