@@ -6,10 +6,10 @@ type UpdateMutateProps<T> = {
   payload: T;
 };
 
-export const useUpdate = <T = any>(resource: string) => {
+export const useUpdate = <T>(resource: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation<T, unknown, UpdateMutateProps<T>>({
+  return useMutation<any, unknown, UpdateMutateProps<T>>({
     mutationFn: async ({ id, payload }: UpdateMutateProps<T>) => {
       const { data } = await axiosInstance.put<T>(`/${resource}/${id}`, payload);
       return data;
