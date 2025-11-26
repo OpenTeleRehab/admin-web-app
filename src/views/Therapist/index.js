@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
-import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
+import { DeleteAction } from 'components/ActionIcons';
 import CreateTherapist from 'views/Therapist/create';
-import { getTherapists, updateTherapistStatus, resendEmail } from 'store/therapist/actions';
+import { getTherapists, updateTherapistStatus } from 'store/therapist/actions';
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicRegion, getTotalTherapistLimit } from 'utils/clinic';
 import * as moment from 'moment';
@@ -17,7 +17,6 @@ import Dialog from 'components/Dialog';
 import DeleteTherapist from './Partials/delete';
 
 import {
-  getPatient,
   getTotalOnGoingTreatment,
   getTotalPatient
 } from 'utils/patient';
@@ -29,7 +28,6 @@ import { Clinic as clinicService } from 'services/clinic';
 import { getProfessionName } from 'utils/profession';
 import { getChatRooms } from 'utils/therapist';
 import customColorScheme from '../../utils/customColorScheme';
-import { checkFederatedUser } from 'utils/user';
 
 let timer = null;
 
@@ -49,15 +47,15 @@ const Therapist = ({ translate }) => {
   const [therapistChatRooms, setTherapistChatRooms] = useState('');
   const [isTherapistLimit, setIsTherapistLimit] = useState(false);
 
-  const [formFields, setFormFields] = useState({
+  const [formFields] = useState({
     enabled: 0
   });
 
   let columns = [
     { name: 'id', title: translate('common.id') },
-    { name: 'last_name', title: translate('common.last_name') },
-    { name: 'first_name', title: translate('common.first_name') },
-    { name: 'email', title: translate('common.email') },
+    { name: 'profession', title: translate('common.profession') },
+    { name: 'region', title: translate('common.region') },
+    { name: 'therapist_clinic', title: translate('common.clinic') },
     { name: 'total_patient', title: translate('common.total_patient') },
     { name: 'assigned_patient', title: translate('common.assigned_patient') },
     { name: 'limit_patient', title: translate('common.on_going.treatment_let') },
@@ -82,8 +80,8 @@ const Therapist = ({ translate }) => {
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true, width: 250 },
-    { columnName: 'last_name', wordWrapEnabled: true },
-    { columnName: 'first_name', wordWrapEnabled: true },
+    { columnName: 'profession', wordWrapEnabled: true },
+    { columnName: 'therapist_clinic', wordWrapEnabled: true },
     { columnName: 'limit_patient', wordWrapEnabled: true },
     { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
     { columnName: 'total_patient', wordWrapEnabled: true },
@@ -154,11 +152,6 @@ const Therapist = ({ translate }) => {
 
   const handleShow = () => setShow(true);
 
-  const handleEdit = (id) => {
-    setEditId(id);
-    setShow(true);
-  };
-
   const handleClose = () => {
     setEditId('');
     setShow(false);
@@ -191,12 +184,6 @@ const Therapist = ({ translate }) => {
     setTherapistChatRooms(getChatRooms(id, therapists));
   };
 
-  const handleSwitchStatus = (id, enabled) => {
-    setId(id);
-    setFormFields({ ...formFields, enabled: enabled });
-    setShowSwitchStatusDialog(true);
-  };
-
   const handleSwitchStatusDialogClose = () => {
     setId(null);
     setShowSwitchStatusDialog(false);
@@ -208,10 +195,6 @@ const Therapist = ({ translate }) => {
         handleSwitchStatusDialogClose();
       }
     });
-  };
-
-  const handleSendMail = (id) => {
-    dispatch(resendEmail(id));
   };
 
   return (
@@ -240,22 +223,10 @@ const Therapist = ({ translate }) => {
         columns={columns}
         columnExtensions={columnExtensions}
         rows={therapists.map(user => {
-          const isFederatedUser = checkFederatedUser(user.email);
-
           const action = (
             <div className='d-flex justify-content-start'>
-              {keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
-                <>
-                  {user.enabled
-                    ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} disabled={!!getPatient(user.id, patients)} />
-                    : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} disabled={!!getPatient(user.id, patients)} />
-                  }
-                  <EditAction onClick={() => handleEdit(user.id)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
-                  {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
-                </>
-              )}
-              {keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
+              {(keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) ||
+                keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) && (
                 <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
               )}
             </div>
