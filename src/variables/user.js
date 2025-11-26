@@ -6,7 +6,8 @@ export const USER_GROUPS = {
   THERAPIST_ADMIN: 'therapist_admin',
   TRANSLATOR: 'translator',
   PATIENT: 'patient',
-  PHC_SERVICE_ADMIN: 'phc_service_admin'
+  PHC_SERVICE_ADMIN: 'phc_service_admin',
+  REGIONAL_ADMIN: 'regional_admin',
 };
 
 export const USER_ROLES = {
@@ -74,7 +75,8 @@ export const USER_ROLES = {
   MANAGE_MFA_POLICY: 'manage_mfa_policy',
   MANAGE_REGION: 'manage_region',
   MANAGE_PROVINCE: 'manage_province',
-  MANAGE_PHC_SERVICE_ADMIN: 'manage_phc_service_admin'
+  MANAGE_PHC_SERVICE_ADMIN: 'manage_phc_service_admin',
+  MANAGE_REGIONAL_ADMIN: 'manage_regional_admin',
 };
 
 export const SETTING_ROLES = [

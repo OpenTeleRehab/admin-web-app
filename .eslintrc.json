@@ -30,7 +30,14 @@
         }
     },
     "rules": {
-        "semi": [2, "always"]
+        "semi": [2, "always"],
+        "comma-dangle": ["off", {
+            "arrays": "only-multiline",
+            "objects": "only-multiline",
+            "imports": "only-multiline",
+            "exports": "only-multiline",
+            "functions": "only-multiline"
+        }]
     },
     "overrides": [
         {
