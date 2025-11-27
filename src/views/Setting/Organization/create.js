@@ -134,7 +134,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
       setErrorMaxSmsPerWeek(false);
     }
 
-    if (!formFields.max_phc_sms_per_week) {
+    if (formFields.max_phc_sms_per_week === '') {
       canSave = false;
       setErrorPhcWorkerMaxSmsPerWeek(true);
     } else {
