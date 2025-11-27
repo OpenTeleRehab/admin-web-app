@@ -62,7 +62,7 @@ const Region = () => {
             invalidate(END_POINTS.COUNTRY_LIMITATION);
             showToast({
               title: t('region.toast_title.delete'),
-              message: t(res.data?.message),
+              message: t(res?.message),
               color: 'success'
             });
             closeDialog();

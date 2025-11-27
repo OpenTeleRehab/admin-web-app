@@ -53,7 +53,7 @@ const Input = <T extends FieldValues>({
             country={getCountryIsoCode().toLowerCase()}
             specialLabel=""
             onlyCountries={definedCountries.map((country: any) => country.iso_code.toLowerCase())}
-            value={field.value}
+            value={field.value ?? undefined}
             onChange={(value, country: any) => {
               setValue('dial_code', country.dialCode);
               field.onChange(value);

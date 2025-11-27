@@ -62,7 +62,7 @@ const Province = () => {
             invalidate(END_POINTS.REGION_LIMITATION);
             showToast({
               title: t('province.toast_title.delete'),
-              message: t(res.data?.message),
+              message: t(res?.message),
               color: 'success'
             });
             closeDialog();

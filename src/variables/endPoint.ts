@@ -10,10 +10,16 @@ export const END_POINTS = {
   PHC_SERVICES: 'phc-services',
   PROVINCES_LIMITATION: 'provinces-limitation',
   COUNT_THERAPIST_BY_CLINIC: 'clinic/therapist/count/by-clinic',
+  PROFESSIONS: 'profession',
   PROFESSION_LIST: 'profession/list',
   PHC_SERVICES_BY_PROVINCE: 'phc-services-by-province',
   PHC_SERVICES_BY_REGION: 'phc-services-by-region',
   ADMIN: 'admin',
   ADMIN_UPDATE_STATUS: 'admin/updateStatus',
-  ADMIN_RESEND_EMAIL: 'admin/resend-email'
+  ADMIN_RESEND_EMAIL: 'admin/resend-email',
+  PHC_WORKERS: 'phc-workers',
+  COUNT_PHC_WORKER_BY_PHC_SERVICE: 'phc-services/count-phc-worker',
+  PHC_WORKERS_UPDATE_STATUS: 'phc-workers/updateStatus',
+  PHC_WORKERS_RESEND_EMAIL: 'phc-workers/resend-email',
+  PHC_WORKERS_DELETE: 'phc-workers/delete/by-id'
 };

@@ -20,6 +20,7 @@ export const USER_ROLES = {
   MANAGE_COUNTRY_ADMIN: 'manage_country_admin',
   MANAGE_CLINIC_ADMIN: 'manage_clinic_admin',
   MANAGE_THERAPIST: 'manage_therapist',
+  MANAGE_PHC_WORKER: 'manage_phc_worker',
   MANAGE_PATIENT: 'manage_patient',
   SETUP_CATEGORY: 'setup_category',
   SETUP_EXERCISE: 'setup_exercise',

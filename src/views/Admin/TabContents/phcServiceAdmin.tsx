@@ -5,7 +5,7 @@ import { EditAction, DeleteAction, EnabledAction, DisabledAction, MailSendAction
 import * as moment from 'moment';
 import settings from 'settings';
 import { useList } from 'hooks/useList';
-import EditPhcServiceAdmin from '../_Partials/createEdit';
+import EditPhcServiceAdmin from '../_Partials/PhcServiceAdminForm';
 import useToast from 'components/V2/Toast';
 import useDialog from 'components/V2/Dialog';
 import { useAlertDialog } from 'components/V2/AlertDialog';
@@ -97,7 +97,7 @@ const PhcServiceAdmin = () => {
             dispatch(showSpinner(false));
             showToast({
               title: t('toast_title.delete_admin_account'),
-              message: t(res.data.message),
+              message: t(res?.message),
               color: 'success'
             });
             closeDialog();

@@ -16,7 +16,7 @@ import { USER_GROUPS, USER_ROLES } from 'variables/user';
 import Dialog from 'components/Dialog';
 import customColorScheme from '../../utils/customColorScheme';
 import PhcServiceAdmin from './TabContents/phcServiceAdmin';
-import CreatePhcServiceAdmin from './_Partials/createEdit';
+import CreatePhcServiceAdmin from './_Partials/PhcServiceAdminForm';
 import CreateOrEditRegionalAdmin from './_Partials/RegionalAdminForm';
 import useDialog from 'components/V2/Dialog';
 import _ from 'lodash';

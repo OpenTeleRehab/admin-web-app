@@ -16,6 +16,7 @@ import CreateExercise from 'views/ServiceSetup/Exercise/create';
 import CreateEducationMaterial from 'views/ServiceSetup/EducationMaterial/create';
 import CreateQuestionnaire from 'views/ServiceSetup/Questionnaire/create';
 import Therapist from 'views/Therapist';
+import PhcWorker from 'views/PhcWorker';
 import Patient from 'views/Patient';
 import ProfilePage from 'views/Profile';
 import FaqPage from 'views/Faq';
@@ -72,12 +73,20 @@ const routes = [
     roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_COUNTRY_ADMIN]
   },
   {
+    title: 'common.phc_worker',
+    path: ROUTES.PHC_WORKER,
+    component: PhcWorker,
+    exact: true,
+    type: PRIVATE,
+    roles: [USER_ROLES.MANAGE_PHC_WORKER]
+  },
+  {
     title: 'patient',
     path: ROUTES.PATIENT,
     component: Patient,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST, USER_ROLES.CLINIC_ADMIN]
+    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST, USER_ROLES.CLINIC_ADMIN, USER_ROLES.MANAGE_PHC_WORKER]
   },
   {
     title: 'patient.detail',

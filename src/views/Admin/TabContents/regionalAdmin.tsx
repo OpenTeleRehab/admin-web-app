@@ -139,7 +139,7 @@ const RegionalAdmin = () => {
             dispatch(showSpinner(false));
             showToast({
               title: t('toast_title.delete_admin_account'),
-              message: t(res.data.message),
+              message: t(res?.message),
               color: 'success'
             });
             closeDialog();
