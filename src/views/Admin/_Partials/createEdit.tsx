@@ -56,7 +56,6 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
     if (phcServiceAdmin) {
       updateUserMutation({ id: phcServiceAdmin.id, payload: data }, {
         onSuccess: async (res) => {
-          console.log('res', res);
           dispatch(showSpinner(false));
           showToast({
             title: t('toast_title.edit_admin_account'),

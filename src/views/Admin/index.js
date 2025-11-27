@@ -8,6 +8,7 @@ import { deleteUser, updateUserStatus } from 'store/user/actions';
 import GlobalAdmin from './TabContents/globalAdmin';
 import CountryAdmin from './TabContents/countryAdmin';
 import ClinicAdmin from './TabContents/clinicAdmin';
+import RegionalAdmin from './TabContents/regionalAdmin';
 
 import CreateAdmin from './create';
 import PropTypes from 'prop-types';
@@ -16,6 +17,7 @@ import Dialog from 'components/Dialog';
 import customColorScheme from '../../utils/customColorScheme';
 import PhcServiceAdmin from './TabContents/phcServiceAdmin';
 import CreatePhcServiceAdmin from './_Partials/createEdit';
+import CreateOrEditRegionalAdmin from './_Partials/RegionalAdminForm';
 import useDialog from 'components/V2/Dialog';
 import _ from 'lodash';
 
@@ -76,8 +78,13 @@ const Admin = ({ translate }) => {
     setShow(false);
   };
   const handleShow = () => {
-    if (type !== USER_GROUPS.PHC_SERVICE_ADMIN) {
+    if (type !== USER_GROUPS.PHC_SERVICE_ADMIN && type !== USER_GROUPS.REGIONAL_ADMIN) {
       setShow(true);
+    } if (type === USER_GROUPS.REGIONAL_ADMIN) {
+      openDialog({
+        title: translate('regional_admin.new'),
+        content: <CreateOrEditRegionalAdmin />
+      });
     } else {
       openDialog({
         title: translate('phc_service_admin.new'),
@@ -176,6 +183,11 @@ const Admin = ({ translate }) => {
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE_ADMIN) && (
           <Tab eventKey={USER_GROUPS.PHC_SERVICE_ADMIN} title={translate('common.phc_service_admin')} onSelect={() => setType(USER_GROUPS.PHC_SERVICE_ADMIN)}>
             <PhcServiceAdmin />
+          </Tab>
+        )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGIONAL_ADMIN) && (
+          <Tab eventKey={USER_GROUPS.REGIONAL_ADMIN} title={translate('common.regional_admin')} onSelect={() => setType(USER_GROUPS.REGIONAL_ADMIN)}>
+            <RegionalAdmin />
           </Tab>
         )}
       </Tabs>

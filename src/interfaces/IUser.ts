@@ -8,10 +8,21 @@ export interface IUser {
   type: string;
   clinic_id?: number;
   country_id?: number;
+  country_name?: string;
   enabled: boolean;
   last_login?: string;
   gender?: string;
   language_id?: number;
   region_name?: string;
+  region_id?: number;
   phc_service?: IPHCService ;
+}
+
+export interface IRegionalAdminRequest {
+  email: string;
+  first_name: string;
+  last_name: string;
+  type: string;
+  region_id: number;
+  country_name?: string;
 }
