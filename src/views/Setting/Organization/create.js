@@ -113,7 +113,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     if (formFields.max_number_of_phc_worker === '') {
       canSave = false;
       setErrorMaxNumberOfPhcWorker('error.organization.max_number_of_phc_worker');
-    } else if (Number(formFields.max_number_of_therapist) <= 0) {
+    } else if (Number(formFields.max_number_of_phc_worker) <= 0) {
       canSave = false;
       setErrorMaxNumberOfPhcWorker('error.organization.max_number_of_phc_worker.equal_to.zero');
     } else {
@@ -134,7 +134,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
       setErrorMaxSmsPerWeek(false);
     }
 
-    if (!formFields.max_phc_sms_per_week) {
+    if (formFields.max_phc_sms_per_week === '') {
       canSave = false;
       setErrorPhcWorkerMaxSmsPerWeek(true);
     } else {

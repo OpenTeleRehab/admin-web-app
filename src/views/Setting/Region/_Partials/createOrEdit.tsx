@@ -124,7 +124,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                   const exceedremainingTherapistLimit = regionData ? numValue > remainingTherapistLimit + regionData.therapist_limit : numValue > remainingTherapistLimit;
 
                   if (value <= 0) {
-                    return t('error.region.therapist_limit.equal_to.zero');
+                    return t('error.region.therapist_limit.less_than_equal_to.zero');
                   }
 
                   if (exceedremainingTherapistLimit) {
@@ -151,7 +151,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                   const exceedremainingPhcWorkerLimit = regionData ? numValue > remainingPhcWorkerLimit + regionData.phc_worker_limit : numValue > remainingPhcWorkerLimit;
 
                   if (value <= 0) {
-                    return t('error.region.phc_worker_limit.equal_to.zero');
+                    return t('error.region.phc_worker_limit.less_than_equal_to.zero');
                   }
 
                   if (exceedremainingPhcWorkerLimit) {
