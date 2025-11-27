@@ -9,7 +9,10 @@ export const useDelete = (resource: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => axiosInstance.delete<IDeleteResponse>(`/${resource}/${id}`),
+    mutationFn: async (id: number) => {
+      const { data } = await axiosInstance.delete<IDeleteResponse>(`/${resource}/${id}`);
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [resource] });
     }

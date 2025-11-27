@@ -15,13 +15,15 @@ import { END_POINTS } from 'variables/endPoint';
 import { Spinner } from 'react-bootstrap';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { useDelete } from 'hooks/useDelete';
+import useToast from 'components/V2/Toast';
 
 const Country = ({ translate, handleRowEdit }) => {
+  const { showToast } = useToast();
   const { data: countries, isLoading } = useList(END_POINTS.COUNTRY);
   const languages = useSelector(state => state.language.languages);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
-  const { mutate: deleteCountry } = useDelete();
+  const { mutate: deleteCountry } = useDelete(END_POINTS.COUNTRY);
   const invalidate = useInvalidate();
 
   const columns = [
@@ -54,9 +56,14 @@ const Country = ({ translate, handleRowEdit }) => {
 
   const handleDeleteDialogConfirm = () => {
     deleteCountry(deleteId, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         invalidate(END_POINTS.COUNTRY_LIMITATION);
         handleDeleteDialogClose();
+        showToast({
+          title: translate('toast_title.delete_country'),
+          message: translate(res?.message),
+          color: 'success'
+        });
       }
     });
   };
