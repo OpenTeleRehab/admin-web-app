@@ -25,6 +25,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
   const [errorMaxNumberOfPhcWorker, setErrorMaxNumberOfPhcWorker] = useState(null);
   const [errorMaxOngoingTreatmentPlan, setErrorMaxOngoingTreatmentPlan] = useState(false);
   const [errorMaxSmsPerWeek, setErrorMaxSmsPerWeek] = useState(false);
+  const [errorPhcWorkerMaxSmsPerWeek, setErrorPhcWorkerMaxSmsPerWeek] = useState(false);
 
   const [formFields, setFormFields] = useState({
     organization_name: '',
@@ -34,7 +35,8 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
     max_number_of_therapist: '',
     max_number_of_phc_worker: '',
     max_ongoing_treatment_plan: 0,
-    max_sms_per_week: 0
+    max_sms_per_week: 0,
+    phc_worker_max_sms_per_week: 0
   });
 
   useEffect(() => {
@@ -53,7 +55,8 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         max_number_of_therapist: organization.max_number_of_therapist,
         max_number_of_phc_worker: organization.max_number_of_phc_worker,
         max_ongoing_treatment_plan: organization.max_ongoing_treatment_plan,
-        max_sms_per_week: organization.max_sms_per_week
+        max_sms_per_week: organization.max_sms_per_week,
+        phc_worker_max_sms_per_week: organization.phc_worker_max_sms_per_week
       });
     }
     // eslint-disable-next-line
@@ -299,6 +302,24 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.organization.max_sms_per_week')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="phcWorkerMaxSmsPerWeek">
+            <Form.Label>{translate('organization.phc_worker_max_sms_per_week')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Form.Control
+              name="phc_worker_max_sms_per_week"
+              onChange={handleChange}
+              type="number"
+              min={0}
+              placeholder={translate('placeholder.organization.phc_worker_max_sms_per_week')}
+              isInvalid={errorPhcWorkerMaxSmsPerWeek}
+              value={formFields.phc_worker_max_sms_per_week}
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.organization.phc_worker_max_sms_per_week')}
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
