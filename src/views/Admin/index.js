@@ -80,7 +80,7 @@ const Admin = ({ translate }) => {
   const handleShow = () => {
     if (type !== USER_GROUPS.PHC_SERVICE_ADMIN && type !== USER_GROUPS.REGIONAL_ADMIN) {
       setShow(true);
-    } if (type === USER_GROUPS.REGIONAL_ADMIN) {
+    } else if (type === USER_GROUPS.REGIONAL_ADMIN) {
       openDialog({
         title: translate('regional_admin.new'),
         content: <CreateOrEditRegionalAdmin />
