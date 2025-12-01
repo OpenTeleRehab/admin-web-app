@@ -141,19 +141,19 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
           <Col>
             <Input
               control={control}
-              name='first_name'
-              label={t('common.first_name')}
-              placeholder={t('placeholder.first_name')}
-              rules={{ required: t('error.first_name') }}
+              name='last_name'
+              label={t('common.last_name')}
+              placeholder={t('placeholder.last_name')}
+              rules={{ required: t('error.last_name') }}
             />
           </Col>
           <Col>
             <Input
               control={control}
-              name='last_name'
-              label={t('common.last_name')}
-              placeholder={t('placeholder.last_name')}
-              rules={{ required: t('error.last_name') }}
+              name='first_name'
+              label={t('common.first_name')}
+              placeholder={t('placeholder.first_name')}
+              rules={{ required: t('error.first_name') }}
             />
           </Col>
         </Row>
