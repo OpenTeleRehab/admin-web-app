@@ -35,7 +35,7 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
       reset(phcServiceAdmin);
       const province = provinces?.data.find((province) => province.id === phcServiceAdmin.phc_service?.province_id);
       setValue('province_id', province?.id);
-      setValue('phc_service_id', phcServiceAdmin.phc_service?.province_id);
+      setValue('phc_service_id', phcServiceAdmin.phc_service?.id);
     } else {
       setValue('type', USER_GROUPS.PHC_SERVICE_ADMIN);
       setValue('region_name', profile?.region_name);
