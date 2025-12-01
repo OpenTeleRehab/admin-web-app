@@ -31,3 +31,9 @@ export const getClinicNames = (ids, clinics) => {
     .join(', ')
     .value();
 };
+
+export const getProvinceName = (id, clinics) => {
+  const clinic = _.findLast(clinics, { id: parseInt(id, 10) });
+
+  return clinic?.province?.name ?? '';
+};

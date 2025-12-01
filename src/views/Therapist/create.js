@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import validateEmail from 'utils/validateEmail';
 import { createTherapist, updateTherapist } from 'store/therapist/actions';
 import { getCountryName, getCountryIdentity, getCountryIsoCode } from 'utils/country';
-import { getClinicName, getClinicIdentity } from 'utils/clinic';
+import { getClinicName, getClinicIdentity, getProvinceName } from 'utils/clinic';
 import { getProfessions } from 'store/profession/actions';
 import { Therapist as therapistService } from 'services/therapist';
 import Select from 'react-select';
@@ -36,11 +36,9 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
   const languages = useSelector(state => state.language.languages);
 
   const [errorEmail, setErrorEmail] = useState(false);
-  const [errorCountry, setErrorCountry] = useState(false);
   const [errorLimitPatient, setErrorLimitPatient] = useState(false);
   const [errorLimitPatientMessage, setErrorLimitPatientMessage] = useState('');
   const [errorOverLimitMessage, setErrorOverLimitMessage] = useState('');
-  const [errorClinic, setErrorClinic] = useState(false);
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
   const [errorOverDefaultLimit, setErrorOverDefaultLimit] = useState(false);
@@ -50,9 +48,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
     phone: '',
     first_name: '',
     last_name: '',
-    country: '',
     limit_patient: defaultOnGoingLimitPatient,
-    clinic: '',
     clinic_identity: '',
     country_identity: ''
   });
@@ -63,18 +59,14 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
 
   const resetData = () => {
     setErrorEmail(false);
-    setErrorCountry(false);
     setErrorLimitPatient(false);
     setErrorOverDefaultLimit(false);
-    setErrorClinic(false);
     setFormFields({
       email: '',
       phone: '',
       first_name: '',
       last_name: '',
       limit_patient: defaultOnGoingLimitPatient,
-      clinic: '',
-      country: ''
     });
   };
 
@@ -102,8 +94,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         phone: editingData.phone || '',
         first_name: editingData.first_name || '',
         last_name: editingData.last_name || '',
-        country: editingData.country_id || '',
-        clinic: editingData.clinic_id || '',
         limit_patient: editingData.limit_patient || '',
         language_id: editingData.language_id || '',
         profession: editingData.profession_id || '',
@@ -112,11 +102,15 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
     } else {
       resetData();
       if (profile !== undefined) {
-        setFormFields({ ...formFields, country: profile.country_id, clinic: profile.clinic_id, country_identity: getCountryIdentity(profile.country_id, countries), clinic_identity: getClinicIdentity(profile.clinic_id, clinics) });
+        setFormFields({
+          ...formFields,
+          country_identity: getCountryIdentity(profile.country_id, countries),
+          clinic_identity: getClinicIdentity(profile.clinic_id, clinics)
+        });
       }
     }
     // eslint-disable-next-line
-  }, [editId, therapists, profile]);
+  }, [editId, therapists, profile, clinics]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -137,13 +131,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       setErrorEmail(false);
     }
 
-    if (formFields.country === '') {
-      canSave = false;
-      setErrorCountry(true);
-    } else {
-      setErrorCountry(false);
-    }
-
     if (formFields.first_name === '') {
       canSave = false;
       setErrorFirstName(true);
@@ -156,20 +143,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       setErrorLastName(true);
     } else {
       setErrorLastName(false);
-    }
-
-    if (formFields.clinic === '') {
-      canSave = false;
-      setErrorClinic(true);
-    } else {
-      setErrorClinic(false);
-    }
-
-    if (formFields.country === '') {
-      canSave = false;
-      setErrorCountry(true);
-    } else {
-      setErrorCountry(false);
     }
 
     if (formFields.limit_patient === '') {
@@ -284,20 +257,30 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         <Form.Row>
           <Form.Group as={Col} controlId="formCountry" className="mb-0">
             <Form.Label>{translate('common.country')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Select
-              isDisabled={true}
-              placeholder={profile !== undefined && getCountryName(profile.country_id, countries)}
-              classNamePrefix="filter"
-              className={errorCountry ? 'is-invalid' : ''}
-              value={profile !== undefined && getCountryName(profile.country_id, countries)}
-              getOptionLabel={option => option.label}
-              styles={customSelectStyles}
-              aria-label="Country"
+            <Form.Control
+              name="country"
+              type="text"
+              value={getCountryName(profile?.country_id, countries)}
+              disabled
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.country')}
-            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group controlId="formRegion">
+            <Form.Label>{translate('common.region')}</Form.Label>
+            <Form.Control
+              name="region"
+              type="text"
+              value={profile?.region_name || ''}
+              disabled
+            />
+          </Form.Group>
+          <Form.Group controlId="formProvince">
+            <Form.Label>{translate('common.province')}</Form.Label>
+            <Form.Control
+              name="province"
+              type="text"
+              value={getProvinceName(profile?.clinic_id, clinics)}
+              disabled
+            />
           </Form.Group>
           <Form.Group as={Col} controlId="patient" className="mb-0">
             <Form.Label>
@@ -382,18 +365,12 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
           </Form.Group>
           <Form.Group as={Col} controlId="clinic">
             <Form.Label>{translate('common.clinic')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Select
-              value={formFields.clinic}
-              placeholder={getClinicName(profile.clinic_id, clinics)}
-              classNamePrefix="filter"
-              className={errorClinic ? 'is-invalid' : ''}
-              isDisabled={true}
-              aria-label="Clinic"
+            <Form.Control
+              name="clinic"
+              type="text"
+              value={getClinicName(profile?.clinic_id, clinics)}
+              disabled
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.clinic')}
-            </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
         <Form.Row>

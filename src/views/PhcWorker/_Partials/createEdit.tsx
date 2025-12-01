@@ -51,22 +51,18 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
       });
       reset(phcWorker);
     } else {
-      setValue('country_id', Number(profile?.country_id));
-      setValue('region_id', profile?.region_id);
       setValue('country_identity', getCountryIdentity(profile.country_id, countries));
       setValue('phc_service_identity', profile.phc_service.identity);
-      setValue('province_id', profile.phc_service.province_id);
-      setValue('phc_service_id', profile.phc_service.id);
       setValue('limit_patient', orgOngoingTreatmentLimit);
     }
   }, [phcWorker, orgOngoingTreatmentLimit, profile, countries, setValue, reset]);
 
   useEffect(() => {
     if (profile) {
-      setValue('country', getCountryName(profile.country_id, countries));
-      setValue('region', profile.region_name);
-      setValue('province', profile.phc_service.province_name);
-      setValue('phc_service', profile.phc_service.name);
+      setValue('country_name', getCountryName(profile.country_id, countries));
+      setValue('region_name', profile.region_name);
+      setValue('province_name', profile.phc_service.province_name);
+      setValue('phc_service_name', profile.phc_service.name);
     }
   }, [profile, setValue]);
 
@@ -143,7 +139,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
           <Col sm={12} md={6}>
             <Input
               control={control}
-              name='country'
+              name='country_name'
               label={t('common.country')}
               disabled
             />
@@ -151,7 +147,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
           <Col sm={12} md={6}>
             <Input
               control={control}
-              name='region'
+              name='region_name'
               label={t('common.region')}
               disabled
             />
@@ -161,7 +157,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
           <Col sm={12} md={6}>
             <Input
               control={control}
-              name='province'
+              name='province_name'
               label={t('common.province')}
               disabled
             />
@@ -226,7 +222,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
           <Col sm={12} md={6}>
             <Input
               control={control}
-              name='phc_service'
+              name='phc_service_name'
               label={t('common.phc_service')}
               disabled
             />
