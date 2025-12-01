@@ -111,6 +111,22 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
   return (
     <Form onSubmit={onSubmit}>
       <DialogBody>
+        <Form.Group as={Row}>
+          <Col md={6}>
+            <Form.Check
+              name="type"
+              value={USER_GROUPS.ORGANIZATION_ADMIN}
+              defaultChecked
+              type="radio"
+              label={t('regional_admin')}
+              id="formRegionalAdmin"
+              disabled={!!regionalAdmin}
+            />
+          </Col>
+        </Form.Group>
+        <p className="text-muted font-italic">
+          {t('admin.hint_message_regional_admin')}
+        </p>
         <Input
           control={control}
           name='email'
