@@ -119,6 +119,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
               control={control}
               name="email"
               type="email"
+              label={t('common.email')}
               placeholder={t('placeholder.email')}
               rules={{ required: t('error.email') }}
               disabled={!!phcWorker}
