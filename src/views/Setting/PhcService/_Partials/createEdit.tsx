@@ -134,7 +134,18 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
               control={control}
               name='phone_number'
               label={t('common.phone.number')}
-              rules={{ required: t('error.phone') }}
+              rules={{
+                required: t('error.phone'),
+                validate: (value) => {
+                  const dialCode = watch('dial_code');
+
+                  if (dialCode === value) {
+                    return t('error.phone');
+                  }
+
+                  return true;
+                }
+              }}
               setValue={setValue}
             />
           </Col>
