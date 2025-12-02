@@ -49,6 +49,8 @@ const Admin = ({ translate }) => {
       setType(USER_GROUPS.ORGANIZATION_ADMIN);
     } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY_ADMIN)) {
       setType(USER_GROUPS.COUNTRY_ADMIN);
+    } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_REGIONAL_ADMIN)) {
+      setType(USER_GROUPS.REGIONAL_ADMIN);
     } else if (keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC_ADMIN)) {
       setType(USER_GROUPS.CLINIC_ADMIN);
     }
