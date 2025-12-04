@@ -27,6 +27,7 @@ import { useOne } from 'hooks/useOne';
 import { useMutationAction } from 'hooks/useMutationAction';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import { IPhcWorker } from 'interfaces/IPhcWorker';
+import { checkFederatedUser } from 'utils/user';
 
 const PhcWorker = () => {
   const dispatch = useDispatch();
@@ -193,6 +194,7 @@ const PhcWorker = () => {
 
   const rows = useMemo(() =>
     (phcWorkers?.data || []).map(phcWorker => {
+      const isFederatedUser = checkFederatedUser(phcWorker.email);
       const action = (
         <>
           {keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER) && (
@@ -204,7 +206,7 @@ const PhcWorker = () => {
               }
               <EditAction onClick={() => handleEdit(phcWorker)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker.id)} />
-              <MailSendAction onClick={() => handleSendMail(phcWorker.id)} disabled={phcWorker.last_login} />
+              {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(phcWorker.id)} disabled={phcWorker.last_login} />}
             </>
           )}
         </>
