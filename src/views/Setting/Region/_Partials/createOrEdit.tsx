@@ -167,7 +167,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
-          {t('common.save')}
+          {regionData ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
           {t('common.cancel')}

@@ -181,7 +181,7 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
-          {t('common.save')}
+          {phcService ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
           {t('common.cancel')}

@@ -176,7 +176,7 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
-          {t('common.save')}
+          {regionalAdmin ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={() => closeDialog()}>
           {t('common.cancel')}

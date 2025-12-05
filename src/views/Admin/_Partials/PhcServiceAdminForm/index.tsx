@@ -145,7 +145,7 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
-          {t('common.save')}
+          {phcServiceAdmin ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
           {t('common.cancel')}
