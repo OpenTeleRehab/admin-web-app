@@ -234,7 +234,7 @@ const PhcWorker = () => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{t('phc_worker.list')}</h1>
-        {totalPhcWorkers && totalPhcWorkers < (profile?.phc_service?.phc_worker_limit ?? 0) && (
+        {totalPhcWorkers != null && totalPhcWorkers < (profile?.phc_service?.phc_worker_limit ?? 0) && (
           <div className="btn-toolbar mb-2 mb-md-0">
             <Button variant="primary" onClick={handleCreate}>
               <BsPlus size={20} className="mr-1" />

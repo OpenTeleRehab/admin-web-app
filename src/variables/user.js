@@ -8,7 +8,6 @@ export const USER_GROUPS = {
   TRANSLATOR: 'translator',
   PATIENT: 'patient',
   PHC_SERVICE_ADMIN: 'phc_service_admin',
-  REGIONAL_ADMIN: 'regional_admin',
 };
 
 export const USER_ROLES = {
