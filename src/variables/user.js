@@ -4,6 +4,7 @@ export const USER_GROUPS = {
   COUNTRY_ADMIN: 'country_admin',
   CLINIC_ADMIN: 'clinic_admin',
   THERAPIST_ADMIN: 'therapist_admin',
+  REGIONAL_ADMIN: 'regional_admin',
   TRANSLATOR: 'translator',
   PATIENT: 'patient',
   PHC_SERVICE_ADMIN: 'phc_service_admin',
