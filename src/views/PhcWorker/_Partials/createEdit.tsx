@@ -195,6 +195,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
               control={control}
               name='last_name'
               label={t('common.last_name')}
+              placeholder={t('placeholder.last_name')}
               rules={{ required: t('error.last_name') }}
             />
           </Col>
@@ -203,6 +204,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
               control={control}
               name='first_name'
               label={t('common.first_name')}
+              placeholder={t('placeholder.first_name')}
               rules={{ required: t('error.first_name') }}
             />
           </Col>
