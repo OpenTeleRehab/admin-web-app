@@ -248,7 +248,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
-          {t('common.save')}
+          {phcWorker ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
           {t('common.cancel')}
