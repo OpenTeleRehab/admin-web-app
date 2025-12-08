@@ -57,10 +57,8 @@ const Therapist = ({ translate }) => {
     { name: 'region', title: translate('common.region') },
     { name: 'therapist_clinic', title: translate('common.clinic') },
     { name: 'total_patient', title: translate('common.total_patient') },
-    { name: 'assigned_patient', title: translate('common.assigned_patient') },
+    { name: 'on_going_treatment', title: translate('common.ongoing_treatment_plan') },
     { name: 'limit_patient', title: translate('common.on_going.treatment_let') },
-    { name: 'status', title: translate('common.status') },
-    { name: 'last_login', title: translate('common.last_login') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -224,7 +222,7 @@ const Therapist = ({ translate }) => {
         columnExtensions={columnExtensions}
         rows={therapists.map(user => {
           const action = (
-            <div className='d-flex justify-content-start'>
+            <div className='d-flex justify-content-center'>
               {(keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) ||
                 keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) && (
                 <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
