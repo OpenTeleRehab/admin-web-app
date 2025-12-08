@@ -105,16 +105,14 @@ const PhcWorker = () => {
   const handleCreate = () => {
     openDialog({
       title: t('phc_worker.new'),
-      content: <CreateEditPhcWorker/>,
-      props: { size: 'lg' }
+      content: <CreateEditPhcWorker/>
     });
   };
 
   const handleEdit = (phcWorker: IPhcWorker) => {
     openDialog({
       title: t('phc_worker.edit'),
-      content: <CreateEditPhcWorker phcWorker={phcWorker} />,
-      props: { size: 'lg' }
+      content: <CreateEditPhcWorker phcWorker={phcWorker} />
     });
   };
 
