@@ -109,6 +109,7 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
           }))}
           label={t('common.province')}
           placeholder={t('common.province.placeholder')}
+          rules={{ required: t('province.required') }}
         />
         <Select
           control={control}
