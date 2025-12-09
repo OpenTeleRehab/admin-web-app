@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import PatientList from './Partials/patientList';
+import PatientReferral from './Partials/patientReferral';
 import AssistiveTechnologyPatient from 'components/AssistiveTechnologyPatient';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadPatientRawData } from 'store/globalPatient/actions';
@@ -39,6 +40,9 @@ const Patient = ({ translate }) => {
       <Tabs id="amg-tab" activeKey={type} onSelect={(key) => handleSelectTab(key)} transition={false}>
         <Tab eventKey="patientList" title={translate('patient')}>
           <PatientList translate={translate} setDownloadfilter={setDownloadfilter}/>
+        </Tab>
+        <Tab eventKey="patientReferral" title={translate('patient.referral.list')}>
+          <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
         </Tab>
         <Tab eventKey="atList" title={translate('assistive_technology')}>
           <AssistiveTechnologyPatient translate={translate} />

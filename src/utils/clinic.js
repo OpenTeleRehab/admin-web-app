@@ -15,7 +15,7 @@ export const getClinicIdentity = (id, clinics) => {
 export const getClinicRegion = (id, clinics) => {
   const clinic = _.findLast(clinics, { id: parseInt(id, 10) });
 
-  return clinic ? clinic.region : '';
+  return clinic ? clinic.region.name : '';
 };
 
 export const getTotalTherapistLimit = (id, clinics) => {
