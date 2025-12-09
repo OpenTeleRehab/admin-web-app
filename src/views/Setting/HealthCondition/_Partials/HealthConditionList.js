@@ -5,7 +5,8 @@ import { DeleteAction, EditAction } from 'components/ActionIcons';
 import { getTranslate } from 'react-localize-redux';
 import Dialog from '../../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteHealthCondition } from '../../../../store/healthCondition/actions';
+import { deleteHealthCondition, getHealthConditions } from '../../../../store/healthCondition/actions';
+import { getHealthConditionGroups } from '../../../../store/healthConditionGroup/actions';
 
 const HealthConditionList = ({ resultHealthConditions, healthConditions, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
@@ -28,6 +29,8 @@ const HealthConditionList = ({ resultHealthConditions, healthConditions, active,
   const handleDeleteDialogConfirm = () => {
     dispatch(deleteHealthCondition(deleteItem.id, deleteItem.parent_id)).then(result => {
       if (result) {
+        dispatch(getHealthConditions({ parent_id: deleteItem.parent_id }));
+        dispatch(getHealthConditionGroups());
         handleDeleteDialogClose();
       }
     });
