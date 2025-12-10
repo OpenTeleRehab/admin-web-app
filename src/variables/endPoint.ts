@@ -21,5 +21,8 @@ export const END_POINTS = {
   COUNT_PHC_WORKER_BY_PHC_SERVICE: 'phc-services/count-phc-worker',
   PHC_WORKERS_UPDATE_STATUS: 'phc-workers/updateStatus',
   PHC_WORKERS_RESEND_EMAIL: 'phc-workers/resend-email',
-  PHC_WORKERS_DELETE: 'phc-workers/delete/by-id'
+  PHC_WORKERS_DELETE: 'phc-workers/delete/by-id',
+  PATIENT_REFERRAL: 'patient-referrals',
+  THERAPIST_BY_CLINIC: 'therapist/list/by-clinic-id',
+  PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
 };
