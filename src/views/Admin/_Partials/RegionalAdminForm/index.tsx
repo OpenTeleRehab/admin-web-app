@@ -118,7 +118,7 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
               value={USER_GROUPS.ORGANIZATION_ADMIN}
               defaultChecked
               type="radio"
-              label={t('regional_admin')}
+              label={t('common.regional_admin')}
               id="formRegionalAdmin"
               disabled={!!regionalAdmin}
             />
