@@ -48,7 +48,7 @@ export const updateClinic = (id, payload) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.updateClinicFail());
-    dispatch(showErrorNotification('toast_title.edit_clinic', data.message));
+    dispatch(showErrorNotification('toast_title.edit_clinic', data.message, { ...data.translate_params }));
     return false;
   }
 };

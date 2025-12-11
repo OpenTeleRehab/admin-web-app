@@ -55,7 +55,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
 
   const provinceOptions = useMemo(() => provinces?.data?.filter((province) => province.region_id === formFields.region_id) || [], [provinces, formFields.region_id]);
 
-  const remainingTherapistLimit = useMemo(() => {
+  const provinceLimitation = useMemo(() => {
     const provinceLimitation = provincesLimitation?.data?.find(province => province.id === formFields.province_id);
     return provinceLimitation;
   }, [provincesLimitation, formFields.province_id]);
@@ -86,8 +86,8 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   }, [editId, profile, countries, clinics]);
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    setFormFields({ ...formFields, [name]: value });
+    const { name, value, type } = e.target;
+    setFormFields({ ...formFields, [name]: type === 'number' ? Number(value) : value });
   };
 
   const handleSingleSelectChange = (key, value) => {
@@ -134,27 +134,40 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       setErrorPhoneMessage('');
     }
 
-    const numValue = Number(formFields.therapist_limit);
-    const remaining = remainingTherapistLimit ? remainingTherapistLimit.remaining_therapist_limit : 0;
+    const clinic = clinics?.find(c => c.id === editId);
+    const remainingTherapistLimit = provinceLimitation ? provinceLimitation.remaining_therapist_limit : 0;
+    let exceedRemainingTherapistLimit = false;
+    let translateParams = {
+      allocated_therapist_limit: '',
+      remaining_therapist_limit: '',
+      therapist_limit_used: '',
+    };
 
-    let exceedRemainingLimit = numValue > remaining;
-
-    if (editId && clinics.length) {
-      const clinic = clinics.find(c => c.id === editId);
-      if (clinic) {
-        exceedRemainingLimit = numValue > remaining + Number(clinic.therapist_limit);
-      }
+    if (clinic?.province.id !== formFields.province_id && formFields.therapist_limit > provinceLimitation?.remaining_therapist_limit) {
+      exceedRemainingTherapistLimit = formFields.therapist_limit > remainingTherapistLimit;
+      translateParams = {
+        allocated_therapist_limit: provinceLimitation?.allocated_therapist_limit,
+        remaining_therapist_limit: provinceLimitation?.remaining_therapist_limit,
+        therapist_limit_used: provinceLimitation?.therapist_limit_used,
+      };
+    } else if (clinic?.province.id === formFields.province_id && formFields.therapist_limit > provinceLimitation?.remaining_therapist_limit + clinic.therapist_limit) {
+      exceedRemainingTherapistLimit = formFields.therapist_limit > remainingTherapistLimit + clinic.therapist_limit;
+      translateParams = {
+        allocated_therapist_limit: provinceLimitation?.allocated_therapist_limit,
+        remaining_therapist_limit: provinceLimitation?.remaining_therapist_limit + clinic?.therapist_limit,
+        therapist_limit_used: provinceLimitation?.therapist_limit_used - clinic?.therapist_limit,
+      };
     }
 
-    if (numValue <= 0) {
+    if (formFields.therapist_limit <= 0) {
       canSave = false;
-      setErrorTherapistLimit('error.clinic.therapist_limit');
-    } else if (numValue < totalTherapist?.therapistTotal) {
+      setErrorTherapistLimit(translate('error.clinic.therapist_limit'));
+    } else if (formFields.therapist_limit < totalTherapist?.therapistTotal) {
       canSave = false;
-      setErrorTherapistLimit('error.clinic.therapist_limit.less_than.total.therapist');
-    } else if (exceedRemainingLimit) {
+      setErrorTherapistLimit(translate('error.clinic.therapist_limit.less_than.total.therapist'));
+    } else if (exceedRemainingTherapistLimit) {
       canSave = false;
-      setErrorTherapistLimit('error.clinic.therapist_limit.greater_than.province.therapist_limit');
+      setErrorTherapistLimit(translate('error.clinic.therapist_limit.greater_than.province.therapist_limit', { ...translateParams }));
     } else {
       canSave = canSave && true;
       setErrorTherapistLimit('');
@@ -171,14 +184,14 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       if (editId) {
         dispatch(updateClinic(editId, data)).then(result => {
           if (result) {
-            invalidate(END_POINTS.PROVINCE_LIMITATION);
+            invalidate(END_POINTS.PROVINCES_LIMITATION);
             handleClose();
           }
         });
       } else {
         dispatch(createClinic(data)).then(result => {
           if (result) {
-            invalidate(END_POINTS.PROVINCE_LIMITATION);
+            invalidate(END_POINTS.PROVINCES_LIMITATION);
             handleClose();
           }
         });
@@ -313,7 +326,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             value={formFields.therapist_limit}
           />
           <Form.Control.Feedback type="invalid">
-            {translate(errorTherapistLimit)}
+            {errorTherapistLimit}
           </Form.Control.Feedback>
         </Form.Group>
       </Form>
