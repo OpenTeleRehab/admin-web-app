@@ -1,21 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Tabs, Tab, Button } from 'react-bootstrap';
+import { Tabs, Tab, Button, Badge } from 'react-bootstrap';
+import { useLocation, useHistory } from 'react-router-dom';
+import queryString from 'query-string';
 import PatientList from './Partials/patientList';
 import PatientReferral from './Partials/patientReferral';
 import AssistiveTechnologyPatient from 'components/AssistiveTechnologyPatient';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadPatientRawData } from 'store/globalPatient/actions';
 import { updateDownloadPending } from 'store/downloadTracker/actions';
+import { PATIENT } from 'variables/routes';
 import { FaDownload } from 'react-icons/fa';
+import { useOne } from 'hooks/useOne';
+import { END_POINTS } from 'variables/endPoint';
+
+const VIEW_PATIENT = 'patientList';
+const VIEW_PATIENT_REFERRAL = 'patientReferralList';
+const ASSISTIVE_TECHNOLOGY = 'atList';
 
 const Patient = ({ translate }) => {
   const dispatch = useDispatch();
+  const { search } = useLocation();
+  const history = useHistory();
   const { profile } = useSelector(state => state.auth);
   const { languages } = useSelector(state => state.language);
   const [type, setType] = useState('patientList');
   const [downloadFilter, setDownloadfilter] = useState();
+  const { data: referralCount } = useOne(END_POINTS.PATIENT_REFERRAL, 'count');
+
+  useEffect(() => {
+    if (queryString.parse(search).tab === ASSISTIVE_TECHNOLOGY) {
+      setType(ASSISTIVE_TECHNOLOGY);
+    } else if (queryString.parse(search).tab === VIEW_PATIENT_REFERRAL) {
+      setType(VIEW_PATIENT_REFERRAL);
+    } else {
+      setType(VIEW_PATIENT);
+    }
+  }, [search]);
+
   const handleSelectTab = (key) => {
+    history.push(`${PATIENT}?tab=${key}`);
     setType(key);
   };
 
@@ -41,7 +65,7 @@ const Patient = ({ translate }) => {
         <Tab eventKey="patientList" title={translate('patient')}>
           <PatientList translate={translate} setDownloadfilter={setDownloadfilter}/>
         </Tab>
-        <Tab eventKey="patientReferral" title={translate('patient.referral.list')}>
+        <Tab eventKey="patientReferralList" title={<div>{translate('patient.referral.list')} <Badge className="ml-1" variant="danger">{referralCount ?? 0}</Badge></div>}>
           <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
         </Tab>
         <Tab eventKey="atList" title={translate('assistive_technology')}>

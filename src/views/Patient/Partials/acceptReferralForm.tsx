@@ -17,7 +17,7 @@ type ReferralFormProps = {
   referralId: number;
 }
 
-const ReferralForm = ({ referralId }: ReferralFormProps) => {
+const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
   const t = useTranslate();
   const invalidate = useInvalidate();
   const { closeDialog } = useDialog();
@@ -43,7 +43,7 @@ const ReferralForm = ({ referralId }: ReferralFormProps) => {
     createReferral(payload, {
       onSuccess: (res) => {
         showToast({
-          title: t('patient.referral_assignment.title'),
+          title: t('patient.referral_assignment.accept.title'),
           message: t(res.message),
         });
         invalidate(END_POINTS.PATIENT_REFERRAL);
@@ -72,4 +72,4 @@ const ReferralForm = ({ referralId }: ReferralFormProps) => {
   );
 };
 
-export default ReferralForm;
+export default AcceptReferralForm;
