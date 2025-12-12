@@ -30,7 +30,9 @@ const PatientList = ({ translate, setDownloadfilter }) => {
     { name: 'gender', title: translate('gender') },
     { name: 'age', title: translate('common.age') },
     { name: 'region', title: translate('common.region') },
-    { name: 'treatment_status', title: translate('common.ongoing_treatment_status') }
+    { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
+    { name: 'health_condition_groups', title: translate('common.health_condition_group') },
+    { name: 'health_conditions', title: translate('common.health_condition') }
   ];
 
   const columnExtensions = [
@@ -146,6 +148,8 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             clinic: getClinicName(patient.clinic_id, clinics),
             region: getClinicRegion(patient.clinic_id, clinics),
             treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.upcomingTreatmentPlan ? patient.upcomingTreatmentPlan : patient.lastTreatmentPlan),
+            health_condition_groups: patient.healthConditionGroups,
+            health_conditions: patient.healthConditions,
             action
           };
         })}
