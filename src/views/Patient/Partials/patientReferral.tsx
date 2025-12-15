@@ -1,12 +1,13 @@
 import { useList } from 'hooks/useList';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { END_POINTS } from 'variables/endPoint';
 import moment from 'moment';
 import { Badge, Button } from 'react-bootstrap';
 import { IReferralResource } from 'interfaces/IReferral';
-import Table from 'components/Table/basic';
+import Table from 'components/Table';
 import useDialog from 'components/V2/Dialog';
-import ReferralForm from './referralForm';
+import ReferralForm from './acceptReferralForm';
+import DeclineForm from './declineReferralForm';
 import { REFERRAL_STATUS } from 'variables/referralStatus';
 import { FaCheck } from 'react-icons/fa6';
 import { IoClose } from 'react-icons/io5';
@@ -15,9 +16,12 @@ type PatientReferralProps = {
   translate: any;
 }
 
-const BasicTable = Table as any;
+const CustomTable = Table as any;
 
 const PatientReferral = ({ translate }: PatientReferralProps) => {
+  const [pageSize, setPageSize] = useState(60);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [filters, setFilters] = useState([]);
   const { data: patientReferrals } = useList<IReferralResource>(END_POINTS.PATIENT_REFERRAL);
   const { openDialog } = useDialog();
 
@@ -27,8 +31,13 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
     { name: 'phc_workers', title: translate('referral.lead.and.supplementary') },
     { name: 'referred_by', title: translate('referral.referred_by') },
     { name: 'status', title: translate('common.status') },
+    { name: 'therapist_reason', title: translate('referral.comment') },
     { name: 'action', title: translate('common.action') },
   ], [translate]);
+
+  const columnExtensions = [
+    { columnName: 'action', align: 'right' }
+  ];
 
   const formatLeadSupplementaryPhc = (workers: string[] = []) => {
     if (!workers || workers.length === 0) return '';
@@ -45,8 +54,15 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
 
   const onAccept = (referralId: number) => {
     openDialog({
-      title: translate('patient.referral.title'),
+      title: translate('patient.referral.accept.title'),
       content: <ReferralForm referralId={referralId} />
+    });
+  };
+
+  const onDecline = (referralId: number) => {
+    openDialog({
+      title: translate('patient.referral.decline.title'),
+      content: <DeclineForm referralId={referralId} />
     });
   };
 
@@ -54,8 +70,23 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
     return (patientReferrals?.data ?? []).map((pr) => {
       const action = (
         <div className='d-flex justify-content-end'>
-          <Button size="sm" className="d-flex justify-content-center align-items-center" disabled={pr.status === REFERRAL_STATUS.INVITED} onClick={() => onAccept(pr.id)}><FaCheck /> {translate('common.accept')}</Button>
-          <Button size="sm" variant='danger' className="ml-1 d-flex justify-content-center align-items-center"><IoClose size={18} /> {translate('common.declined')}</Button>
+          <Button
+            size="sm"
+            className="d-flex justify-content-center align-items-center"
+            disabled={pr.status === REFERRAL_STATUS.INVITED}
+            onClick={() => onAccept(pr.id)}
+          >
+            <FaCheck /> {translate('common.accept')}
+          </Button>
+          <Button
+            size="sm"
+            disabled={pr.status === REFERRAL_STATUS.INVITED}
+            variant='danger'
+            className="ml-1 d-flex justify-content-center align-items-center"
+            onClick={() => onDecline(pr.id)}
+          >
+            <IoClose size={18} /> {translate('common.declined')}
+          </Button>
         </div>
       );
 
@@ -65,6 +96,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(pr.lead_and_supplementary_phc) }}></span>,
         referred_by: pr.referred_by,
         status: <Badge pill variant='light'>{pr.status}</Badge>,
+        therapist_reason: pr.therapist_reason,
         action,
       };
     });
@@ -72,8 +104,17 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
 
   return (
     <div className="mt-4">
-      <BasicTable
+      <CustomTable
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        setFilters={setFilters}
+        filters={filters}
         columns={columns}
+        hideSearchFilter
+        columnExtensions={columnExtensions}
+        hover="hover-primary"
         rows={rows}
       />
     </div>
