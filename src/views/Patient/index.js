@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Tabs, Tab, Button, Badge } from 'react-bootstrap';
-import { useLocation, useHistory } from 'react-router-dom';
+import { Badge, Button, Tab, Tabs } from 'react-bootstrap';
+import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import PatientList from './Partials/patientList';
 import PatientReferral from './Partials/patientReferral';
@@ -13,6 +13,8 @@ import { PATIENT } from 'variables/routes';
 import { FaDownload } from 'react-icons/fa';
 import { useOne } from 'hooks/useOne';
 import { END_POINTS } from 'variables/endPoint';
+import { useKeycloak } from '@react-keycloak/web';
+import { USER_ROLES } from 'variables/user';
 
 const VIEW_PATIENT = 'patientList';
 const VIEW_PATIENT_REFERRAL = 'patientReferralList';
@@ -20,8 +22,10 @@ const ASSISTIVE_TECHNOLOGY = 'atList';
 
 const Patient = ({ translate }) => {
   const dispatch = useDispatch();
-  const { search } = useLocation();
   const history = useHistory();
+  const { keycloak } = useKeycloak();
+  const { search } = useLocation();
+
   const { profile } = useSelector(state => state.auth);
   const { languages } = useSelector(state => state.language);
   const [type, setType] = useState('patientList');
@@ -68,6 +72,11 @@ const Patient = ({ translate }) => {
         <Tab eventKey="patientReferralList" title={<div>{translate('patient.referral.list')} <Badge className="ml-1" variant="danger">{referralCount ?? 0}</Badge></div>}>
           <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
         </Tab>
+        {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
+          <Tab eventKey="patientReferral" title={translate('patient.referral.list')}>
+            <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
+          </Tab>
+        )}
         <Tab eventKey="atList" title={translate('assistive_technology')}>
           <AssistiveTechnologyPatient translate={translate} />
         </Tab>

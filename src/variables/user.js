@@ -78,6 +78,7 @@ export const USER_ROLES = {
   MANAGE_PROVINCE: 'manage_province',
   MANAGE_PHC_SERVICE_ADMIN: 'manage_phc_service_admin',
   MANAGE_REGIONAL_ADMIN: 'manage_regional_admin',
+  MANAGE_PATIENT_REFERRAL: 'manage_patient_referral',
 };
 
 export const SETTING_ROLES = [
