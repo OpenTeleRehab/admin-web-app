@@ -43,7 +43,7 @@ const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
     createReferral(payload, {
       onSuccess: (res) => {
         showToast({
-          title: t('patient.referral_assignment.accept.title'),
+          title: t('success_message.referral_assignment.create'),
           message: t(res.message),
         });
         invalidate(END_POINTS.PATIENT_REFERRAL);

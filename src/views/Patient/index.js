@@ -69,14 +69,13 @@ const Patient = ({ translate }) => {
         <Tab eventKey="patientList" title={translate('patient')}>
           <PatientList translate={translate} setDownloadfilter={setDownloadfilter}/>
         </Tab>
-        <Tab eventKey="patientReferralList" title={<div>{translate('patient.referral.list')} <Badge className="ml-1" variant="danger">{referralCount ?? 0}</Badge></div>}>
-          <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
-        </Tab>
+
         {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
-          <Tab eventKey="patientReferral" title={translate('patient.referral.list')}>
+          <Tab eventKey="patientReferralList" title={<div>{translate('patient.referral.list')} <Badge className="ml-1" variant="danger">{referralCount ?? 0}</Badge></div>}>
             <PatientReferral translate={translate} setDownloadfilter={setDownloadfilter}/>
           </Tab>
         )}
+
         <Tab eventKey="atList" title={translate('assistive_technology')}>
           <AssistiveTechnologyPatient translate={translate} />
         </Tab>

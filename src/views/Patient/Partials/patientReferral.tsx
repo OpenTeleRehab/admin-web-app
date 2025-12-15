@@ -31,7 +31,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
     { name: 'phc_workers', title: translate('referral.lead.and.supplementary') },
     { name: 'referred_by', title: translate('referral.referred_by') },
     { name: 'status', title: translate('common.status') },
-    { name: 'therapist_reason', title: translate('referral.comment') },
+    { name: 'therapist_reason', title: translate('referral.reason') },
     { name: 'action', title: translate('common.action') },
   ], [translate]);
 
