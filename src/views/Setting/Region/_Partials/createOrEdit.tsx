@@ -122,13 +122,18 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                   const numValue = Number(value);
                   const remainingTherapistLimit = countryLimitation ? countryLimitation.remaining_therapist_limit : 0;
                   const exceedremainingTherapistLimit = regionData ? numValue > remainingTherapistLimit + regionData.therapist_limit : numValue > remainingTherapistLimit;
+                  const translateParams = {
+                    allocated_therapist_limit: countryLimitation?.allocated_therapist_limit,
+                    remaining_therapist_limit: countryLimitation?.remaining_therapist_limit,
+                    therapist_limit_used: countryLimitation?.therapist_limit_used,
+                  };
 
                   if (value <= 0) {
                     return t('error.region.therapist_limit.less_than_equal_to.zero');
                   }
 
                   if (exceedremainingTherapistLimit) {
-                    return t('error.region.therapist_limit.greater_than.country.therapist_limit');
+                    return t('error.region.therapist_limit.greater_than.country.therapist_limit', { ...translateParams });
                   }
 
                   return true;
@@ -149,13 +154,18 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                   const numValue = Number(value);
                   const remainingPhcWorkerLimit = countryLimitation ? countryLimitation.remaining_phc_worker_limit : 0;
                   const exceedremainingPhcWorkerLimit = regionData ? numValue > remainingPhcWorkerLimit + regionData.phc_worker_limit : numValue > remainingPhcWorkerLimit;
+                  const translateParams = {
+                    allocated_phc_worker_limit: countryLimitation?.allocated_phc_worker_limit,
+                    remaining_phc_worker_limit: countryLimitation?.remaining_phc_worker_limit,
+                    phc_worker_limit_used: countryLimitation?.phc_worker_limit_used,
+                  };
 
                   if (value <= 0) {
                     return t('error.region.phc_worker_limit.less_than_equal_to.zero');
                   }
 
                   if (exceedremainingPhcWorkerLimit) {
-                    return t('error.region.phc_worker_limit.greater_than.country.phc_worker_limit');
+                    return t('error.region.phc_worker_limit.greater_than.country.phc_worker_limit', { ...translateParams });
                   }
 
                   return true;
