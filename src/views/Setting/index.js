@@ -45,6 +45,7 @@ import {
   VIEW_ASSISTIVE_TECHNOLOGY,
   VIEW_COLOR_SCHEME,
   VIEW_SURVEY,
+  VIEW_SCREENING_QUESTIONNAIRE,
   VIEW_HEALTH_CONDITION,
   VIEW_MFA_POLICY,
   VIEW_REGION,
@@ -74,6 +75,8 @@ import CreateProvince from './Province/_Partials/createOrEdit';
 import Region from './Region';
 import Province from './Province';
 import CreateEditPhcService from './PhcService/_Partials/createEdit';
+import ScreeningQuestionnaire from './ScreeningQuestionnaire';
+import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { END_POINTS } from 'variables/endPoint';
 import { useList } from 'hooks/useList';
 
@@ -120,6 +123,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_COLOR_SCHEME);
     } else if (hash.includes('#' + VIEW_SURVEY)) {
       setView(VIEW_SURVEY);
+    } else if (hash.includes('#' + VIEW_SCREENING_QUESTIONNAIRE)) {
+      setView(VIEW_SCREENING_QUESTIONNAIRE);
     } else if (hash.includes('#' + VIEW_MFA_POLICY)) {
       setView(VIEW_MFA_POLICY);
     } else if (hash.includes('#' + VIEW_HEALTH_CONDITION)) {
@@ -219,6 +224,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
                     (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
                     (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
+                    (view === VIEW_SCREENING_QUESTIONNAIRE && keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE)) ||
                     (view === VIEW_REGION && keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION)) ||
                     (view === VIEW_PROVINCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
@@ -248,6 +254,7 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_ORGANIZATION && <CreateOrganization show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_ASSISTIVE_TECHNOLOGY && <CreateAssistiveTechnology show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_SURVEY && <CreateSurvey show={show} editId={editId} handleClose={handleClose} />}
+      {show && view === VIEW_SCREENING_QUESTIONNAIRE && <CreateScreeningQuestionnaire show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_MFA_POLICY && <CreateMfaPolicy show={show} handleClose={handleClose} />}
       {showUploadDialog && view === VIEW_DISEASE && <UploadDisease showUploadDialog={showUploadDialog} handleCloseUploadDialog={handleCloseUploadDialog} setShowUploadDialog={setShowUploadDialog} />}
 
@@ -378,6 +385,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_SCREENING_QUESTIONNAIRE} eventKey={VIEW_SCREENING_QUESTIONNAIRE}>
+              {translate('setting.screening_questionnaire')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_HEALTH_CONDITION} eventKey={VIEW_HEALTH_CONDITION}>
@@ -410,6 +424,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && view === VIEW_SCREENING_QUESTIONNAIRE && <ScreeningQuestionnaire handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }

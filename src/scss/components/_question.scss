@@ -1,0 +1,13 @@
+.question {
+	&-setting {
+		&-popover {
+			.tab {
+				&-content {
+					background-color: $light;
+					border-radius: 6px;
+					padding: 22px;
+				}
+			}
+		}
+	}
+}

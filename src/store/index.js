@@ -21,6 +21,7 @@ import { localization } from 'store/localization/reducers';
 import { termAndCondition } from 'store/termAndCondition/reducers';
 import { educationMaterial } from 'store/educationMaterial/reducers';
 import { questionnaire } from 'store/questionnaire/reducers';
+import { screeningQuestionnaire } from 'store/screeningQuestionnaire/reducers';
 import { category } from 'store/category/reducers';
 import { staticPage } from 'store/staticPage/reducers';
 import { dashboard } from 'store/dashboard/reducers';
@@ -67,6 +68,7 @@ export const rootReducer = {
   privacyPolicy,
   profession,
   questionnaire,
+  screeningQuestionnaire,
   spinnerOverlay,
   staticPage,
   systemLimit,

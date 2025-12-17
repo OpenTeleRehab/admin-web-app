@@ -71,6 +71,7 @@ export const USER_ROLES = {
   VIEW_DASHBOARD: 'view_dashboard',
   SUPER_ADMIN: 'super_admin',
   MANAGE_SURVEY: 'manage_survey',
+  MANAGE_SCREENING_QUESTIONNAIRE: 'manage_screening_questionnaire',
   DOWNLOAD_SURVEY: 'download_survey',
   MANAGE_HEALTH_CONDITION: 'manage_health_condition',
   MANAGE_MFA_POLICY: 'manage_mfa_policy',
