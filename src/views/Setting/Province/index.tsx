@@ -37,7 +37,6 @@ const Province = () => {
   const columns = useMemo(() => [
     { name: 'identity', title: t('common.id') },
     { name: 'name', title: t('common.name') },
-    { name: 'region_name', title: t('common.region') },
     { name: 'therapist_limit', title: t('common.therapist_limit') },
     { name: 'phc_worker_limit', title: t('common.phc_worker_limit') },
     { name: 'action', title: t('common.action') }
@@ -97,7 +96,6 @@ const Province = () => {
         name: province.name,
         therapist_limit: province.therapist_limit,
         phc_worker_limit: province.phc_worker_limit,
-        region_name: province.region_name,
         action
       };
     }),
