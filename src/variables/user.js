@@ -80,6 +80,10 @@ export const USER_ROLES = {
   MANAGE_PHC_SERVICE_ADMIN: 'manage_phc_service_admin',
   MANAGE_REGIONAL_ADMIN: 'manage_regional_admin',
   MANAGE_PATIENT_REFERRAL: 'manage_patient_referral',
+  MANAGE_DOWNLOAD_TRACKER: 'manage_download_tracker',
+  VIEW_PROFESSION: 'view_profession',
+  VIEW_CLINIC_LIST: 'view_clinic_list',
+  VIEW_PROVINCE_LIST: 'view_province_list',
 };
 
 export const SETTING_ROLES = [
