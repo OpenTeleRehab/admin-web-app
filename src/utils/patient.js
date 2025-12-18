@@ -15,3 +15,13 @@ export const getTotalOnGoingTreatment = (therapisId, patients) => {
   const totalOnGoing = patients.filter(p => p.therapist_id === therapisId && !_.isEmpty(p.ongoingTreatmentPlan)).length;
   return totalOnGoing;
 };
+
+export const getTotalPatientByPhcWorker = (phcWorkerId, patients = []) => {
+  const totalPatients = patients.filter(p => p.phc_worker_id === phcWorkerId).length;
+  return totalPatients;
+};
+
+export const getTotalOnGoingTreatmentByPhcWorker = (phcWorkerId, patients = []) => {
+  const totalOnGoing = patients.filter(p => p.phc_worker_id === phcWorkerId && !_.isEmpty(p.ongoingTreatmentPlan)).length;
+  return totalOnGoing;
+};

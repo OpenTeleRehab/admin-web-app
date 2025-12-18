@@ -9,8 +9,8 @@ import CreateEditPhcWorker from './_Partials/createEdit';
 import * as moment from 'moment';
 import settings from 'settings';
 import {
-  getTotalOnGoingTreatment,
-  getTotalPatient
+  getTotalOnGoingTreatmentByPhcWorker,
+  getTotalPatientByPhcWorker
 } from 'utils/patient';
 import { USER_ROLES } from '../../variables/user';
 import { useKeycloak } from '@react-keycloak/web';
@@ -45,8 +45,6 @@ const PhcWorker = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
-  // TODO: fetch patients by phcWorker
-  const patients: any = [];
 
   const { data: phcWorkers } = useList<IPhcWorker>(END_POINTS.PHC_WORKERS,
     {
@@ -58,7 +56,11 @@ const PhcWorker = () => {
       user_type: profile.type,
       page_size: pageSize,
       page: currentPage + 1
-   }
+    }
+  );
+  const { data: patients } = useList(END_POINTS.PATIENT_LIST_BY_PHC_WORKER_IDS,
+    { phc_worker_ids: phcWorkers?.data?.map((pw) => pw.id) },
+    { enabled: (phcWorkers?.data ?? []).length > 0 }
   );
   const { data: professions } = useList<any>(END_POINTS.PROFESSIONS);
   const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: true });
@@ -216,9 +218,9 @@ const PhcWorker = () => {
         last_name: phcWorker.last_name,
         email: phcWorker.email,
         profession: getProfessionName(phcWorker.profession_id, professions?.data || []),
-        total_patient: getTotalPatient(phcWorker.id, patients),
-        on_going_treatment: getTotalOnGoingTreatment(phcWorker.id, patients),
-        assigned_patient: getTotalOnGoingTreatment(phcWorker.id, patients),
+        total_patient: getTotalPatientByPhcWorker(phcWorker.id, patients?.data),
+        on_going_treatment: getTotalOnGoingTreatmentByPhcWorker(phcWorker.id, patients?.data),
+        assigned_patient: getTotalOnGoingTreatmentByPhcWorker(phcWorker.id, patients?.data),
         limit_patient: phcWorker.limit_patient,
         status: <EnabledStatus enabled={phcWorker.enabled} />,
         last_login: phcWorker.last_login ? moment.utc(phcWorker.last_login).local().format(settings.datetime_format) : '',
