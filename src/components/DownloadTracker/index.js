@@ -10,10 +10,13 @@ import Spinner from 'react-bootstrap/Spinner';
 import { ExportStatus } from '../../variables/exportStatus';
 import moment from 'moment';
 import settings from '../../settings';
+import { useRole } from 'hooks/useRole';
+import { USER_ROLES } from 'variables/user';
 
 const DownloadTracker = ({ showDownloadTrackers, setShowDownloadTrackers }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
+  const { hasAnyRole } = useRole();
   const { downloadPendings, downloadTrackers } = useSelector((state) => state.downloadTracker);
   const translate = getTranslate(localize);
 
@@ -23,6 +26,8 @@ const DownloadTracker = ({ showDownloadTrackers, setShowDownloadTrackers }) => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (!hasAnyRole([USER_ROLES.MANAGE_DOWNLOAD_TRACKER])) return;
+
     dispatch(getDownloadTrackers());
 
     const interval = setInterval(() => {

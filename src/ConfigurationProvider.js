@@ -11,9 +11,12 @@ import { getProfile } from 'store/auth/actions';
 import { getOrganizations, getOrganizationTherapistAndTreatmentLimit } from './store/organization/actions';
 import SplashScreen from './components/SplashScreen';
 import { getColorScheme } from './store/colorScheme/actions';
+import { useRole } from 'hooks/useRole';
+import { USER_ROLES } from 'variables/user';
 
 const ConfigurationProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const { hasAnyRole } = useRole();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,8 +34,15 @@ const ConfigurationProvider = ({ children }) => {
       });
 
       dispatch(getCountries());
-      dispatch(getClinics());
-      dispatch(getProfessions());
+
+      if (hasAnyRole([USER_ROLES.MANAGE_CLINIC, USER_ROLES.VIEW_CLINIC_LIST])) {
+        dispatch(getClinics());
+      }
+
+      if (hasAnyRole([USER_ROLES.MANAGE_PROFESSION, USER_ROLES.VIEW_PROFESSION])) {
+        dispatch(getProfessions());
+      }
+
       dispatch(getLanguages());
       dispatch(getDefaultLimitedPatients());
       dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));

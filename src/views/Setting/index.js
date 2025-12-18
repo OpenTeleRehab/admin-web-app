@@ -79,10 +79,12 @@ import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { END_POINTS } from 'variables/endPoint';
 import { useList } from 'hooks/useList';
+import { useRole } from 'hooks/useRole';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const { hash } = useLocation();
+  const { hasAnyRole } = useRole();
   const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
   const [view, setView] = useState(undefined);
@@ -90,7 +92,7 @@ const Setting = ({ translate }) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [editId, setEditId] = useState();
   const { openDialog } = useDialog();
-  useList(END_POINTS.PROVINCES_LIMITATION);
+  useList(END_POINTS.PROVINCES_LIMITATION, null, { enabled: hasAnyRole([USER_ROLES.MANAGE_PROVINCE, USER_ROLES.VIEW_PROVINCE_LIST]) });
 
   useEffect(() => {
     if (hash.includes('#' + VIEW_TRANSLATION)) {

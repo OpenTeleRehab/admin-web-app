@@ -14,7 +14,7 @@ import { FaDownload } from 'react-icons/fa';
 import { useOne } from 'hooks/useOne';
 import { END_POINTS } from 'variables/endPoint';
 import { useKeycloak } from '@react-keycloak/web';
-import { USER_ROLES } from 'variables/user';
+import { USER_ROLES, USER_GROUPS } from 'variables/user';
 
 const VIEW_PATIENT = 'patientList';
 const VIEW_PATIENT_REFERRAL = 'patientReferralList';
@@ -30,7 +30,7 @@ const Patient = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const [type, setType] = useState('patientList');
   const [downloadFilter, setDownloadfilter] = useState();
-  const { data: referralCount } = useOne(END_POINTS.PATIENT_REFERRAL, 'count');
+  const { data: referralCount } = useOne(`${END_POINTS.PATIENT_REFERRAL}/count`, null, { enabled: profile.type === USER_GROUPS.CLINIC_ADMIN });
 
   useEffect(() => {
     if (queryString.parse(search).tab === ASSISTIVE_TECHNOLOGY) {
