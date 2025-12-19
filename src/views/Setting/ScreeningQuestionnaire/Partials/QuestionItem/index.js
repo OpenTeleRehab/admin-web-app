@@ -27,7 +27,7 @@ const QuestionItem = ({
   const questions = watch(`sections.${sectionIndex}.questions`);
   const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
 
-  const disableSetting = sectionIndex === 0 && questionIndex === 0;
+  const disableSetting = questionIndex === 0;
   const disableRemoveQuestion = questions?.length <= 1 || typeof question.id === 'number';
   const disableQuestionType = typeof question.id === 'number';
 
