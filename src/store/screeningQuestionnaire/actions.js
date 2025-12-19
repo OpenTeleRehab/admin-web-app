@@ -52,6 +52,7 @@ export const updateScreeningQuestionnaire = (id, payload) => async (dispatch) =>
   if (data.success) {
     dispatch(mutation.updateScreeningQuestionnaireSuccess());
     dispatch(getScreeningQuestionnaires());
+    dispatch(getScreeningQuestionnaire(id));
     dispatch(showSuccessNotification('toast_title.edit_screening_questionnaire', data.message));
     return true;
   } else {

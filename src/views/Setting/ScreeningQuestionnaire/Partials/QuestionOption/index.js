@@ -39,7 +39,7 @@ const QuestionOption = ({
       {(question.question_type === 'checkbox' || question.question_type === 'radio') && (
         <>
           {fields.map((field, index) => (
-            <Row key={index}>
+            <Row key={field.id}>
               <Col xs={6} sm={4}>
                 <div className="d-flex">
                   <Form.Check
