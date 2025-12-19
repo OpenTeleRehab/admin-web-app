@@ -23,6 +23,13 @@ const SectionRepeater = ({
     name: 'sections',
   });
 
+  const disableRemoveSection = (index) => {
+    const sections = watch('sections');
+    const section = sections[index];
+
+    return sections.length <= 1 || typeof section?.id === 'number';
+  };
+
   return (
     <>
       {fields.map((field, index) => (
@@ -37,7 +44,7 @@ const SectionRepeater = ({
                 variant="link"
                 size="sm"
                 className="text-danger px-0"
-                disabled={fields.length <= 1}
+                disabled={disableRemoveSection(index)}
                 onClick={() => remove(index)}
               >
                 <BsTrash size={20} />
