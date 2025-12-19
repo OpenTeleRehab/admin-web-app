@@ -314,7 +314,7 @@ const CreateOrganization = ({ show, editId, handleClose }) => {
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} controlId="phcWorkerMaxSmsPerWeek">
-            <Form.Label>{translate('organization.phc_worker_max_sms_per_week')}</Form.Label>
+            <Form.Label>{translate('organization.max_phc_sms_per_week')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Form.Control
               name="max_phc_sms_per_week"
