@@ -33,7 +33,7 @@ const SectionRepeater = ({
   return (
     <>
       {fields.map((field, index) => (
-        <Card key={index} className="question-card mb-3">
+        <Card key={field.id} className="question-card mb-3">
           <Card.Header>
             <div className="d-flex justify-content-between align-items-center">
               <Card.Title className="mb-0">

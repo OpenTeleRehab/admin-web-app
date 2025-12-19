@@ -32,14 +32,14 @@ const QuestionRepeater = ({
 
   return (
     <>
-      {fields.map((field, item) => (
+      {fields.map((field, index) => (
         <QuestionItem
-          key={item}
+          key={field.id}
           sectionIndex={sectionIndex}
-          questionIndex={item}
+          questionIndex={index}
           control={control}
           watch={watch}
-          onRemove={() => remove(item)}
+          onRemove={() => remove(index)}
         />
       ))}
       <Button

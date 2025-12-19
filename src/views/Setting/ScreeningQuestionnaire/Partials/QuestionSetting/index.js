@@ -116,7 +116,7 @@ const QuestionSetting = ({
 
               <Tab.Pane eventKey="skip_logic">
                 {fields.map((field, index) => (
-                  <Row key={index}>
+                  <Row key={field.id}>
                     <Col xs={5} sm={5}>
                       <Select
                         control={control}
