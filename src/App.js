@@ -28,20 +28,20 @@ const App = () => {
       LoadingComponent={<SplashScreen />}
     >
       <Provider store={store}>
-        <ToastProvider>
-          <ReactQueryProvider>
-            <ConfigurationProvider>
-              <LocalizeProvider store={store}>
+        <LocalizeProvider store={store}>
+          <ToastProvider>
+            <ReactQueryProvider>
+              <ConfigurationProvider>
                 <DialogProvider>
                   <Router history={createBrowserHistory()}>
                     <RouteSwitch />
                     <Survey />
                   </Router>
                 </DialogProvider>
-              </LocalizeProvider>
-            </ConfigurationProvider>
-          </ReactQueryProvider>
-        </ToastProvider>
+              </ConfigurationProvider>
+            </ReactQueryProvider>
+          </ToastProvider>
+        </LocalizeProvider>
       </Provider>
     </ReactKeycloakProvider>
   );
