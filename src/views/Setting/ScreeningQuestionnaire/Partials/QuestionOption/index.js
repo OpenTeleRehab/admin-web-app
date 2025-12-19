@@ -63,6 +63,7 @@ const QuestionOption = ({
                   control={control}
                   name={`${fieldName}.${index}.option_point`}
                   type="number"
+                  min={0}
                   placeholder={translate('question.point.placeholder')}
                   rules={{ required: translate('question.point.required') }}
                 />
@@ -127,6 +128,7 @@ const QuestionOption = ({
               control={control}
               name={`${fieldName}.0.option_point`}
               type="number"
+              min={0}
               placeholder={translate('question.point.placeholder')}
               rules={{ required: translate('question.point.required') }}
             />
@@ -136,6 +138,7 @@ const QuestionOption = ({
               control={control}
               name={`${fieldName}.0.threshold`}
               type="number"
+              min={0}
               placeholder={translate('question.answer_threshold')}
               rules={{ required: translate('question.answer.threshold.required') }}
             />
