@@ -5,11 +5,13 @@ import { getTranslate, withLocalize } from 'react-localize-redux';
 import { useFieldArray } from 'react-hook-form';
 import { Button, Card } from 'react-bootstrap';
 import { BsPlusCircle, BsTrash } from 'react-icons/bs';
+import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 import QuestionRepeater from '../QuestionRepeater';
 
+const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0];
+
 const SectionRepeater = ({
-  defaultValue,
   control,
   watch,
 }) => {
@@ -20,10 +22,6 @@ const SectionRepeater = ({
     control,
     name: 'sections',
   });
-
-  const handleAddSection = () => {
-    append(defaultValue);
-  };
 
   return (
     <>
@@ -55,7 +53,6 @@ const SectionRepeater = ({
               rules={{ required: translate('questionnaire.title.required') }}
             />
             <QuestionRepeater
-              defaultValue={defaultValue.questions[0]}
               sectionIndex={index}
               control={control}
               watch={watch}
@@ -67,7 +64,7 @@ const SectionRepeater = ({
         aria-label="Add Section"
         className="px-0"
         variant="link"
-        onClick={handleAddSection}
+        onClick={() => append(defaultValues)}
       >
         <BsPlusCircle size={20} /> {translate('questionnaire.new.section')}
       </Button>
@@ -76,7 +73,6 @@ const SectionRepeater = ({
 };
 
 SectionRepeater.propTypes = {
-  defaultValue: PropTypes.object,
   control: PropTypes.object,
   watch: PropTypes.func,
 };
