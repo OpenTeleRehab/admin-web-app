@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import useToast from 'components/V2/Toast';
@@ -8,7 +8,7 @@ const ReactQueryProvider = ({ children }) => {
   const { showToast } = useToast();
   const t = useTranslate();
 
-  const [queryClient] = useState(() => {
+  const queryClient = useMemo(() => {
     return new QueryClient({
       defaultOptions: {
         queries: {
@@ -20,13 +20,15 @@ const ReactQueryProvider = ({ children }) => {
         onError: (error) => {
           showToast({
             title: t('toast_title.error_message'),
-            message: t(error.response.data.message || ''),
+            message: t(error.response?.data?.message || '', {
+              ...error.response?.data?.translate_params
+            }),
             color: 'danger'
           });
         }
       })
     });
-  });
+  }, [showToast, t]);
 
   return (
     <QueryClientProvider client={queryClient}>

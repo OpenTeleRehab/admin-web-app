@@ -6,13 +6,14 @@ import Select from 'components/V2/Form/Select';
 import useToast from 'components/V2/Toast';
 import { useCreate } from 'hooks/useCreate';
 import { useInvalidate } from 'hooks/useInvalidate';
+import { useList } from 'hooks/useList';
 import { useOne } from 'hooks/useOne';
 import { useTranslate } from 'hooks/useTranslate';
 import { useUpdate } from 'hooks/useUpdate';
 import { ICountryResource } from 'interfaces/ICountry';
 import { ILimitation } from 'interfaces/ILimitation';
 import { IRegionResource } from 'interfaces/IRegion';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,6 +37,10 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
   const { mutate: createRegionMutation } = useCreate(END_POINTS.REGION);
   const { mutate: updateRegionMutation } = useUpdate(END_POINTS.REGION);
   const { data: countryLimitation } = useOne<ILimitation>(END_POINTS.COUNTRY_LIMITATION, null, { enabled: true });
+  const { data: regionLimitations } = useList(END_POINTS.REGION_LIMITATIONS);
+  const regionLimitation = useMemo(() => {
+    return regionLimitations?.data?.find((region) => region.id === regionData?.id);
+  }, [regionLimitations, regionData?.id]);
 
   useEffect(() => {
     if (regionData) {
@@ -132,6 +137,10 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                     return t('error.region.therapist_limit.less_than_equal_to.zero');
                   }
 
+                  if (value < (regionLimitation?.therapist_limit_used ?? 0)) {
+                    return t('error.region.therapist_limit.less_than.provinces.total.theraist_limit', { therapist_limit_used: regionLimitation?.therapist_limit_used ?? 0 });
+                  }
+
                   if (exceedremainingTherapistLimit) {
                     return t('error.region.therapist_limit.greater_than.country.therapist_limit', { ...translateParams });
                   }
@@ -162,6 +171,10 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
 
                   if (value <= 0) {
                     return t('error.region.phc_worker_limit.less_than_equal_to.zero');
+                  }
+
+                  if (value < (regionLimitation?.phc_worker_limit_used ?? 0)) {
+                    return t('error.region.phc_worker_limit.less_than.provinces.total.phc_worker_limit', { phc_worker_limit_used: regionLimitation?.phc_worker_limit_used ?? 0 });
                   }
 
                   if (exceedremainingPhcWorkerLimit) {
