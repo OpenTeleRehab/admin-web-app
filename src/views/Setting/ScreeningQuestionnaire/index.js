@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withLocalize } from 'react-localize-redux';
 import { Badge } from 'react-bootstrap';
 import BasicTable from '../../../components/Table/basic';
-import { EditAction, PublishAction, ViewAction } from '../../../components/ActionIcons';
+import { DeleteAction, EditAction, PublishAction, ViewAction } from '../../../components/ActionIcons';
 import Dialog from '../../../components/Dialog';
 import customColorScheme from '../../../utils/customColorScheme';
 import ViewScreeningQuestionnaire from './view';
@@ -71,13 +71,12 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
                 <ViewAction onClick={() => handleViewScreeningQuestionnaire(item)} />
                 {keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && (
                   <>
-                    {item.published_date && (
-                      <EditAction onClick={() => handleRowEdit(item.id)} />
-                    )}
+                    <EditAction onClick={() => handleRowEdit(item.id)} />
                     <PublishAction
                       className="ml-1"
                       onClick={() => handlePublish(item.id)} disabled={item.published_date}
                     />
+                    <DeleteAction onClick={() => {}} />
                   </>
                 )}
               </>
