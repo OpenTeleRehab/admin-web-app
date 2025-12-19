@@ -91,7 +91,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
       );
 
       return {
-        identity: pr.id,
+        identity: pr.patient_identity,
         date_of_birth: pr.date_of_birth ? moment(pr.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(pr.lead_and_supplementary_phc) }}></span>,
         referred_by: pr.referred_by,
