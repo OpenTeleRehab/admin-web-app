@@ -3,7 +3,7 @@ export const END_POINTS = {
   COUNTRY_LIMITATION: 'country-limitation',
   ORGANIZATION_LIMITATION: 'organization-limitation',
   REGION_LIMITATION: 'region-limitation',
-  REGION_LIMITATIONS: 'region-limitations',
+  REGION_LIMITATIONS: 'region-limitations-by-user-country',
   PROVINCE_LIMITATION: 'province-limitation',
   REGION: 'regions',
   PROVINCE: 'provinces',
