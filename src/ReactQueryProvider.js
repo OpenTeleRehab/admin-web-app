@@ -28,7 +28,7 @@ const ReactQueryProvider = ({ children }) => {
         }
       })
     });
-  }, [showToast, t]);
+  }, [t]);
 
   return (
     <QueryClientProvider client={queryClient}>
