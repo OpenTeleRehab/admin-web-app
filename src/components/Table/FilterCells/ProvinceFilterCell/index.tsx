@@ -3,10 +3,12 @@ import Select from 'react-select';
 import { useList } from 'hooks/useList';
 import { END_POINTS } from 'variables/endPoint';
 import { IProvinceResource } from 'interfaces/IProvince';
+import { useTranslate } from 'hooks/useTranslate';
 
 const ProvinceFilterCell = ({ onFilter } : { onFilter: (value: any) => void }) => {
-  const [province, setProvince] = useState(0);
+  const [province, setProvince] = useState<number | string>('');
   const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE_BY_REGION);
+  const t = useTranslate();
 
   const customSelectStyles = {
     option: (provided: any) => ({
@@ -17,19 +19,24 @@ const ProvinceFilterCell = ({ onFilter } : { onFilter: (value: any) => void }) =
     menuPortal: (base: any) => ({ ...base, zIndex: 1000 })
   };
 
-  const handleFilter = (value: number) => {
+  const handleFilter = (value: number | string) => {
     setProvince(value);
-    onFilter(value === 0 ? null : { value });
+    onFilter(value === '' ? null : { value });
   };
+
+  const options = [
+    { id: '', name: t('common.all') },
+    ...(provinces?.data || []),
+  ];
 
   return (
     <th>
       <Select
         classNamePrefix="filter"
-        value={(provinces?.data || []).filter(item => item.id === province)}
+        value={options.filter(item => item.id === province)}
         getOptionLabel={option => option.name}
-        options={provinces?.data || []}
-        onChange={(e) => handleFilter(e ? Number(e.id) : 0)}
+        options={options}
+        onChange={(e) => handleFilter(e ? e.id : '')}
         menuPortalTarget={document.body}
         styles={customSelectStyles}
         aria-label="Province"
