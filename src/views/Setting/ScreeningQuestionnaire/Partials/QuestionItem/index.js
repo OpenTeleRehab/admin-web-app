@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import { FaCopy } from 'react-icons/fa';
-import { BsArrowsMove, BsGearFill, BsTrash } from 'react-icons/bs';
+import { BsArrowsMove, BsGear, BsGearFill, BsTrash } from 'react-icons/bs';
 import { SCREENING_QUESTION_TYPE } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 import Select from '../../../../../components/V2/Form/Select';
@@ -31,9 +31,14 @@ const QuestionItem = ({
   const disableRemoveQuestion = questions?.length <= 1 || typeof question.id === 'number';
   const disableQuestionType = typeof question.id === 'number';
 
+  useEffect(() => {
+    if (questionIndex === 0) {
+      setShowSetting(false);
+    }
+  }, [questionIndex]);
+
   const handleRemoveQuestion = () => {
-    // TODO: Remove logic belong to this question
-    onRemove(questionIndex);
+    onRemove();
   };
 
   return (
@@ -59,10 +64,14 @@ const QuestionItem = ({
               aria-label="Setting"
               variant="link"
               size="sm"
-              className="text-dark px-0 ml-2"
+              className="text-primary px-0 ml-2"
               onClick={() => setShowSetting(!showSetting)}
             >
-              <BsGearFill size={20} />
+              {question.logics.length ? (
+                <BsGearFill size={20} />
+              ) : (
+                <BsGear size={20} />
+              )}
             </Button>
             <Button
               aria-label="Clone Question"

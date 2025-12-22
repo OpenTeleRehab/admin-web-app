@@ -9,7 +9,7 @@ import SectionRepeater from './Partials/SectionRepeater';
 import Dialog from '../../../components/Dialog';
 import Input from '../../../components/V2/Form/Input';
 import Select from '../../../components/V2/Form/Select';
-import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../variables/questionnaire';
+import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES, SCREENING_QUESTION_TYPE } from '../../../variables/questionnaire';
 import {
   createScreeningQuestionnaire,
   getScreeningQuestionnaire,
@@ -17,6 +17,7 @@ import {
 } from '../../../store/screeningQuestionnaire/actions';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES;
+const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].options;
 
 const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const dispatch = useDispatch();
@@ -28,8 +29,8 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
 
   const {
     control,
+    setValue,
     reset,
-    resetField,
     watch,
     handleSubmit,
     formState: { isDirty }
@@ -42,9 +43,79 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
+      // TODO: Reset question logic when question option removed
+      // Reset question logic when question removed
+      if (name?.endsWith('.questions')) {
+        const questionIds = value.sections.flatMap(section => section.questions.map(question => question.id));
+
+        value.sections.forEach((section, sectionIndex) => {
+          section.questions?.forEach((question, questionIndex) => {
+            const logics = question.logics.filter(logic => questionIds.includes(logic.target_question_id));
+
+            setValue(`sections.${sectionIndex}.questions.${questionIndex}.logics`, logics ?? []);
+          });
+        });
+      }
+
+      // Reset question logic when question type changed
       if (name?.endsWith('.question_type') && type === 'change') {
-        // Reset question option
-        resetField(name.replace('.question_type', '.options'));
+        const question = watch(name.replace('.question_type', ''));
+
+        if ([SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(question.question_type)) {
+          setValue(name.replace('.question_type', '.options'), [
+            {
+              ...defaultQuestionOptionValues[0],
+              id: crypto.randomUUID(),
+            },
+            {
+              ...defaultQuestionOptionValues[0],
+              id: crypto.randomUUID(),
+            }
+          ]);
+        } else {
+          setValue(name.replace('.question_type', '.options'), [
+            {
+              ...defaultQuestionOptionValues[0],
+              id: crypto.randomUUID(),
+            },
+          ]);
+        }
+
+        if ([SCREENING_QUESTION_TYPE.OPEN_TEXT, SCREENING_QUESTION_TYPE.OPEN_NUMBER, SCREENING_QUESTION_TYPE.RATING].includes(question.question_type)) {
+          value.sections.forEach((sectionItem, sectionIndex) => {
+            sectionItem.questions?.forEach((questionItem, questionIndex) => {
+              questionItem.logics.forEach((logicItem, logicIndex) => {
+                setValue(`sections.${sectionIndex}.questions.${questionIndex}.logics.${logicIndex}`, {
+                  ...logicItem,
+                  condition_rule: null,
+                  target_option_id: null,
+                });
+              });
+            });
+          });
+        }
+
+        if (question.question_type === SCREENING_QUESTION_TYPE.NOTE) {
+          value.sections.forEach((sectionItem, sectionIndex) => {
+            sectionItem.questions?.forEach((questionItem, questionIndex) => {
+              const logics = questionItem.logics.filter(logic => logic.target_question_id !== question.id);
+
+              setValue(`sections.${sectionIndex}.questions.${questionIndex}.logics`, logics ?? []);
+            });
+          });
+        }
+      }
+
+      if (name?.endsWith('.target_question_id') && type === 'change') {
+        const logic = watch(name.replace('.target_question_id', ''));
+
+        setValue(name.replace('.target_question_id', ''), {
+          ...logic,
+          target_option_id: null,
+          target_option_value: null,
+          condition_type: 'skip',
+          condition_rule: null,
+        });
       }
     });
     return () => subscription.unsubscribe();
@@ -122,12 +193,12 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
                 name="description"
                 label={translate('questionnaire.description')}
                 placeholder={translate('questionnaire.description.placeholder')}
-                rules={{ required: translate('questionnaire.description.required') }}
               />
             </Col>
           </Row>
           <SectionRepeater
             control={control}
+            setValue={setValue}
             watch={watch}
           />
         </Form>

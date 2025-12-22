@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFieldArray } from 'react-hook-form';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import { BsFillGearFill, BsPlus, BsTrash } from 'react-icons/bs';
 import { Button, CloseButton, Col, Nav, Row, Tab } from 'react-bootstrap';
-import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES, SCREENING_QUESTION_TYPE } from '../../../../../variables/questionnaire';
+import { SCREENING_QUESTION_TYPE } from '../../../../../variables/questionnaire';
 import Select from '../../../../../components/V2/Form/Select';
-
-const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0].questions[0].logics[0];
+import Input from '../../../../../components/V2/Form/Input';
 
 const QuestionSetting = ({
   sectionIndex,
@@ -20,46 +19,21 @@ const QuestionSetting = ({
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
-  const [target, setTarget] = useState(undefined);
-  const [isTargetQuestionTypeSelected, setIsTargetQuestionTypeSelected] = useState(undefined);
-
-  const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
+  const questions = watch(`sections.${sectionIndex}.questions`);
+  const question = questions[questionIndex];
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: `sections.${sectionIndex}.questions.${questionIndex}.logics`,
   });
 
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name?.endsWith('target_question_id')) {
-        const questions = watch(`sections.${sectionIndex}.questions`);
-        const targetQuestionId = watch(name);
-
-        setTarget(questions.find(item => item.id === targetQuestionId));
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  useEffect(() => {
-    if (target?.question_type) {
-      if ([SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(target.question_type)) {
-        setIsTargetQuestionTypeSelected(true);
-      } else {
-        setIsTargetQuestionTypeSelected(false);
-      }
-    } else {
-      setIsTargetQuestionTypeSelected(undefined);
-    }
-  }, [target]);
-
   const getTargetQuestions = () => {
     const questions = watch(`sections.${sectionIndex}.questions`);
 
     if (questions.length) {
-      const targetQuestions = questions.slice(0, questionIndex);
+      const targetQuestions = questions
+        .slice(0, questionIndex)
+        .filter(question => (question.question_type !== SCREENING_QUESTION_TYPE.NOTE));
 
       if (targetQuestions.length) {
         return targetQuestions.map((item) => ({
@@ -72,20 +46,78 @@ const QuestionSetting = ({
     return [];
   };
 
+  const getConditionRuleOptions = (logicIndex) => {
+    const selectedTargetQuestionType = getTargetQuestionType(logicIndex);
+
+    if (selectedTargetQuestionType) {
+      if ([SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(selectedTargetQuestionType)) {
+        return [
+          { value: 'was_answered', label: translate('question.condition_rule.was_answered') },
+          { value: 'was_not_answered', label: translate('question.condition_rule.was_not_answered') },
+          { value: 'equal', label: translate('question.condition_rule.equal') },
+          { value: 'not_equal', label: translate('question.condition_rule.not_equal') },
+        ];
+      }
+      if ([SCREENING_QUESTION_TYPE.OPEN_TEXT, SCREENING_QUESTION_TYPE.OPEN_NUMBER, SCREENING_QUESTION_TYPE.RATING].includes(selectedTargetQuestionType)) {
+        return [
+          { value: 'equal', label: translate('question.condition_rule.equal') },
+          { value: 'not_equal', label: translate('question.condition_rule.not_equal') },
+        ];
+      }
+    }
+
+    return [];
+  };
+
+  const getTargetQuestionType = (logicIndex) => {
+    if (question?.logics?.length) {
+      const selectedTargetQuestionId = question.logics[logicIndex]?.target_question_id;
+      const selectedTargetQuestion = questions.find(item => item.id === selectedTargetQuestionId);
+
+      if (selectedTargetQuestion) {
+        return selectedTargetQuestion.question_type;
+      }
+    }
+
+    return null;
+  };
+
   const getTargetQuestionOptions = (index) => {
     const logic = watch(`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}`);
 
     const questions = watch(`sections.${sectionIndex}.questions`);
     const question = questions.find(item => item.id === logic.target_question_id);
 
-    if (question.options?.length) {
-      return question.options.map((item, index) => ({
-        value: item.id ?? index,
+    if (question?.options?.length) {
+      return question.options.map((item) => ({
+        value: item.id,
         label: item.option_text,
       }));
     }
 
     return [];
+  };
+
+  const showTargetQuestionOptions = (index) => {
+    if (question.logics.length) {
+      const conditionRule = question.logics[index].condition_rule;
+
+      return conditionRule === 'equal' || conditionRule === 'not_equal';
+    }
+
+    return false;
+  };
+
+  const handleAddCondition = () => {
+    append({
+      id: crypto.randomUUID(),
+      question_id: null,
+      target_question_id: null,
+      target_option_id: null,
+      target_option_value: null,
+      condition_type: 'skip',
+      condition_rule: null,
+    });
   };
 
   return (
@@ -126,39 +158,32 @@ const QuestionSetting = ({
                       />
                     </Col>
                     <Col xs={3} sm={3}>
-                      {question.logics?.length && question.logics[index].target_question_id !== null && (
-                        <>
-                          {isTargetQuestionTypeSelected ? (
-                            <Select
-                              control={control}
-                              name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.condition_rule`}
-                              options={[
-                                { value: 'was_answered', label: 'Was answered' },
-                                { value: 'was_not_answered', label: 'Was not answered' },
-                                { value: 'equal', label: 'Equal' },
-                                { value: 'not_equal', label: 'Not equal' },
-                              ]}
-                            />
-                          ) : (
-                            <Select
-                              control={control}
-                              name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.condition_rule`}
-                              options={[
-                                { value: 'equal', label: 'Equal' },
-                                { value: 'not_equal', label: 'Not equal' },
-                              ]}
-                            />
-                          )}
-                        </>
+                      {!!getConditionRuleOptions(index).length && (
+                        <Select
+                          control={control}
+                          name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.condition_rule`}
+                          options={getConditionRuleOptions(index)}
+                        />
                       )}
                     </Col>
                     <Col xs={3} sm={3}>
-                      {(question.logics?.length && (question.logics[index].condition_rule === 'equal' || question.logics[index].condition_rule === 'not_equal')) && (
-                        <Select
-                          control={control}
-                          name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_id`}
-                          options={getTargetQuestionOptions(index)}
-                        />
+                      {!!showTargetQuestionOptions(index) && (
+                        <>
+                          {[SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(getTargetQuestionType(index)) && (
+                            <Select
+                              control={control}
+                              name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_id`}
+                              options={getTargetQuestionOptions(index)}
+                            />
+                          )}
+                          {[SCREENING_QUESTION_TYPE.RATING].includes(getTargetQuestionType(index)) && (
+                            <Input
+                              control={control}
+                              name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_value`}
+                              placeholder={translate('question.target_option_value.placeholder')}
+                            />
+                          )}
+                        </>
                       )}
                     </Col>
                     <Col xs={1} sm={1}>
@@ -167,7 +192,6 @@ const QuestionSetting = ({
                         variant="link"
                         size="sm"
                         className="text-danger px-0 ml-2"
-                        disabled={fields.length <= 1}
                         onClick={() => remove(index)}
                       >
                         <BsTrash size={20} />
@@ -177,9 +201,9 @@ const QuestionSetting = ({
                 ))}
                 <Button
                   aria-label="Add another condition"
-                  onClick={() => append(defaultValues)}
+                  onClick={handleAddCondition}
                 >
-                  <BsPlus size={16} /> Add another condition
+                  <BsPlus size={16} /> {translate('question.add_another_condition')}
                 </Button>
               </Tab.Pane>
             </Tab.Content>
