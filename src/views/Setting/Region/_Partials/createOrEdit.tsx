@@ -138,7 +138,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                   }
 
                   if (value < (regionLimitation?.therapist_limit_used ?? 0)) {
-                    return t('error.region.therapist_limit.less_than.provinces.total.theraist_limit', { therapist_limit_used: regionLimitation?.therapist_limit_used ?? 0 });
+                    return t('error.region.therapist_limit.less_than.provinces.total.therapist_limit', { therapist_limit_used: regionLimitation?.therapist_limit_used ?? 0 });
                   }
 
                   if (exceedremainingTherapistLimit) {

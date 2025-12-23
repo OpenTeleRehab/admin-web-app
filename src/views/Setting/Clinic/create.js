@@ -50,7 +50,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     city: '',
     country_iso: '',
     phone: '',
-    therapist_limit: 0
+    therapist_limit: ''
   });
 
   const provinceOptions = useMemo(() => provinces?.data?.filter((province) => province.region_id === formFields.region_id) || [], [provinces, formFields.region_id]);
