@@ -168,6 +168,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
               label={t('common.limit_treatment', { defaultLimitedPatients: maxPhcOngoingTreatmentPlans })}
               name="limit_patient"
               type="number"
+              min={0}
               placeholder={t('placeholder.limit_patient')}
               rules={{
                 required: t('error.limit_patient'),

@@ -14,6 +14,7 @@ type InputProps<T extends FieldValues> = {
   controlAs?: React.ElementType;
   rows?: number;
   label?: string;
+  min?: number;
 } & Omit<FormControlProps, 'name'>;
 
 const Input = <T extends FieldValues>({
