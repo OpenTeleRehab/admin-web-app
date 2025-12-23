@@ -27,4 +27,6 @@ export const END_POINTS = {
   THERAPIST_BY_CLINIC: 'therapist/list/by-clinic-id',
   PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
   PATIENT_LIST_BY_PHC_WORKER_IDS: 'patient/list/by-phc-worker-ids',
+  GUIDANCE_PAGE: 'guidance-page',
+  GUIDANCE_PAGE_UPDATE_ORDER: 'guidance-page/update-order'
 };

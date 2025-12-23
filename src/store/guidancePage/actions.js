@@ -38,7 +38,7 @@ export const createGuidancePage = (payload) => async (dispatch) => {
   const data = await guidancePage.createGuidancePage(payload);
   if (data.success) {
     dispatch(mutation.createGuidancePageSuccess());
-    dispatch(getGuidancePages());
+    dispatch(getGuidancePages({ target_role: payload.target_role }));
     dispatch(showSuccessNotification('toast_title.new_guidance_page', data.message));
     dispatch(showSpinner(false));
     return true;
@@ -55,7 +55,7 @@ export const updateGuidancePage = (id, payload) => async dispatch => {
   const data = await guidancePage.updateGuidancePage(id, payload);
   if (data.success) {
     dispatch(mutation.updateGuidancePageSuccess());
-    dispatch(getGuidancePages());
+    dispatch(getGuidancePages({ target_role: payload.target_role }));
     dispatch(showSuccessNotification('toast_title.update_guidance_page', data.message));
     return true;
   } else {
@@ -70,7 +70,7 @@ export const updateGuidancePages = (payload) => async dispatch => {
   const data = await guidancePage.updateGuidancePages(payload);
   if (data.success) {
     dispatch(mutation.updateGuidancePagesSuccess());
-    dispatch(getGuidancePages({ lang: payload.lang }));
+    dispatch(getGuidancePages({ target_role: payload.target_role, lang: payload.lang }));
     return true;
   } else {
     dispatch(mutation.updateGuidancePagesFail());
@@ -83,7 +83,7 @@ export const deleteGuidance = id => async (dispatch) => {
   const data = await guidancePage.deleteGuidancePage(id);
   if (data.success) {
     dispatch(mutation.deleteGuidanceSuccess());
-    dispatch(getGuidancePages());
+    dispatch(getGuidancePages({ target_role: 'therapist' }));
     dispatch(showSuccessNotification('toast_title.delete_guidance_page', data.message));
     return true;
   } else {

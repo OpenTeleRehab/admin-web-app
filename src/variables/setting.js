@@ -8,6 +8,7 @@ export const VIEW_PROFESSION = 'profession';
 export const VIEW_LANGUAGE = 'language';
 export const VIEW_STATIC_PAGE = 'static_page';
 export const VIEW_GUIDANCE_PAGE = 'guidance_page';
+export const VIEW_PHC_WORKER_GUIDANCE = 'phc_worker_guidance';
 export const VIEW_DISEASE = 'disease';
 export const VIEW_ORGANIZATION = 'organization';
 export const VIEW_ASSISTIVE_TECHNOLOGY = 'assistive_technology';
@@ -31,6 +32,7 @@ export const SETTINGS = [
   VIEW_LANGUAGE,
   VIEW_STATIC_PAGE,
   VIEW_GUIDANCE_PAGE,
+  VIEW_PHC_WORKER_GUIDANCE,
   VIEW_DISEASE,
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
