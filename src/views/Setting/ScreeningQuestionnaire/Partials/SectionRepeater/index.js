@@ -8,11 +8,13 @@ import { BsPlusCircle, BsTrash } from 'react-icons/bs';
 import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 import QuestionRepeater from '../QuestionRepeater';
+import ActionRepeater from '../ActionRepeater';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0];
 
 const SectionRepeater = ({
   control,
+  setValue,
   watch,
 }) => {
   const localize = useSelector((state) => state.localize);
@@ -62,9 +64,15 @@ const SectionRepeater = ({
             <QuestionRepeater
               sectionIndex={index}
               control={control}
+              setValue={setValue}
               watch={watch}
             />
           </Card.Body>
+          <ActionRepeater
+            sectionIndex={index}
+            control={control}
+            watch={watch}
+          />
         </Card>
       ))}
       <Button
@@ -81,6 +89,7 @@ const SectionRepeater = ({
 
 SectionRepeater.propTypes = {
   control: PropTypes.object,
+  setValue: PropTypes.func,
   watch: PropTypes.func,
 };
 

@@ -115,10 +115,23 @@ const publishScreeningQuestionnaire = (id) => {
     });
 };
 
+const deleteScreeningQuestionnaire = (id) => {
+  return axios.delete(`/screening-questionnaires/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const ScreeningQuestionnaire = {
   getScreeningQuestionnaires,
   getScreeningQuestionnaire,
   createScreeningQuestionnaire,
   updateScreeningQuestionnaire,
   publishScreeningQuestionnaire,
+  deleteScreeningQuestionnaire,
 };

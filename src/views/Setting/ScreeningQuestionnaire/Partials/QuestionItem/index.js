@@ -16,8 +16,11 @@ import QuestionSetting from '../QuestionSetting';
 const QuestionItem = ({
   sectionIndex,
   questionIndex,
+  provided,
   control,
+  setValue,
   watch,
+  onClone,
   onRemove,
 }) => {
   const localize = useSelector((state) => state.localize);
@@ -27,6 +30,7 @@ const QuestionItem = ({
   const questions = watch(`sections.${sectionIndex}.questions`);
   const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
 
+  const disableMove = questions?.length <= 1 || typeof question.id === 'number';
   const disableSetting = questionIndex === 0;
   const disableRemoveQuestion = questions?.length <= 1 || typeof question.id === 'number';
   const disableQuestionType = typeof question.id === 'number';
@@ -37,10 +41,6 @@ const QuestionItem = ({
     }
   }, [questionIndex]);
 
-  const handleRemoveQuestion = () => {
-    onRemove();
-  };
-
   return (
     <Card className="question-card mb-2">
       <Card.Header>
@@ -49,14 +49,17 @@ const QuestionItem = ({
             {translate('questionnaire.question_number', { number: questionIndex + 1 })}
           </Card.Title>
 
-          <Button
-            aria-label="Move question"
-            variant="link"
-            size="sm"
-            className="text-dark drag-button"
-          >
-            <BsArrowsMove size={20} />
-          </Button>
+          <div {...provided.dragHandleProps}>
+            <Button
+              aria-label="Move question"
+              variant="link"
+              size="sm"
+              className="text-dark drag-button"
+              disabled={disableMove}
+            >
+              <BsArrowsMove size={20} />
+            </Button>
+          </div>
 
           <div className="d-flex gap-3">
             <Button
@@ -78,7 +81,7 @@ const QuestionItem = ({
               variant="link"
               size="sm"
               className="text-primary px-0 ml-2"
-              onClick={() => {}}
+              onClick={() => onClone(questionIndex)}
             >
               <FaCopy size={20} />
             </Button>
@@ -88,7 +91,7 @@ const QuestionItem = ({
               size="sm"
               className="text-danger px-0 ml-2"
               disabled={disableRemoveQuestion}
-              onClick={() => handleRemoveQuestion()}
+              onClick={onRemove}
             >
               <BsTrash size={20} />
             </Button>
@@ -136,6 +139,7 @@ const QuestionItem = ({
               sectionIndex={sectionIndex}
               questionIndex={questionIndex}
               control={control}
+              setValue={setValue}
               watch={watch}
             />
           </div>
@@ -162,8 +166,11 @@ const QuestionItem = ({
 QuestionItem.propTypes = {
   sectionIndex: PropTypes.number,
   questionIndex: PropTypes.number,
+  provided: PropTypes.object,
   control: PropTypes.object,
+  setValue: PropTypes.func,
   watch: PropTypes.func,
+  onClone: PropTypes.func,
   onRemove: PropTypes.func,
 };
 
