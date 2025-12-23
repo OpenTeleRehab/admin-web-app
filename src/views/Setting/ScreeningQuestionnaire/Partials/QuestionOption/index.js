@@ -5,9 +5,12 @@ import { useSelector } from 'react-redux';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import { useFieldArray } from 'react-hook-form';
-import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 import FileUpload from '../../../../../components/V2/Form/FileUpload';
+import {
+  DEFAULT_SCREENING_QUESTIONNAIRE_VALUES,
+  SCREENING_QUESTION_TYPE,
+} from '../../../../../variables/questionnaire';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0].questions[0].options[0];
 
@@ -28,15 +31,22 @@ const QuestionOption = ({
     name: fieldName,
   });
 
+  const handleAddOption = () => {
+    append({
+      ...defaultValues,
+      id: crypto.randomUUID(),
+    });
+  };
+
   const disableRemoveOption = (index) => {
     const option = watch(`sections.${sectionIndex}.questions.${questionIndex}.options.${index}`);
 
-    return question?.options?.length <= 2 || option?.id;
+    return question.options.length <= 2 || typeof option.id === 'number';
   };
 
   return (
     <>
-      {(question.question_type === 'checkbox' || question.question_type === 'radio') && (
+      {[SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(question.question_type) && (
         <>
           {fields.map((field, index) => (
             <Row key={field.id}>
@@ -94,7 +104,7 @@ const QuestionOption = ({
                 aria-label="Add more option"
                 className="py-0"
                 variant="link"
-                onClick={() => append(defaultValues)}
+                onClick={handleAddOption}
               >
                 <BsPlus size={16} /> {translate('question.add.more.answer')}
               </Button>
@@ -102,7 +112,7 @@ const QuestionOption = ({
           </Row>
         </>
       )}
-      {question.question_type === 'open-text' && (
+      {question.question_type === SCREENING_QUESTION_TYPE.OPEN_TEXT && (
         <Row>
           <Col lg={6}>
             <Input
@@ -113,7 +123,7 @@ const QuestionOption = ({
           </Col>
         </Row>
       )}
-      {question.question_type === 'open-number' && (
+      {question.question_type === SCREENING_QUESTION_TYPE.OPEN_NUMBER && (
         <Row>
           <Col xs={4} md={4}>
             <Input
@@ -145,27 +155,51 @@ const QuestionOption = ({
           </Col>
         </Row>
       )}
-      {question.question_type === 'rating' && (
-        <Row>
-          <Col xs={4}>
-            <Input
-              control={control}
-              label={translate('question.min')}
-              name={`${fieldName}.0.min`}
-              rules={{ required: translate('question.min.required') }}
-            />
-          </Col>
-          <Col xs={4}>
-            <Input
-              control={control}
-              label={translate('question.max')}
-              name={`${fieldName}.0.max`}
-              rules={{ required: translate('question.max.required') }}
-            />
-          </Col>
-        </Row>
+      {question.question_type === SCREENING_QUESTION_TYPE.RATING && (
+        <>
+          <Row>
+            <Col xs={4}>
+              <Input
+                control={control}
+                label={translate('question.min')}
+                name={`${fieldName}.0.min`}
+                type="number"
+                min={0}
+                rules={{ required: translate('question.min.required') }}
+              />
+            </Col>
+            <Col xs={4}>
+              <Input
+                control={control}
+                label={translate('question.min_note')}
+                name={`${fieldName}.0.min_note`}
+                rules={{ required: translate('question.min_note.required') }}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={4}>
+              <Input
+                control={control}
+                label={translate('question.max')}
+                name={`${fieldName}.0.max`}
+                type="number"
+                min={0}
+                rules={{ required: translate('question.max.required') }}
+              />
+            </Col>
+            <Col xs={4}>
+              <Input
+                control={control}
+                label={translate('question.max_note')}
+                name={`${fieldName}.0.max_note`}
+                rules={{ required: translate('question.max_note.required') }}
+              />
+            </Col>
+          </Row>
+        </>
       )}
-      {question.question_type === 'note' && (
+      {question.question_type === SCREENING_QUESTION_TYPE.NOTE && (
         <Row>
           <Col>
             <Input

@@ -27,6 +27,16 @@ const QuestionRepeater = ({
     append({
       ...defaultValues,
       id: crypto.randomUUID(),
+      options: [
+        {
+          ...defaultValues.options[0],
+          id: crypto.randomUUID(),
+        },
+        {
+          ...defaultValues.options[1],
+          id: crypto.randomUUID(),
+        }
+      ]
     });
   };
 

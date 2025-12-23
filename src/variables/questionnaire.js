@@ -25,25 +25,29 @@ export const DEFAULT_SCREENING_QUESTIONNAIRE_VALUES = {
           file: null,
           options: [
             {
-              id: null,
+              id: crypto.randomUUID(),
               option_text: '',
               option_point: null,
               threshold: null,
               min: null,
               max: null,
+              min_note: null,
+              max_note: null,
+              file: null,
+            },
+            {
+              id: crypto.randomUUID(),
+              option_text: '',
+              option_point: null,
+              threshold: null,
+              min: null,
+              max: null,
+              min_note: null,
+              max_note: null,
               file: null,
             }
           ],
-          logics: [
-            {
-              id: null,
-              question_id: null,
-              target_question_id: null,
-              target_option_id: null,
-              condition_type: 'skip',
-              condition_rule: null,
-            }
-          ]
+          logics: [],
         }
       ]
     }
