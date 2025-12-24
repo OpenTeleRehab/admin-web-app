@@ -52,7 +52,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
 
   useEffect(() => {
     if (editId && guidancePage.id) {
-      setFormFields({ title: guidancePage.title || '' });
+      setFormFields({ title: guidancePage.title || '', target_role: guidancePage.target_role || 'therapist' });
       setContent(guidancePage.content || '');
     }
   }, [editId, guidancePage]);
