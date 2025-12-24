@@ -75,3 +75,17 @@ export const publishScreeningQuestionnaire = (id) => async (dispatch) => {
     return false;
   }
 };
+
+export const deleteScreeningQuestionnaire = (id) => async (dispatch) => {
+  dispatch(mutation.deleteScreeningQuestionnaireRequest());
+  const data = await ScreeningQuestionnaire.deleteScreeningQuestionnaire(id);
+  if (data.success) {
+    dispatch(getScreeningQuestionnaires());
+    dispatch(showSuccessNotification('toast_title.delete_screening_questionnaire', data.message));
+    return true;
+  } else {
+    dispatch(mutation.deleteScreeningQuestionnaireFail());
+    dispatch(showErrorNotification('toast_title.delete_screening_questionnaire', data.message));
+    return false;
+  }
+};

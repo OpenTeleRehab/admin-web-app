@@ -49,6 +49,14 @@ export const DEFAULT_SCREENING_QUESTIONNAIRE_VALUES = {
           ],
           logics: [],
         }
+      ],
+      actions: [
+        {
+          id: null,
+          from: null,
+          to: null,
+          action_text: null,
+        }
       ]
     }
   ]

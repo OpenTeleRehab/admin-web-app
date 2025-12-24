@@ -61,17 +61,17 @@ const publishScreeningQuestionnaireFail = () => ({
   type: 'PUBLISH_SCREENING_QUESTIONNAIRE_FAIL'
 });
 
-const exportScreeningQuestionnaireRequest = () => ({
-  type: 'EXPORT_SCREENING_QUESTIONNAIRE_REQUEST'
+const deleteScreeningQuestionnaireRequest = () => ({
+  type: 'DELETE_SCREENING_QUESTIONNAIRE_REQUEST'
 });
 
-const exportScreeningQuestionnaireSuccess = (data) => ({
-  type: 'EXPORT_SCREENING_QUESTIONNAIRE_SUCCESS',
+const deleteScreeningQuestionnaireSuccess = (data) => ({
+  type: 'DELETE_SCREENING_QUESTIONNAIRE_SUCCESS',
   data
 });
 
-const exportScreeningQuestionnaireFail = () => ({
-  type: 'EXPORT_SCREENING_QUESTIONNAIRE_FAIL'
+const deleteScreeningQuestionnaireFail = () => ({
+  type: 'DELETE_SCREENING_QUESTIONNAIRE_FAIL'
 });
 
 export const mutation = {
@@ -90,7 +90,7 @@ export const mutation = {
   publishScreeningQuestionnaireRequest,
   publishScreeningQuestionnaireSuccess,
   publishScreeningQuestionnaireFail,
-  exportScreeningQuestionnaireRequest,
-  exportScreeningQuestionnaireSuccess,
-  exportScreeningQuestionnaireFail
+  deleteScreeningQuestionnaireRequest,
+  deleteScreeningQuestionnaireSuccess,
+  deleteScreeningQuestionnaireFail
 };

@@ -9,7 +9,11 @@ import { DeleteAction, EditAction, PublishAction, ViewAction } from '../../../co
 import Dialog from '../../../components/Dialog';
 import customColorScheme from '../../../utils/customColorScheme';
 import ViewScreeningQuestionnaire from './view';
-import { getScreeningQuestionnaires, publishScreeningQuestionnaire } from '../../../store/screeningQuestionnaire/actions';
+import {
+  deleteScreeningQuestionnaire,
+  getScreeningQuestionnaires,
+  publishScreeningQuestionnaire
+} from '../../../store/screeningQuestionnaire/actions';
 import { USER_ROLES } from '../../../variables/user';
 import { STATUS_VARIANTS } from '../../../variables/privacyPolicy';
 import keycloak from '../../../utils/keycloak';
@@ -21,7 +25,9 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
   const { screeningQuestionnaires } = useSelector((state) => state.screeningQuestionnaire);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [publishedId, setPublishedId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [screeningQuestionnaire, setScreeningQuestionnaire] = useState();
 
@@ -34,6 +40,11 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
     setShowPublishedDialog(true);
   };
 
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
   const handlePublishedDialogConfirm = () => {
     dispatch(publishScreeningQuestionnaire(publishedId)).then(result => {
       if (result) {
@@ -42,9 +53,22 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
     });
   };
 
+  const handleDeleteDialogConfirm = () => {
+    dispatch(deleteScreeningQuestionnaire(deleteId)).then(result => {
+      if (result) {
+        handleDeleteDialogClose();
+      }
+    });
+  };
+
   const handlePublishedDialogClose = () => {
     setPublishedId(null);
     setShowPublishedDialog(false);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteId(null);
+    setShowDeleteDialog(false);
   };
 
   const handleViewScreeningQuestionnaire = (screeningQuestionnaire) => {
@@ -73,10 +97,13 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
                   <>
                     <EditAction onClick={() => handleRowEdit(item.id)} />
                     <PublishAction
-                      className="ml-1"
-                      onClick={() => handlePublish(item.id)} disabled={item.published_date}
+                      disabled={item.published_date}
+                      onClick={() => handlePublish(item.id)}
                     />
-                    <DeleteAction onClick={() => {}} />
+                    <DeleteAction
+                      disabled={item.isUsed}
+                      onClick={() => handleDelete(item.id)}
+                    />
                   </>
                 )}
               </>
@@ -107,6 +134,16 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
         onConfirm={handlePublishedDialogConfirm}
       >
         <p>{translate('screening_questionnaire.publish_confirmation_message')}</p>
+      </Dialog>
+      <Dialog
+        show={showDeleteDialog}
+        title={translate('screening_questionnaire.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDeleteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleDeleteDialogConfirm}
+      >
+        <p>{translate('screening_questionnaire.delete_confirmation_message')}</p>
       </Dialog>
       <ViewScreeningQuestionnaire
         id={screeningQuestionnaire?.id}

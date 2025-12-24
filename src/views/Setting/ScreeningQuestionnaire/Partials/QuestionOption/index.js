@@ -18,12 +18,15 @@ const QuestionOption = ({
   sectionIndex,
   questionIndex,
   control,
+  setValue,
   watch,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
-  const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
+  const questions = watch(`sections.${sectionIndex}.questions`);
+  const question = questions[questionIndex];
+
   const fieldName = `sections.${sectionIndex}.questions.${questionIndex}.options`;
 
   const { fields, append, remove } = useFieldArray({
@@ -36,6 +39,16 @@ const QuestionOption = ({
       ...defaultValues,
       id: crypto.randomUUID(),
     });
+  };
+
+  const handleRemoveOption = (index) => {
+    questions.forEach((q, i) => {
+      const logics = q.logics.filter(logic => logic.target_option_id !== question.options[index].id);
+
+      setValue(`sections.${sectionIndex}.questions.${i}.logics`, logics);
+    });
+
+    remove(index);
   };
 
   const disableRemoveOption = (index) => {
@@ -84,7 +97,7 @@ const QuestionOption = ({
                   variant="outline-danger"
                   className="remove-btn d-flex align-items-center justify-content-center mt-1"
                   disabled={disableRemoveOption(index)}
-                  onClick={() => remove(index)}
+                  onClick={() => handleRemoveOption(index)}
                 >
                   <BsX size={16} />
                 </Button>
@@ -219,6 +232,7 @@ QuestionOption.propTypes = {
   sectionIndex: PropTypes.number,
   questionIndex: PropTypes.number,
   control: PropTypes.object,
+  setValue: PropTypes.func,
   watch: PropTypes.func,
 };
 
