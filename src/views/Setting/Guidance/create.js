@@ -24,6 +24,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
   const [language, setLanguage] = useState('');
   const [content, setContent] = useState('');
   const [formFields, setFormFields] = useState({
+    target_role: 'therapist',
     title: ''
   });
 

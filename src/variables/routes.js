@@ -31,6 +31,7 @@ export const SETTING_PHC_SERVICE = SETTING + '#phc_service';
 export const SETTING_PROFESSION = SETTING + '#profession';
 export const SETTING_STATIC_PAGE = SETTING + '#static_page';
 export const SETTING_GUIDANCE_PAGE = SETTING + '#guidance_page';
+export const SETTING_PHC_WORKER_GUIDANCE = SETTING + '#phc_worker_guidance';
 export const SETTING_LANGUAGE = SETTING + '#language';
 export const SETTING_DISEASE = SETTING + '#disease';
 export const SETTING_ORGANIZATION = SETTING + '#organization';

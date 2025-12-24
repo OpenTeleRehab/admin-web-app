@@ -17,6 +17,7 @@ type ShowAlertType = {
   hideConfirm?: boolean;
   hideCancel?: boolean;
   closeOnConfirm?: boolean;
+  props?: { size: 'sm' | 'lg' | 'xl' | undefined };
 }
 
 export const useAlertDialog = () => {
@@ -34,7 +35,8 @@ export const useAlertDialog = () => {
     cancelProps,
     hideConfirm,
     hideCancel,
-    closeOnConfirm = true
+    closeOnConfirm = true,
+    props
   }: ShowAlertType) => {
     openDialog({
       title,
@@ -71,7 +73,7 @@ export const useAlertDialog = () => {
           </DialogFooter>
         </>
       ),
-      props: { size: 'lg' }
+      props
     });
   }, [t, openDialog, closeDialog]);
 

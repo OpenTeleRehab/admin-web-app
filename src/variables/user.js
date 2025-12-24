@@ -84,6 +84,8 @@ export const USER_ROLES = {
   VIEW_PROFESSION: 'view_profession',
   VIEW_CLINIC_LIST: 'view_clinic_list',
   VIEW_PROVINCE_LIST: 'view_province_list',
+  MANAGE_PHC_WORKER_GUIDANCE: 'manage_phc_worker_guidance',
+  TRANSLATE_PHC_WORKER_GUIDANCE: 'translate_phc_worker_guidance',
 };
 
 export const SETTING_ROLES = [

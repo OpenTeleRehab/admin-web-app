@@ -17,6 +17,8 @@ import Profession from 'views/Setting/Profession';
 import Language from 'views/Setting/Language';
 import StaticPage from 'views/Setting/StaticPage';
 import GuidancePage from 'views/Setting/Guidance';
+import PhcWorkerGuidance from 'views/Setting/PhcWorkerGuidance';
+import CreateEditPhcWorkerGuidance from 'views/Setting/PhcWorkerGuidance/createOrEdit';
 import Disease from 'views/Setting/Disease';
 import ColorScheme from 'views/Setting/ColorScheme';
 import Organization from './Organization';
@@ -40,6 +42,7 @@ import {
   VIEW_LANGUAGE,
   VIEW_STATIC_PAGE,
   VIEW_GUIDANCE_PAGE,
+  VIEW_PHC_WORKER_GUIDANCE,
   VIEW_DISEASE,
   VIEW_ORGANIZATION,
   VIEW_ASSISTIVE_TECHNOLOGY,
@@ -115,6 +118,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_STATIC_PAGE);
     } else if (hash.includes('#' + VIEW_GUIDANCE_PAGE)) {
       setView(VIEW_GUIDANCE_PAGE);
+    } else if (hash.includes('#' + VIEW_PHC_WORKER_GUIDANCE)) {
+      setView(VIEW_PHC_WORKER_GUIDANCE);
     } else if (hash.includes('#' + VIEW_DISEASE)) {
       setView(VIEW_DISEASE);
     } else if (hash.includes('#' + VIEW_ORGANIZATION)) {
@@ -149,7 +154,7 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    if (view !== VIEW_REGION && view !== VIEW_PROVINCE && view !== VIEW_PHC_SERVICE) {
+    if (![VIEW_REGION, VIEW_PROVINCE, VIEW_PHC_SERVICE, VIEW_PHC_WORKER_GUIDANCE].includes(view)) {
       setShow(true);
 
       return;
@@ -174,6 +179,13 @@ const Setting = ({ translate }) => {
         openDialog({
           title: translate('phc_service.new'),
           content: <CreateEditPhcService />
+        });
+        break;
+      case VIEW_PHC_WORKER_GUIDANCE:
+        openDialog({
+          title: translate('phc_worker_guidance.new'),
+          content: <CreateEditPhcWorkerGuidance />,
+          props: { size: 'lg' }
         });
         break;
       default:
@@ -229,6 +241,7 @@ const Setting = ({ translate }) => {
                     (view === VIEW_SCREENING_QUESTIONNAIRE && keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE)) ||
                     (view === VIEW_REGION && keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION)) ||
                     (view === VIEW_PROVINCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE)) ||
+                    (view === VIEW_PHC_WORKER_GUIDANCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE)) ||
                     (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
                     (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
                     <Button variant="primary" onClick={handleShow}>
@@ -352,6 +365,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_PHC_WORKER_GUIDANCE} eventKey={VIEW_PHC_WORKER_GUIDANCE}>
+              {translate('setting.phc_worker_guidance')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
         { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_DISEASE} eventKey={VIEW_DISEASE}>
@@ -421,6 +441,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.VIEW_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PRIVACY_POLICY)) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && view === VIEW_PHC_WORKER_GUIDANCE && <PhcWorkerGuidance /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }

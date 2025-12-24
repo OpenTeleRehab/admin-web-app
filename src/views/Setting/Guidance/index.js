@@ -19,15 +19,9 @@ import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
 import keycloak from '../../../utils/keycloak';
 import { USER_ROLES } from '../../../variables/user';
+import { reorderArray } from 'utils/array';
 
 let timer = null;
-
-const reorderGuidance = (quidances, startIndex, endIndex) => {
-  const result = Array.from(quidances);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
 
 const GuidancePage = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
@@ -48,7 +42,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
   useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      dispatch(getGuidancePages());
+      dispatch(getGuidancePages({ target_role: 'therapist' }));
     }, 500);
   }, [language, dispatch]);
 
@@ -62,7 +56,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
       return;
     }
 
-    const updatedGuidances = reorderGuidance(
+    const updatedGuidances = reorderArray(
       guidancePages,
       e.source.index,
       e.destination.index
@@ -71,7 +65,7 @@ const GuidancePage = ({ translate, handleRowEdit }) => {
     setGuidanceObjects(updatedGuidances);
 
     if (updatedGuidances.length) {
-      dispatch(updateGuidancePages({ guidancePages: updatedGuidances, lang: language }));
+      dispatch(updateGuidancePages({ guidancePages: updatedGuidances, lang: language, target_role: 'therapist' }));
     }
   };
 
