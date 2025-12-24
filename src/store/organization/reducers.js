@@ -26,7 +26,8 @@ export const organization = (state = initialState, action) => {
     case 'GET_ORGANIZATION_THERAPIST_AND_TREATMENT_LIMIT_SUCCESS': {
       return Object.assign({}, state, {
         orgTherapistLimit: action.data ? action.data.max_therapist : 0,
-        orgOngoingTreatmentLimit: action.data ? action.data.max_ongoing_treatment_plan : 0
+        orgOngoingTreatmentLimit: action.data ? action.data.max_ongoing_treatment_plan : 0,
+        maxPhcOngoingTreatmentPlans: action.data ? action.data.max_phc_ongoing_treatment_plan : 0
       });
     }
     default:

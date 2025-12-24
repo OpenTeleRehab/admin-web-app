@@ -29,8 +29,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
   const { showToast } = useToast();
   const { closeDialog } = useDialog();
   const countries = useSelector((state: any) => state.country.countries);
-  const { orgOngoingTreatmentLimit } = useSelector((state: any) => state.organization);
-
+  const { maxPhcOngoingTreatmentPlans } = useSelector((state: any) => state.organization);
   const [patients, setPatients] = useState([]);
   const [onGoingPatients, setOngoingPatient] = useState(0);
 
@@ -53,9 +52,9 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
     } else {
       setValue('country_identity', getCountryIdentity(profile.country_id, countries));
       setValue('phc_service_identity', profile.phc_service.identity);
-      setValue('limit_patient', orgOngoingTreatmentLimit);
+      setValue('limit_patient', maxPhcOngoingTreatmentPlans);
     }
-  }, [phcWorker, orgOngoingTreatmentLimit, profile, countries, setValue, reset]);
+  }, [phcWorker, maxPhcOngoingTreatmentPlans, profile, countries, setValue, reset]);
 
   useEffect(() => {
     if (profile) {
@@ -166,7 +165,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
           <Col sm={12} md={6}>
             <Input
               control={control}
-              label={t('common.limit_treatment', { defaultLimitedPatients: orgOngoingTreatmentLimit })}
+              label={t('common.limit_treatment', { defaultLimitedPatients: maxPhcOngoingTreatmentPlans })}
               name="limit_patient"
               type="number"
               placeholder={t('placeholder.limit_patient')}
@@ -179,7 +178,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
                     return t('error.limit_patient.lessthan');
                   }
 
-                  if (numValue > orgOngoingTreatmentLimit) {
+                  if (numValue > maxPhcOngoingTreatmentPlans) {
                     return t('error.over_default_limit_patient');
                   }
 
