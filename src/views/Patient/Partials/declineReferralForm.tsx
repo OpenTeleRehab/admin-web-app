@@ -3,6 +3,7 @@ import DialogBody from 'components/V2/Dialog/DialogBody';
 import DialogFooter from 'components/V2/Dialog/DialogFooter';
 import Input from 'components/V2/Form/Input';
 import useToast from 'components/V2/Toast';
+import { useInvalidate } from 'hooks/useInvalidate';
 import { useTranslate } from 'hooks/useTranslate';
 import { useUpdate } from 'hooks/useUpdate';
 import { Button, Form } from 'react-bootstrap';
@@ -15,6 +16,7 @@ type DeclineFormProps = {
 
 const DeclineReferralForm = ({ referralId }: DeclineFormProps) => {
   const t: any = useTranslate();
+  const invalidate = useInvalidate();
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
   const { mutate: declineReferral } = useUpdate(END_POINTS.PATIENT_REFERRAL);
@@ -27,6 +29,7 @@ const DeclineReferralForm = ({ referralId }: DeclineFormProps) => {
           title: t('patient.referral.decline.title'),
           message: t(res.message),
         });
+        invalidate(`${END_POINTS.PATIENT_REFERRAL}/count`);
         closeDialog();
       }
     });

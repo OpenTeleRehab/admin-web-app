@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import CustomTable from 'components/Table';
-import { getCountryName } from 'utils/country';
-import { getClinicName, getClinicRegion } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
 import { deleteGlobalPatient, getGlobalPatients } from 'store/globalPatient/actions';
 import { renderStatusBadge } from 'utils/treatmentPlan';
@@ -20,8 +18,6 @@ const PatientList = ({ translate, setDownloadfilter }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const patients = useSelector(state => state.patient.patients);
-  const countries = useSelector(state => state.country.countries);
-  const clinics = useSelector(state => state.clinic.clinics);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const { profile } = useSelector(state => state.auth);
 
@@ -47,6 +43,10 @@ const PatientList = ({ translate, setDownloadfilter }) => {
     columns.splice(3, 0, { name: 'clinic', title: translate('common.clinic') });
   }
 
+  if (profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN) {
+    columns.splice(3, 0, { name: 'phc_service', title: translate('common.phc_service') });
+  }
+
   if ([USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN].includes(profile.type)) {
     columns.push({ name: 'action', title: translate('common.action') });
   }
@@ -70,6 +70,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
         type: profile.type,
         country: profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
         clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
+        phc_service_id: profile.type === USER_GROUPS.PHC_SERVICE_ADMIN ? profile.phc_service.id : undefined,
         filters
       })).then(result => {
         if (result) {
@@ -142,9 +143,10 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             email: patient.email,
             gender: translate(`common.${patient.gender}`),
             age: patient.date_of_birth !== null ? AgeCalculation(patient.date_of_birth, translate) : '',
-            country: getCountryName(patient.country_id, countries),
-            clinic: getClinicName(patient.clinic_id, clinics),
-            region: getClinicRegion(patient.clinic_id, clinics),
+            country: patient.country_name,
+            clinic: patient.clinic_name,
+            region: patient.region_name,
+            phc_service: patient.phc_service_name,
             treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.upcomingTreatmentPlan ? patient.upcomingTreatmentPlan : patient.lastTreatmentPlan),
             action
           };
