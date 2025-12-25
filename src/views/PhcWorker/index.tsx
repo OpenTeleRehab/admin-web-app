@@ -48,7 +48,7 @@ const PhcWorker = () => {
 
   const { data: phcWorkers } = useList<IPhcWorker>(END_POINTS.PHC_WORKERS,
     {
-      phc_service_id: profile ? profile.phc_service_id : null,
+      phc_service_id: profile ? profile.phc_service.id : null,
       country_id: profile ? profile.country_id : null,
       region_id: profile ? profile.region_id : null,
       filters,
