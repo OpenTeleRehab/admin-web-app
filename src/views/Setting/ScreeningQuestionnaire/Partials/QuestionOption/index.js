@@ -20,6 +20,7 @@ const QuestionOption = ({
   control,
   setValue,
   watch,
+  disabled,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -77,6 +78,7 @@ const QuestionOption = ({
                       name={`${fieldName}.${index}.option_text`}
                       placeholder={translate('question.option_text.placeholder')}
                       rules={{ required: translate('question.option_text.required') }}
+                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -107,6 +109,7 @@ const QuestionOption = ({
                   control={control}
                   name={`${fieldName}.${index}.file`}
                   label={translate('question.media_upload')}
+                  disabled={disabled}
                 />
               </Col>
             </Row>
@@ -232,6 +235,7 @@ const QuestionOption = ({
               name={`${fieldName}.0.option_text`}
               placeholder={translate('question.answer.note.placeholder')}
               rules={{ required: translate('question.answer.note.required') }}
+              disabled={disabled}
             />
           </Col>
         </Row>
@@ -246,6 +250,7 @@ QuestionOption.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(QuestionOption);

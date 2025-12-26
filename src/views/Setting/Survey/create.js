@@ -18,6 +18,7 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import Questionnaire from './Partials/Questionnaire';
 import { USER_GROUPS } from 'variables/user';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateSurvey = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -63,6 +64,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   const [questionnaire, setQuestionnaire] = useState({ title: '', questions: [] });
   const [questionnaireId, setQuestionnaireId] = useState();
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const organizationOptions = organizations.map(item => ({
     value: item.id,
     label: item.name
@@ -655,6 +657,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
           setQuestionnaireData={setQuestionnaire}
           language={language}
           setLanguage={setLanguage}
+          disabled={!isEditableLanguage}
         />
       </Form>
     </Dialog>

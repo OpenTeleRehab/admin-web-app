@@ -15,6 +15,7 @@ import {
   getScreeningQuestionnaire,
   updateScreeningQuestionnaire,
 } from '../../../store/screeningQuestionnaire/actions';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES;
 const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].options;
@@ -40,6 +41,8 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
       lang: languages.length ? languages[0].id : null,
     }
   });
+  const language = watch('lang');
+  const isEditableLanguage = useEditableLanguage(language);
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
@@ -193,6 +196,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
                 name="description"
                 label={translate('questionnaire.description')}
                 placeholder={translate('questionnaire.description.placeholder')}
+                disabled={!isEditableLanguage}
               />
             </Col>
           </Row>
@@ -200,6 +204,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
             control={control}
             setValue={setValue}
             watch={watch}
+            disabled={!isEditableLanguage}
           />
         </Form>
       </Dialog>

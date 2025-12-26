@@ -18,6 +18,7 @@ import { useOne } from 'hooks/useOne';
 import { useUpdate } from 'hooks/useUpdate';
 import useToast from 'components/V2/Toast';
 import { showSpinner } from 'store/spinnerOverlay/actions';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 type CreateEditPhcWorkerGuidanceProps = {
   editId?: number;
@@ -39,6 +40,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
     }
   });
   const language = watch('lang');
+  const isEditableLanguage = useEditableLanguage(language);
   const { data: phcWorkerGuidance } = useOne(END_POINTS.GUIDANCE_PAGE, editId!, { enabled: !!editId, params: { lang: language } });
 
   useEffect(() => {
@@ -105,6 +107,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
           label={t('common.title')}
           placeholder={t('placeholder.title')}
           rules={{ required: t('common.required.title') }}
+          disabled={!isEditableLanguage}
         />
         <Form.Group controlId="content">
           <Form.Label>{t('common.content')}</Form.Label>
@@ -155,6 +158,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
                     content_style: settings.tinymce.contentStyle,
                     toolbar: settings.tinymce.toolbar
                   }}
+                  disabled={!isEditableLanguage}
                   onEditorChange={field.onChange}
                 />
                 {fieldState.error && (
@@ -168,7 +172,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
         </Form.Group>
       </DialogBody>
       <DialogFooter>
-        <Button variant="primary" type='submit'>
+        <Button variant="primary" type='submit' disabled={!isEditableLanguage}>
           {editId ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>

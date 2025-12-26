@@ -93,9 +93,11 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
             const action = (
               <>
                 <ViewAction onClick={() => handleViewScreeningQuestionnaire(item)} />
+                {(keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_SCREENING_QUESTIONNAIRE)) && (
+                  <EditAction onClick={() => handleRowEdit(item.id)} />
+                )}
                 {keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && (
                   <>
-                    <EditAction onClick={() => handleRowEdit(item.id)} />
                     <PublishAction
                       disabled={item.published_date}
                       onClick={() => handlePublish(item.id)}

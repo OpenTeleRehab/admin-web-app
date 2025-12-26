@@ -31,6 +31,7 @@ import customColorScheme from '../../../utils/customColorScheme';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const CreateEducationMaterial = ({ translate }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     title: '',
     file: undefined
@@ -317,6 +319,7 @@ const CreateEducationMaterial = ({ translate }) => {
                 placeholder={translate('education_material.title.placeholder')}
                 maxLength={settings.textMaxLength}
                 isInvalid={titleError}
+                disabled={!isEditableLanguage}
               />
               <Form.Control.Feedback type="invalid">
                 {translate('education_material.title.required')}

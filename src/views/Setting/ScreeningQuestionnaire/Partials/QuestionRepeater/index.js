@@ -16,6 +16,7 @@ const QuestionRepeater = ({
   control,
   setValue,
   watch,
+  disabled,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -107,6 +108,7 @@ const QuestionRepeater = ({
                         watch={watch}
                         onClone={handleCloneQuestion}
                         onRemove={() => remove(index)}
+                        disabled={disabled}
                       />
                     </div>
                   )}
@@ -121,6 +123,7 @@ const QuestionRepeater = ({
         className="px-0"
         variant="link"
         onClick={handleAddQuestion}
+        disabled={disabled}
       >
         <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
       </Button>
@@ -133,6 +136,7 @@ QuestionRepeater.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(QuestionRepeater);

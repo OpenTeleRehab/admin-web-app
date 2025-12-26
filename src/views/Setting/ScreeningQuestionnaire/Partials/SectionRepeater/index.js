@@ -16,6 +16,7 @@ const SectionRepeater = ({
   control,
   setValue,
   watch,
+  disabled,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -60,12 +61,14 @@ const SectionRepeater = ({
               label="Title"
               placeholder={translate('questionnaire.title.placeholder')}
               rules={{ required: translate('questionnaire.title.required') }}
+              disabled={disabled}
             />
             <QuestionRepeater
               sectionIndex={index}
               control={control}
               setValue={setValue}
               watch={watch}
+              disabled={disabled}
             />
           </Card.Body>
           <ActionRepeater
@@ -91,6 +94,7 @@ SectionRepeater.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(SectionRepeater);
