@@ -47,6 +47,7 @@ const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
           message: t(res.message),
         });
         invalidate(END_POINTS.PATIENT_REFERRAL);
+        invalidate(`${END_POINTS.PATIENT_REFERRAL}/count`);
         closeDialog();
       }
     });
