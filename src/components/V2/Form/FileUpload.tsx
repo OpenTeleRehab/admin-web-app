@@ -1,8 +1,8 @@
+import React, { useRef } from 'react';
 import { Button, Form, FormCheckProps } from 'react-bootstrap';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import { BsUpload, BsX } from 'react-icons/bs';
 import settings from '../../../settings';
-import React from 'react';
 
 type FileUploadProps<T extends FieldValues> = {
   control: Control<T>;
@@ -20,6 +20,8 @@ const FileUpload = <T extends FieldValues>({
   label,
   rules,
 }: FileUploadProps<T>) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   return (
     <Controller
       name={name}
@@ -45,7 +47,13 @@ const FileUpload = <T extends FieldValues>({
                     aria-label="remove file"
                     variant="outline-danger"
                     className="remove-btn d-flex align-items-center justify-content-center"
-                    onClick={() => field.onChange(null)}
+                    onClick={() => {
+                      // Reset the input so the same file can be selected again
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                      }
+                      field.onChange(null);
+                    }}
                   >
                     <BsX size={16} />
                   </Button>
@@ -56,6 +64,7 @@ const FileUpload = <T extends FieldValues>({
               <BsUpload size={15}/> {label}
               <input
                 className="position-absolute upload-btn"
+                ref={fileInputRef}
                 type="file"
                 onChange={(event) => field.onChange(event.target.files?.[0])}
                 accept={settings.question.acceptImageTypes}
