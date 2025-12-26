@@ -9,7 +9,8 @@
 }
 
 .is-invalid {
-	.filter__control {
+	.filter__control,
+	.select__control {
 		border-color: $error;
 
 		&:hover {

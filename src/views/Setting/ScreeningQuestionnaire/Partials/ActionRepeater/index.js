@@ -8,8 +8,6 @@ import { BsPlusCircle, BsX } from 'react-icons/bs';
 import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 
-const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0].actions[0];
-
 const ActionRepeater = ({
   sectionIndex,
   control,
@@ -81,6 +79,15 @@ const ActionRepeater = ({
     return 0;
   };
 
+  const handleAddAction = () => {
+    append({
+      id: null,
+      from: null,
+      to: null,
+      action_text: null,
+    });
+  };
+
   return (
     <Card.Footer>
       <Card className="question-card mb-2">
@@ -92,80 +99,82 @@ const ActionRepeater = ({
             <strong>{translate('question.point')}: {getTotalPoints(sectionIndex)}</strong>
           </div>
         </Card.Header>
-        <Card.Body>
-          {fields.map((field, index) => (
-            <Row key={field.id}>
-              <Col xs={3} lg={3}>
-                <Input
-                  control={control}
-                  name={`sections.${sectionIndex}.actions.${index}.from`}
-                  type="number"
-                  min={getInitMinValue(index)}
-                  placeholder={translate('screening_questionnaire.action.from.placeholder')}
-                  rules={{
-                    required: translate('screening_questionnaire.action.from.required'),
-                    min: {
-                      value: getInitMinValue(index),
-                      message: translate('screening_questionnaire.action.min.validate', { min: getInitMinValue(index) }),
-                    },
-                    max: {
-                      value: getTotalPoints(index) - 1,
-                      message: translate('screening_questionnaire.action.max.validate', { max: getTotalPoints(index) - 1 }),
-                    }
-                  }}
-                />
-              </Col>
-              <Col xs={3} lg={3}>
-                <Input
-                  control={control}
-                  name={`sections.${sectionIndex}.actions.${index}.to`}
-                  type="number"
-                  min={getEndMinValue(index)}
-                  placeholder={translate('screening_questionnaire.action.to.placeholder')}
-                  rules={{
-                    required: translate('screening_questionnaire.action.to.required'),
-                    min: {
-                      value: getEndMinValue(index),
-                      message: translate('screening_questionnaire.action.min.validate', { min: getEndMinValue(index) }),
-                    },
-                    max: {
-                      value: getTotalPoints(index),
-                      message: translate('screening_questionnaire.action.max.validate', { max: getTotalPoints(index) }),
-                    }
-                  }}
-                />
-              </Col>
-              <Col xs={3} lg={3}>
-                <Input
-                  control={control}
-                  name={`sections.${sectionIndex}.actions.${index}.action_text`}
-                  placeholder={translate('screening_questionnaire.action.action_text.placeholder')}
-                  rules={{
-                    required: translate('screening_questionnaire.action.action_text.required'),
-                  }}
-                />
-              </Col>
-              <Col xs={2} lg={2}>
-                <Button
-                  aria-label="Remove action"
-                  variant="outline-danger"
-                  className="remove-btn d-flex align-items-center justify-content-center mt-1"
-                  disabled={index < fields.length - 1}
-                  onClick={() => remove(index)}
-                >
-                  <BsX size={16} />
-                </Button>
-              </Col>
-            </Row>
-          ))}
-        </Card.Body>
+        {fields.length > 0 && (
+          <Card.Body>
+            {fields.map((field, index) => (
+              <Row key={field.id}>
+                <Col xs={3} lg={3}>
+                  <Input
+                    control={control}
+                    name={`sections.${sectionIndex}.actions.${index}.from`}
+                    type="number"
+                    min={getInitMinValue(index)}
+                    placeholder={translate('screening_questionnaire.action.from.placeholder')}
+                    rules={{
+                      required: translate('screening_questionnaire.action.from.required'),
+                      min: {
+                        value: getInitMinValue(index),
+                        message: translate('screening_questionnaire.action.min.validate', { min: getInitMinValue(index) }),
+                      },
+                      max: {
+                        value: getTotalPoints(index) - 1,
+                        message: translate('screening_questionnaire.action.max.validate', { max: getTotalPoints(index) - 1 }),
+                      }
+                    }}
+                  />
+                </Col>
+                <Col xs={3} lg={3}>
+                  <Input
+                    control={control}
+                    name={`sections.${sectionIndex}.actions.${index}.to`}
+                    type="number"
+                    min={getEndMinValue(index)}
+                    placeholder={translate('screening_questionnaire.action.to.placeholder')}
+                    rules={{
+                      required: translate('screening_questionnaire.action.to.required'),
+                      min: {
+                        value: getEndMinValue(index),
+                        message: translate('screening_questionnaire.action.min.validate', { min: getEndMinValue(index) }),
+                      },
+                      max: {
+                        value: getTotalPoints(index),
+                        message: translate('screening_questionnaire.action.max.validate', { max: getTotalPoints(index) }),
+                      }
+                    }}
+                  />
+                </Col>
+                <Col xs={3} lg={3}>
+                  <Input
+                    control={control}
+                    name={`sections.${sectionIndex}.actions.${index}.action_text`}
+                    placeholder={translate('screening_questionnaire.action.action_text.placeholder')}
+                    rules={{
+                      required: translate('screening_questionnaire.action.action_text.required'),
+                    }}
+                  />
+                </Col>
+                <Col xs={2} lg={2}>
+                  <Button
+                    aria-label="Remove action"
+                    variant="outline-danger"
+                    className="remove-btn d-flex align-items-center justify-content-center mt-1"
+                    disabled={index < fields.length - 1}
+                    onClick={() => remove(index)}
+                  >
+                    <BsX size={16} />
+                  </Button>
+                </Col>
+              </Row>
+            ))}
+          </Card.Body>
+        )}
         <Card.Footer>
           <Button
             aria-label="Add action"
             className="px-0"
             variant="link"
             disabled={disableAddAction()}
-            onClick={() => append(defaultValues)}
+            onClick={handleAddAction}
           >
             <BsPlusCircle size={20} /> {translate('screening_questionnaire.add_more_action')}
           </Button>

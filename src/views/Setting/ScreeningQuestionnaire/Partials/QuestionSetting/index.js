@@ -50,7 +50,7 @@ const QuestionSetting = ({
     const selectedTargetQuestionType = getTargetQuestionType(logicIndex);
 
     if (selectedTargetQuestionType) {
-      if ([SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO].includes(selectedTargetQuestionType)) {
+      if ([SCREENING_QUESTION_TYPE.CHECKBOX, SCREENING_QUESTION_TYPE.RADIO, SCREENING_QUESTION_TYPE.RATING].includes(selectedTargetQuestionType)) {
         return [
           { value: 'was_answered', label: translate('question.condition_rule.was_answered') },
           { value: 'was_not_answered', label: translate('question.condition_rule.was_not_answered') },
@@ -58,10 +58,10 @@ const QuestionSetting = ({
           { value: 'not_equal', label: translate('question.condition_rule.not_equal') },
         ];
       }
-      if ([SCREENING_QUESTION_TYPE.OPEN_TEXT, SCREENING_QUESTION_TYPE.OPEN_NUMBER, SCREENING_QUESTION_TYPE.RATING].includes(selectedTargetQuestionType)) {
+      if ([SCREENING_QUESTION_TYPE.OPEN_TEXT, SCREENING_QUESTION_TYPE.OPEN_NUMBER].includes(selectedTargetQuestionType)) {
         return [
-          { value: 'equal', label: translate('question.condition_rule.equal') },
-          { value: 'not_equal', label: translate('question.condition_rule.not_equal') },
+          { value: 'was_answered', label: translate('question.condition_rule.was_answered') },
+          { value: 'was_not_answered', label: translate('question.condition_rule.was_not_answered') },
         ];
       }
     }
@@ -163,6 +163,7 @@ const QuestionSetting = ({
                           control={control}
                           name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.condition_rule`}
                           options={getConditionRuleOptions(index)}
+                          rules={{ required: translate('question.condition_rule.required') }}
                         />
                       )}
                     </Col>
@@ -174,13 +175,17 @@ const QuestionSetting = ({
                               control={control}
                               name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_id`}
                               options={getTargetQuestionOptions(index)}
+                              rules={{ required: translate('question.target_option_id.required') }}
                             />
                           )}
                           {[SCREENING_QUESTION_TYPE.RATING].includes(getTargetQuestionType(index)) && (
                             <Input
                               control={control}
                               name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_value`}
+                              type="number"
+                              min={0}
                               placeholder={translate('question.target_option_value.placeholder')}
+                              rules={{ required: translate('question.target_option_value.required') }}
                             />
                           )}
                         </>
