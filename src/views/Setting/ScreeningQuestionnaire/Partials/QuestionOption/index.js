@@ -178,7 +178,13 @@ const QuestionOption = ({
                 name={`${fieldName}.0.min`}
                 type="number"
                 min={0}
-                rules={{ required: translate('question.min.required') }}
+                rules={{
+                  required: translate('question.min.required'),
+                  max: {
+                    value: parseInt(watch(`${fieldName}.0.max`)) - 1,
+                    message: translate('question.min.validate', { max: watch(`${fieldName}.0.max`) }),
+                  }
+                }}
               />
             </Col>
             <Col xs={4}>
@@ -198,7 +204,13 @@ const QuestionOption = ({
                 name={`${fieldName}.0.max`}
                 type="number"
                 min={0}
-                rules={{ required: translate('question.max.required') }}
+                rules={{
+                  required: translate('question.max.required'),
+                  min: {
+                    value: parseInt(watch(`${fieldName}.0.min`)) + 1,
+                    message: translate('question.max.validate', { min: watch(`${fieldName}.0.min`) }),
+                  }
+                }}
               />
             </Col>
             <Col xs={4}>
