@@ -11,6 +11,7 @@ import {
 } from 'store/assistiveTechnology/actions';
 import { formatFileSize } from '../../../utils/file';
 import settings from 'settings';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -23,6 +24,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
   const [file, setFile] = useState(undefined);
   const [errorCode, setErrorCode] = useState(false);
   const [errorName, setErrorName] = useState(false);
+  const isEditableLanguage = useEditableLanguage(language);
 
   const [formFields, setFormFields] = useState({
     code: '',
@@ -142,6 +144,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={!isEditableLanguage}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -166,6 +169,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
               isInvalid={errorCode}
               value={formFields.code}
               maxLength={settings.textMaxLength}
+              disabled={!isEditableLanguage}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.assistive_technology.code')}
@@ -182,6 +186,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
               isInvalid={errorName}
               value={formFields.name}
               maxLength={settings.textMaxLength}
+              disabled={!isEditableLanguage}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.assistive_technology.name')}
@@ -199,6 +204,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
                 aria-label="Upload File"
                 id="file"
                 onKeyPress={(event) => handleFileUpload(event)}
+                disabled={!isEditableLanguage}
               />
               <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
               {formFields.file === undefined &&
@@ -230,6 +236,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
               onChange={handleChange}
               as="textarea"
               rows={3}
+              disabled={!isEditableLanguage}
             />
           </Form.Group>
         </Form.Row>

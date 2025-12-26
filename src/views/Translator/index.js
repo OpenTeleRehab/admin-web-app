@@ -2,40 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   deleteTranslator,
-  getTranslators,
   resendEmail, updateTranslatorStatus
 } from 'store/translator/actions';
 import settings from 'settings';
 import * as moment from 'moment';
+import useDialog from 'components/V2/Dialog';
 
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
-import { getTranslate } from 'react-localize-redux';
+import { useTranslate } from 'hooks/useTranslate';
 import { Button } from 'react-bootstrap';
 import { BsPlus } from 'react-icons/bs';
 import Dialog from '../../components/Dialog';
-import CreateTranslator from './create';
+import CreateOrEditTranslator from './_Partials/createOrEdit';
+import { useList } from 'hooks/useList';
+import { useInvalidate } from 'hooks/useInvalidate';
+import { END_POINTS } from 'variables/endPoint';
 
-let timer = null;
 const Translator = () => {
   const dispatch = useDispatch();
-  const translators = useSelector(state => state.translator.translators);
-  const localize = useSelector((state) => state.localize);
-  const translate = getTranslate(localize);
+  const translate = useTranslate();
+  const invalidate = useInvalidate();
   const { profile } = useSelector((state) => state.auth);
+  const { openDialog } = useDialog();
 
   const columns = [
     { name: 'last_name', title: translate('common.last_name') },
     { name: 'first_name', title: translate('common.first_name') },
     { name: 'email', title: translate('common.email') },
+    {
+      name: 'edit_languages',
+      title: translate('translator.edit_languages'),
+      getCellValue: (row) => (row.edit_languages ?? []).map(lang => lang.name).join(' / ')
+    },
     { name: 'status', title: translate('common.status') },
     { name: 'last_login', title: translate('common.last_login') },
     { name: 'action', title: translate('common.action') }
   ];
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -43,29 +49,17 @@ const Translator = () => {
   const [formFields, setFormFields] = useState({
     enabled: 0
   });
-  const [show, setShow] = useState(false);
-  const [editId, setEditId] = useState('');
   const [id, setId] = useState(null);
+  const { data: translators } = useList(END_POINTS.TRANSLATOR, {
+    search_value: searchValue,
+    filters: filters,
+    page_size: pageSize,
+    page: currentPage + 1
+  });
 
   useEffect(() => {
     setCurrentPage(0);
   }, [pageSize, searchValue, filters]);
-
-  useEffect(() => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getTranslators({
-        search_value: searchValue,
-        filters: filters,
-        page_size: pageSize,
-        page: currentPage + 1
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
-    }, 500);
-  }, [currentPage, pageSize, searchValue, filters, dispatch]);
 
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
@@ -77,16 +71,19 @@ const Translator = () => {
     dispatch(resendEmail(id));
   };
 
-  const handleEdit = (id) => {
-    setEditId(id);
-    setShow(true);
+  const handleCreate = () => {
+    openDialog({
+      title: translate('translator.new'),
+      content: <CreateOrEditTranslator />
+    });
   };
 
-  const handleClose = () => {
-    setEditId('');
-    setShow(false);
+  const handleEdit = (translator) => {
+    openDialog({
+      title: translate('translator.edit'),
+      content: <CreateOrEditTranslator translator={translator} />
+    });
   };
-  const handleShow = () => setShow(true);
 
   const handleDelete = (id) => {
     setId(id);
@@ -120,6 +117,7 @@ const Translator = () => {
   const handleSwitchStatusDialogConfirm = () => {
     dispatch(updateTranslatorStatus(id, formFields)).then(result => {
       if (result) {
+        invalidate(END_POINTS.TRANSLATOR);
         handleSwitchStatusDialogClose();
       }
     });
@@ -130,7 +128,7 @@ const Translator = () => {
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
         <h1>{translate('translator.management')}</h1>
         <div className="btn-toolbar mb-2 mb-md-0">
-          <Button variant="primary" onClick={handleShow}>
+          <Button variant="primary" onClick={handleCreate}>
             <BsPlus size={20} className="mr-1" />
             {translate('translator.new')}
           </Button>
@@ -141,20 +139,20 @@ const Translator = () => {
         setPageSize={setPageSize}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        totalCount={totalCount}
+        totalCount={translators?.info?.total_count ?? 0}
         setSearchValue={setSearchValue}
         setFilters={setFilters}
         filters={filters}
         columns={columns}
         columnExtensions={columnExtensions}
-        rows={translators.map(translator => {
+        rows={(translators?.data ?? []).map(translator => {
           const action = (
             <>
               {translator.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(translator.id, 0)} disabled={parseInt(translator.id) === parseInt(profile.id)}/>
                 : <DisabledAction onClick={() => handleSwitchStatus(translator.id, 1)} disabled={parseInt(translator.id) === parseInt(profile.id)} />
               }
-              <EditAction onClick={() => handleEdit(translator.id)} />
+              <EditAction onClick={() => handleEdit(translator)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(translator.id)} disabled={parseInt(translator.id) === parseInt(profile.id) || translator.enabled} />
               <MailSendAction onClick={() => handleSendMail(translator.id)} disabled={translator.last_login} />
             </>
@@ -165,12 +163,12 @@ const Translator = () => {
             first_name: translator.first_name,
             email: translator.email,
             status: <EnabledStatus enabled={!!translator.enabled} />,
+            edit_languages: translator.edit_languages,
             last_login: translator.last_login ? moment.utc(translator.last_login).local().format(settings.datetime_format) : '',
             action
           };
         })}
       />
-      {show && <CreateTranslator show={show} handleClose={handleClose} editId={editId} />}
       <Dialog
         show={showDeleteDialog}
         title={translate('translator.delete_confirmation_title')}

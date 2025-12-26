@@ -9,6 +9,7 @@ import { createGuidancePage, getGuidancePage, updateGuidancePage } from 'store/g
 import { Editor } from '@tinymce/tinymce-react';
 import { File } from '../../../services/file';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateGuidancePage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -22,6 +23,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
   const [errorTitle, setErrorTitle] = useState(false);
 
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [content, setContent] = useState('');
   const [formFields, setFormFields] = useState({
     target_role: 'therapist',
@@ -123,6 +125,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={!isEditableLanguage}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -146,6 +149,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
             value={formFields.title}
             maxLength={settings.textMaxLength}
             isInvalid={errorTitle}
+            disabled={!isEditableLanguage}
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.static_page.title')}
@@ -194,6 +198,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
               content_style: settings.tinymce.contentStyle,
               toolbar: settings.tinymce.toolbar
             }}
+            disabled={!isEditableLanguage}
             onEditorChange={handleEditorChange}
           />
           {errorContent &&

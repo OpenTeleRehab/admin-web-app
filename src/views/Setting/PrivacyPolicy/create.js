@@ -15,6 +15,7 @@ import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -30,6 +31,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
   const { profile } = useSelector(state => state.auth);
 
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     version: ''
   });
@@ -142,7 +144,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
-      disabled={editId && isPublished && !isAutoTranslated}
+      disabled={editId && isPublished && !isAutoTranslated && !isEditableLanguage}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -220,6 +222,7 @@ const CreatePrivacyPolicy = ({ show, editId = null, handleClose }) => {
               content_style: settings.tinymce.contentStyle,
               toolbar: settings.tinymce.toolbar
             }}
+            disabled={!isEditableLanguage}
             onEditorChange={handleEditorChange}
           />
           <span className={errorClass}>{ errorContentMessage }</span>

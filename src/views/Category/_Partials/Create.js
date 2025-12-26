@@ -9,6 +9,7 @@ import settings from 'settings';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
   const [errorCategory, setErrorCategory] = useState(false);
   const [errorCurrentCategory, setErrorCurrentCategory] = useState(false);
   const [errorCategoryValue, setErrorCategoryValue] = useState(false);
+  const isEditableLanguage = useEditableLanguage(language);
 
   useEffect(() => {
     if (languages.length) {
@@ -145,6 +147,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
       title={translate(editId ? 'category.edit_' + type : 'category.new_' + type)}
       onCancel={handleClose}
       onConfirm={handleConfirm}
+      disabled={!isEditableLanguage}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
@@ -193,6 +196,7 @@ const Create = ({ show, handleClose, editId, activeCategory, type, allowNew }) =
               onChange={handleChange}
               maxLength={settings.textMaxLength}
               aria-label="Category name"
+              disabled={!isEditableLanguage}
             />
           }
           <Form.Control.Feedback type="invalid">

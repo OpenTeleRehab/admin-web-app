@@ -20,6 +20,7 @@ import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
 import { USER_GROUPS } from '../../../variables/user';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -38,6 +39,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
   const { staticPage, filters } = useSelector(state => state.staticPage);
 
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     platform: '',
     url: '',
@@ -232,6 +234,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
       title={translate(editId ? 'static_page.edit' : 'static_page.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
+      disabled={!isEditableLanguage}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
@@ -335,6 +338,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             value={formFields.title}
             maxLength={settings.textMaxLength}
             isInvalid={errorTitle}
+            disabled={!isEditableLanguage}
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.static_page.title')}
@@ -400,6 +404,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               toolbar: settings.tinymce.toolbar
             }}
             onEditorChange={handleEditorChange}
+            disabled={!isEditableLanguage}
           />
           {errorContent &&
             <div className="invalid-feedback d-block">{translate('error.term_and_condition.content')}</div>
