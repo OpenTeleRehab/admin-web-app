@@ -45,9 +45,11 @@ const ConfigurationProvider = ({ children }) => {
 
       dispatch(getLanguages());
       dispatch(getDefaultLimitedPatients());
-      dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));
+      if (hasAnyRole([USER_ROLES.MANAGE_ORGANIZATION, USER_ROLES.VIEW_MANAGE_ORGANIZATION])) {
+        dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));
+        dispatch(getOrganizations());
+      }
       dispatch(getColorScheme());
-      dispatch(getOrganizations());
     }
   }, [loading, dispatch]);
 

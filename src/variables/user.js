@@ -41,6 +41,7 @@ export const USER_ROLES = {
   MESSAGE_CALL_BETWEEN_THERAPIST_PATIENT: 'message_call_between_therapist_patient',
   VIEW_EDIT_OWN_PROFILE: 'view_edit_own_profile',
   MANAGE_ORGANIZATION: 'manage_organization',
+  VIEW_MANAGE_ORGANIZATION: 'view_organization',
   MANAGE_ASSISTIVE_TECHNOLOGY: 'manage_assistive_technology',
   MANAGE_COUNTRY: 'manage_country',
   MANAGE_TRANSLATION: 'manage_translation',

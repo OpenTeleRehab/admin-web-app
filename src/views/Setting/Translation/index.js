@@ -14,10 +14,12 @@ import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
 import Dialog from 'components/Dialog';
 import { TEXT_MAX_LENGTH, TRANSLATION_KEYS } from 'variables/setting';
+import { USER_GROUPS } from 'variables/user';
 
 let timer = null;
 const Translation = ({ translate }) => {
   const dispatch = useDispatch();
+  const { profile } = useSelector(state => state.auth);
   const { localizations, loading } = useSelector(state => state.localization);
   const languages = useSelector(state => state.language.languages);
   const { colorScheme } = useSelector(state => state.colorScheme);
@@ -29,11 +31,31 @@ const Translation = ({ translate }) => {
   const [filters, setFilters] = useState([]);
   const [editingRowIds, setEditingRowIds] = useState([]);
   const [showInlineEdited] = useState(true);
-  const [editingStateColumnExtensions] = useState([
-    { columnName: 'key', editingEnabled: false }
+  const [editingStateColumnExtensions, setEditingStateColumnExtensions] = useState([
+    { columnName: 'key', editingEnabled: false },
   ]);
   const [showAlert, setShowAlert] = useState(false);
   const [overLengthTranslations, setOverLengthTranslations] = useState([]);
+
+  useEffect(() => {
+    if (profile.type !== USER_GROUPS.SUPER_ADMIN) {
+      const allowEditLangsCode = new Set(
+        profile.edit_languages.map(l => l.code)
+      );
+
+      const disabledColumns = languages
+        .filter(lang => !allowEditLangsCode.has(lang.code))
+        .map((lang) => ({
+          columnName: lang.code,
+          editingEnabled: false,
+        }));
+
+      setEditingStateColumnExtensions([
+        { columnName: 'key', editingEnabled: false },
+        ...disabledColumns,
+      ]);
+    }
+  }, [profile, languages]);
 
   useEffect(() => {
     clearTimeout(timer);
