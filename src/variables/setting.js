@@ -20,6 +20,7 @@ export const VIEW_HEALTH_CONDITION = 'health_condition';
 export const VIEW_REGION = 'region';
 export const VIEW_PROVINCE = 'province';
 export const VIEW_PHC_SERVICE = 'phc_service';
+export const VIEW_API_CLIENT = 'api_client';
 
 export const SETTINGS = [
   VIEW_COUNTRY,
@@ -43,7 +44,8 @@ export const SETTINGS = [
   VIEW_HEALTH_CONDITION,
   VIEW_REGION,
   VIEW_PROVINCE,
-  VIEW_PHC_SERVICE
+  VIEW_PHC_SERVICE,
+  VIEW_API_CLIENT,
 ];
 
 export const TEXT_MAX_LENGTH = {
@@ -54,3 +56,5 @@ export const TEXT_MAX_LENGTH = {
 export const TRANSLATION_KEYS = {
   SMS_REMINDER_ALERT: 'sms.reminder.alert'
 };
+
+export const singleIpRegex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;

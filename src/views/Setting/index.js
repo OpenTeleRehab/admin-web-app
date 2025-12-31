@@ -53,7 +53,8 @@ import {
   VIEW_MFA_POLICY,
   VIEW_REGION,
   VIEW_PROVINCE,
-  VIEW_PHC_SERVICE
+  VIEW_PHC_SERVICE,
+  VIEW_API_CLIENT
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -75,8 +76,10 @@ import CreateMfaPolicy from './MfaPolicy/create';
 import useDialog from 'components/V2/Dialog';
 import CreateRegion from './Region/_Partials/createOrEdit';
 import CreateProvince from './Province/_Partials/createOrEdit';
+import CreateApiClient from './ApiClient/_Partials/createOrEdit';
 import Region from './Region';
 import Province from './Province';
+import ApiClient from './ApiClient';
 import CreateEditPhcService from './PhcService/_Partials/createEdit';
 import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
@@ -140,6 +143,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_REGION);
     } else if (hash.includes('#' + VIEW_PROVINCE)) {
       setView(VIEW_PROVINCE);
+    } else if (hash.includes('#' + VIEW_API_CLIENT)) {
+      setView(VIEW_API_CLIENT);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -154,7 +159,7 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    if (![VIEW_REGION, VIEW_PROVINCE, VIEW_PHC_SERVICE, VIEW_PHC_WORKER_GUIDANCE].includes(view)) {
+    if (![VIEW_REGION, VIEW_PROVINCE, VIEW_PHC_SERVICE, VIEW_PHC_WORKER_GUIDANCE, VIEW_API_CLIENT].includes(view)) {
       setShow(true);
 
       return;
@@ -185,6 +190,13 @@ const Setting = ({ translate }) => {
         openDialog({
           title: translate('phc_worker_guidance.new'),
           content: <CreateEditPhcWorkerGuidance />,
+          props: { size: 'lg' }
+        });
+        break;
+      case VIEW_API_CLIENT:
+        openDialog({
+          title: translate('api_client.new'),
+          content: <CreateApiClient />,
           props: { size: 'lg' }
         });
         break;
@@ -446,6 +458,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { keycloak.hasRealmRole(USER_ROLES.MANAGE_API_CLIENT) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.SETTING_API_CLIENT} eventKey={VIEW_API_CLIENT}>
+              {translate('setting.api_client')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -470,6 +489,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && view === VIEW_PROVINCE && <Province /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_API_CLIENT) && view === VIEW_API_CLIENT && <ApiClient /> }
     </>
   );
 };
