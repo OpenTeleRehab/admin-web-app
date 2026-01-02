@@ -770,7 +770,7 @@ const CreateExercise = ({ translate }) => {
                           </Form.Group>
                         </>
                       }
-                      {enableRejectApprove() &&
+                      {isEditableLanguage && enableRejectApprove() &&
                           <>
                             <Button
                               onClick={handleApprove}
@@ -788,7 +788,7 @@ const CreateExercise = ({ translate }) => {
                             </Button>
                           </>
                       }
-                      {!enableRejectApprove() &&
+                      {isEditableLanguage && !enableRejectApprove() &&
                           <Button
                             id="formSave"
                             onClick={handleSave}

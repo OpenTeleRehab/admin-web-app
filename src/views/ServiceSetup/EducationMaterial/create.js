@@ -429,7 +429,7 @@ const CreateEducationMaterial = ({ translate }) => {
                     </Form.Group>
                   </>
                 }
-                {enableRejectApprove() &&
+                {isEditableLanguage && enableRejectApprove() &&
                   <>
                     <Button
                       onClick={handleApprove}
@@ -447,7 +447,7 @@ const CreateEducationMaterial = ({ translate }) => {
                     </Button>
                   </>
                 }
-                {!enableRejectApprove() &&
+                {isEditableLanguage && !enableRejectApprove() &&
                   <Button
                     onClick={handleSave}
                     disabled={isLoading}
