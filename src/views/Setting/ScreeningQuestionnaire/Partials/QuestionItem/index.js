@@ -22,6 +22,7 @@ const QuestionItem = ({
   watch,
   onClone,
   onRemove,
+  disabled,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -55,7 +56,7 @@ const QuestionItem = ({
               variant="link"
               size="sm"
               className="text-dark drag-button"
-              disabled={disableMove}
+              disabled={disableMove || disabled}
             >
               <BsArrowsMove size={20} />
             </Button>
@@ -63,7 +64,7 @@ const QuestionItem = ({
 
           <div className="d-flex gap-3">
             <Button
-              disabled={disableSetting}
+              disabled={disableSetting || disabled}
               aria-label="Setting"
               variant="link"
               size="sm"
@@ -82,6 +83,7 @@ const QuestionItem = ({
               size="sm"
               className="text-primary px-0 ml-2"
               onClick={() => onClone(questionIndex)}
+              disabled={disabled}
             >
               <FaCopy size={20} />
             </Button>
@@ -90,7 +92,7 @@ const QuestionItem = ({
               variant="link"
               size="sm"
               className="text-danger px-0 ml-2"
-              disabled={disableRemoveQuestion}
+              disabled={disableRemoveQuestion || disabled}
               onClick={onRemove}
             >
               <BsTrash size={20} />
@@ -104,6 +106,7 @@ const QuestionItem = ({
               name={`sections.${sectionIndex}.questions.${questionIndex}.question_text`}
               placeholder={translate('questionnaire.question_text.placeholder')}
               rules={{ required: translate('questionnaire.title.required') }}
+              disabled={disabled}
             />
           </Col>
           <Col lg={5}>
@@ -119,6 +122,7 @@ const QuestionItem = ({
                 { value: SCREENING_QUESTION_TYPE.NOTE, label: translate('question.type.note') },
               ]}
               isDisabled={disableQuestionType}
+              disabled={disabled}
             />
           </Col>
         </Row>
@@ -128,6 +132,7 @@ const QuestionItem = ({
               control={control}
               name={`sections.${sectionIndex}.questions.${questionIndex}.file`}
               label={translate('question.media_upload')}
+              disabled={disabled}
             />
           </Col>
         </Row>
@@ -141,12 +146,14 @@ const QuestionItem = ({
               control={control}
               setValue={setValue}
               watch={watch}
+              disabled={disabled}
             />
           </div>
           <Checkbox
             control={control}
             name={`sections.${sectionIndex}.questions.${questionIndex}.mandatory`}
             label={translate('question.mandatory')}
+            disabled={disabled}
           />
         </div>
         <div className={showSetting ? '' : 'd-none'}>
@@ -156,6 +163,7 @@ const QuestionItem = ({
             control={control}
             watch={watch}
             onClose={setShowSetting}
+            disabled={disabled}
           />
         </div>
       </Card.Body>
@@ -172,6 +180,7 @@ QuestionItem.propTypes = {
   watch: PropTypes.func,
   onClone: PropTypes.func,
   onRemove: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(QuestionItem);

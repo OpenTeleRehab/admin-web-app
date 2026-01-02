@@ -9,6 +9,7 @@ import settings from 'settings';
 import Select from 'react-select';
 import scssColors from '../../../../scss/custom.scss';
 import GoogleTranslationAttribute from '../../../../components/GoogleTranslationAttribute';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 const CreateHealthConditionGroup = ({ show, handleClose, editId }) => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const CreateHealthConditionGroup = ({ show, handleClose, editId }) => {
     health_condition_value: ''
   });
   const [language, setLanguage] = useState('');
-
+  const isEditableLanguage = useEditableLanguage(language);
   const [errorHealthConditionGroup, setErrorHealthConditionGroup] = useState(false);
   const [errorHealthConditionValue, setErrorHealthConditionValue] = useState(false);
 
@@ -120,6 +121,7 @@ const CreateHealthConditionGroup = ({ show, handleClose, editId }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={!isEditableLanguage}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formLanguage">
@@ -147,6 +149,7 @@ const CreateHealthConditionGroup = ({ show, handleClose, editId }) => {
             onChange={handleChange}
             maxLength={settings.textMaxLength}
             aria-label={translate('placeholder.enter_health_condition_group_name')}
+            disabled={!isEditableLanguage}
           />
           <Form.Control.Feedback type="invalid">
             {translate(errorHealthConditionGroup ? 'error.health_condition_group' : '')}
@@ -164,6 +167,7 @@ const CreateHealthConditionGroup = ({ show, handleClose, editId }) => {
               value={formFields.health_condition_value_value}
               onChange={handleChange}
               aria-label={translate('placeholder.enter_health_condition_value')}
+              disabled={!isEditableLanguage}
             />
             <Form.Text className="text-muted">
               {translate('setting.health_condition_group.health_condition_value_hint')}

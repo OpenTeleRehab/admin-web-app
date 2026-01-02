@@ -19,6 +19,7 @@ const FileUpload = <T extends FieldValues>({
   name,
   label,
   rules,
+  disabled,
 }: FileUploadProps<T>) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -60,7 +61,7 @@ const FileUpload = <T extends FieldValues>({
                 </div>
               </div>
             )}
-            <div className="btn btn-sm text-primary position-relative overflow-hidden" role="button">
+            <div className={`btn btn-sm text-primary position-relative overflow-hidden${disabled && ' disabled'}`} role="button">
               <BsUpload size={15}/> {label}
               <input
                 className="position-absolute upload-btn"
@@ -69,6 +70,7 @@ const FileUpload = <T extends FieldValues>({
                 onChange={(event) => field.onChange(event.target.files?.[0])}
                 accept={settings.question.acceptImageTypes}
                 aria-label="Upload"
+                disabled={disabled}
               />
             </div>
             {fieldState.error && (

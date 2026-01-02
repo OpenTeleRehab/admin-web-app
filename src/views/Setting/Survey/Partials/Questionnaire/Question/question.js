@@ -25,7 +25,7 @@ const reorderQuestion = (questions, startIndex, endIndex) => {
   return result;
 };
 
-const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, questionnaire, showFallbackText, modifiable, answerValueError, answerThresholdError }) => {
+const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, questionnaire, showFallbackText, modifiable, answerValueError, answerThresholdError, disabled }) => {
   const { languages } = useSelector(state => state.language);
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
   const handleFileChange = (e, index) => {
@@ -233,6 +233,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   isInvalid={questionTitleError[index]}
                                   maxLength={settings.textMaxLength}
                                   aria-label="Title"
+                                  disabled={disabled}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                   {translate('question.title.required')}
@@ -303,6 +304,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
                                               aria-label="Value"
+                                              disabled={disabled}
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}
@@ -367,6 +369,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
                                               aria-label="Value"
+                                              disabled={disabled}
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}
@@ -519,7 +522,8 @@ Question.propTypes = {
   questionnaire: PropTypes.object,
   showFallbackText: PropTypes.bool,
   answerValueError: PropTypes.array,
-  answerThresholdError: PropTypes.array
+  answerThresholdError: PropTypes.array,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(Question);

@@ -24,6 +24,7 @@ import {
 } from 'react-icons/bs';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import CheckboxTree from 'react-checkbox-tree';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -60,6 +61,7 @@ const CreateExercise = ({ translate }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     title: '',
     include_feedback: true,
@@ -552,6 +554,7 @@ const CreateExercise = ({ translate }) => {
                       value={formFields.title}
                       placeholder={translate('exercise.title.placeholder')}
                       isInvalid={titleError}
+                      disabled={!isEditableLanguage}
                     />
                     <Form.Control.Feedback type="invalid">
                       {translate('exercise.title.required')}
@@ -693,6 +696,7 @@ const CreateExercise = ({ translate }) => {
                               value={additionalField.field}
                               onChange={e => handleChangeInput(index, e)}
                               isInvalid={inputFieldError[index]}
+                              disabled={!isEditableLanguage}
                             />
                             <Form.Control.Feedback type="invalid">
                               {translate('exercise.additional_field.label.required')}
@@ -712,6 +716,7 @@ const CreateExercise = ({ translate }) => {
                               value={additionalField.value}
                               onChange={event => handleChangeInput(index, event)}
                               isInvalid={inputValueError[index]}
+                              disabled={!isEditableLanguage}
                             />
                             <Form.Control.Feedback type="invalid">
                               {translate('exercise.additional_field.value.required')}

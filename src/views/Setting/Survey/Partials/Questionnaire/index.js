@@ -18,7 +18,7 @@ import SelectLanguage from '../../../../ServiceSetup/_Partials/SelectLanguage';
 import FallbackText from '../../../../../components/Form/FallbackText';
 import _ from 'lodash';
 
-const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldError, id, questionnaireData, setQuestionnaireData, language, setLanguage, answerValueError, answerThresholdError }) => {
+const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldError, id, questionnaireData, setQuestionnaireData, language, setLanguage, answerValueError, answerThresholdError, disabled }) => {
   const dispatch = useDispatch();
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
@@ -144,6 +144,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
                 isInvalid={titleError}
                 maxLength={255}
                 aria-label="Title"
+                disabled={disabled}
               />
               <Form.Control.Feedback type="invalid">
                 {translate('questionnaire.title.required')}
@@ -191,6 +192,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
                 placeholder={translate('questionnaire.description.placeholder')}
                 value={questionnaireData.description}
                 onChange={handleChange}
+                disabled={disabled}
               />
             </Form.Group>
           </Col>
@@ -208,6 +210,7 @@ const Questionnaire = ({ translate, titleError, questionTitleError, answerFieldE
               modifiable={!questionnaire.is_used || !id}
               questionnaire={questionnaire}
               showFallbackText={showFallbackText}
+              disabled={disabled}
             />
             {enableButtons() &&
               <div className="py-1 px-1">
@@ -241,7 +244,8 @@ Questionnaire.propTypes = {
   language: PropTypes.string,
   setLanguage: PropTypes.func,
   answerValueError: PropTypes.array,
-  answerThresholdError: PropTypes.array
+  answerThresholdError: PropTypes.array,
+  disabled: PropTypes.bool,
 };
 
 export default withLocalize(Questionnaire);

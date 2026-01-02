@@ -211,6 +211,37 @@ const Setting = ({ translate }) => {
     setShowUploadDialog(false);
   };
 
+  const showCreateBtn = () => {
+    const viewRoleMap = {
+      [VIEW_TERM_AND_CONDITION]: USER_ROLES.MANAGE_TERM_CONDITION,
+      [VIEW_PRIVACY_POLICY]: USER_ROLES.MANAGE_PRIVACY_POLICY,
+      [VIEW_COUNTRY]: USER_ROLES.MANAGE_COUNTRY,
+      [VIEW_CLINIC]: USER_ROLES.MANAGE_CLINIC,
+      [VIEW_PHC_SERVICE]: USER_ROLES.MANAGE_PHC_SERVICE,
+      [VIEW_PROFESSION]: USER_ROLES.MANAGE_PROFESSION,
+      [VIEW_MFA_POLICY]: USER_ROLES.MANAGE_MFA_POLICY,
+      [VIEW_SCREENING_QUESTIONNAIRE]: USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE,
+      [VIEW_REGION]: USER_ROLES.MANAGE_REGION,
+      [VIEW_PROVINCE]: USER_ROLES.MANAGE_PROVINCE,
+      [VIEW_PHC_WORKER_GUIDANCE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
+      [VIEW_SURVEY]: USER_ROLES.MANAGE_SURVEY,
+    };
+
+    const excludedViews = [
+      VIEW_TRANSLATION,
+      VIEW_SYSTEM_LIMIT,
+      VIEW_HEALTH_CONDITION,
+    ];
+
+    if (excludedViews.includes(view)) return false;
+
+    if (profile?.type === USER_GROUPS.SUPER_ADMIN) return true;
+
+    if (viewRoleMap[view] && keycloak.hasRealmRole(viewRoleMap[view])) return true;
+
+    return false;
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -230,20 +261,7 @@ const Setting = ({ translate }) => {
                 )}
 
                 <div className="btn-toolbar mb-2 mb-md-0">
-                  {((view === VIEW_TERM_AND_CONDITION && keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION)) ||
-                    (view === VIEW_PRIVACY_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY)) ||
-                    (view === VIEW_COUNTRY && keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY)) ||
-                    (view === VIEW_CLINIC && keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC)) ||
-                    (view === VIEW_PHC_SERVICE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE)) ||
-                    (view === VIEW_PROFESSION && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION)) ||
-                    (view === VIEW_MFA_POLICY && keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY)) ||
-                    (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY)) ||
-                    (view === VIEW_SCREENING_QUESTIONNAIRE && keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE)) ||
-                    (view === VIEW_REGION && keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION)) ||
-                    (view === VIEW_PROVINCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE)) ||
-                    (view === VIEW_PHC_WORKER_GUIDANCE && keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE)) ||
-                    (profile && profile.type === USER_GROUPS.SUPER_ADMIN)) &&
-                    (view !== VIEW_TRANSLATION) && (view !== VIEW_SYSTEM_LIMIT) && (view !== VIEW_HEALTH_CONDITION) && (
+                  {showCreateBtn() && (
                     <Button variant="primary" onClick={handleShow}>
                       <BsPlus size={20} className="mr-1" />
                       { translate(`${view}.new`) }
@@ -407,7 +425,7 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_SCREENING_QUESTIONNAIRE)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_SCREENING_QUESTIONNAIRE} eventKey={VIEW_SCREENING_QUESTIONNAIRE}>
               {translate('setting.screening_questionnaire')}
@@ -439,7 +457,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE) && view === VIEW_PHC_SERVICE && <PhcService /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION) && view === VIEW_PROFESSION && <Profession handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
-      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.VIEW_PRIVACY_POLICY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PRIVACY_POLICY)) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
+      { hasAnyRole([USER_ROLES.MANAGE_PRIVACY_POLICY, USER_ROLES.VIEW_PRIVACY_POLICY, USER_ROLES.TRANSLATE_PRIVACY_POLICY]) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && view === VIEW_PHC_WORKER_GUIDANCE && <PhcWorkerGuidance /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
@@ -447,7 +465,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE) && view === VIEW_SCREENING_QUESTIONNAIRE && <ScreeningQuestionnaire handleRowEdit={handleEdit} /> }
+      { hasAnyRole([USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE, USER_ROLES.TRANSLATE_SCREENING_QUESTIONNAIRE]) && view === VIEW_SCREENING_QUESTIONNAIRE && <ScreeningQuestionnaire handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
