@@ -32,6 +32,7 @@ import Dialog from '../../../components/Dialog';
 import { USER_ROLES } from '../../../variables/user';
 import SelectLanguage from '../_Partials/SelectLanguage';
 import FallbackText from '../../../components/Form/FallbackText';
+import { useEditableLanguage } from '../../../hooks/useEditableLanguage';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const { categoryTreeData } = useSelector((state) => state.category);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [language, setLanguage] = useState('');
+  const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     title: '',
     description: ''
@@ -409,6 +411,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 isInvalid={titleError}
                 maxLength={255}
                 aria-label="Title"
+                disabled={!isEditableLanguage}
               />
               <Form.Control.Feedback type="invalid">
                 {translate('questionnaire.title.required')}
@@ -456,6 +459,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 placeholder={translate('questionnaire.description.placeholder')}
                 value={formFields.description}
                 onChange={handleChange}
+                disabled={!isEditableLanguage}
               />
             </Form.Group>
           </Col>
@@ -509,6 +513,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 value={true}
                 checked={formFields.include_at_the_start}
                 label={translate('questionnaire.include_at_the_start')}
+                disabled={!isEditableLanguage}
               />
             </Form.Group>
           </Col>
@@ -522,6 +527,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 value={true}
                 checked={formFields.include_at_the_end}
                 label={translate('questionnaire.include_at_the_end')}
+                disabled={!isEditableLanguage}
               />
             </Form.Group>
           </Col>
@@ -600,7 +606,7 @@ const CreateQuestionnaire = ({ translate }) => {
             {!enableButtons() &&
               <div className="sticky-btn d-flex justify-content-end">
                 <div className="py-2 questionnaire-save-cancel-wrapper px-3">
-                  {enableRejectApprove() &&
+                  {isEditableLanguage && enableRejectApprove() &&
                     <>
                       <Button
                         onClick={handleApprove}
@@ -618,7 +624,7 @@ const CreateQuestionnaire = ({ translate }) => {
                       </Button>
                     </>
                   }
-                  {!enableRejectApprove() &&
+                  {isEditableLanguage && !enableRejectApprove() &&
                     <Button
                       aria-label="Save"
                       onClick={handleSave}

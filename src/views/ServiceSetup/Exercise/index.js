@@ -209,8 +209,8 @@ const Exercise = ({ translate }) => {
               />
             </Card.Header>
             <Card.Body>
-              <Form.Group>
-                {isTranslating &&
+              {isTranslating &&
+                <Form.Group>
                   <Form.Check
                     custom
                     type="checkbox"
@@ -219,7 +219,9 @@ const Exercise = ({ translate }) => {
                     id="showSuggestions"
                     onChange={handleCheckBoxChange}
                   />
-                }
+                </Form.Group>
+              }
+              <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Select
                   classNamePrefix="filter"

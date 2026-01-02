@@ -196,8 +196,8 @@ const EducationMaterial = ({ translate }) => {
               />
             </Card.Header>
             <Card.Body>
-              <Form.Group>
-                {isTranslating &&
+              {isTranslating &&
+                <Form.Group>
                   <Form.Check
                     custom
                     type="checkbox"
@@ -206,7 +206,9 @@ const EducationMaterial = ({ translate }) => {
                     id="showSuggestions"
                     onChange={handleCheckBoxChange}
                   />
-                }
+                </Form.Group>
+              }
+              <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Select
                   classNamePrefix="filter"

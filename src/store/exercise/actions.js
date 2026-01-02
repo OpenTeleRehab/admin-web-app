@@ -114,7 +114,7 @@ export const approveTranslation = (id, payload) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.approveTranslationFail());
-    dispatch(showSuccessNotification('toast_title.translation.approve', 'error_message.translation.approve'));
+    dispatch(showErrorNotification('toast_title.translation.approve', 'error_message.translation.approve'));
     return false;
   }
 };
