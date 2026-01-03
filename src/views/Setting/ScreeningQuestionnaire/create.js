@@ -15,7 +15,7 @@ import {
   getScreeningQuestionnaire,
   updateScreeningQuestionnaire,
 } from '../../../store/screeningQuestionnaire/actions';
-import { useEditableLanguage } from 'hooks/useEditableLanguage';
+import _ from 'lodash';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES;
 const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].options;
@@ -26,7 +26,11 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const translate = getTranslate(localize);
   const { screeningQuestionnaire } = useSelector(state => state.screeningQuestionnaire);
   const { languages } = useSelector(state => state.language);
+  const [language, setLanguage] = useState(languages.length ? languages[0].id : null);
   const [showConfirmUpdate, setShowConfirmUpdate] = useState(false);
+
+  const languageObj = languages.find(item => item.id === parseInt(language, 10));
+  const untranslatable = languageObj && languageObj.code !== languageObj.fallback;
 
   const {
     control,
@@ -38,15 +42,17 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   } = useForm({
     defaultValues: {
       ...defaultValues,
-      lang: languages.length ? languages[0].id : null,
+      lang: language,
     }
   });
-  const language = watch('lang');
-  const isEditableLanguage = useEditableLanguage(language);
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       // TODO: Reset question logic when question option removed
+      if (name === 'lang' && type === 'change') {
+        setLanguage(value.lang);
+      }
+
       // Reset question logic when question removed
       if (name?.endsWith('.questions')) {
         const questionIds = value.sections.flatMap(section => section.questions.map(question => question.id));
@@ -126,15 +132,13 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
 
   useEffect(() => {
     if (editId) {
-      dispatch(getScreeningQuestionnaire(editId));
+      dispatch(getScreeningQuestionnaire(editId, language));
     }
-  }, [dispatch, editId]);
+  }, [dispatch, editId, language]);
 
   useEffect(() => {
-    if (editId && screeningQuestionnaire) {
-      reset(screeningQuestionnaire, { keepDirtyValues: false });
-    } else {
-      reset(defaultValues, { keepDirtyValues: false });
+    if (editId && !_.isEmpty(screeningQuestionnaire)) {
+      reset({ ...screeningQuestionnaire, lang: language }, { keepDirtyValues: false });
     }
   }, [editId, screeningQuestionnaire]);
 
@@ -196,7 +200,6 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
                 name="description"
                 label={translate('questionnaire.description')}
                 placeholder={translate('questionnaire.description.placeholder')}
-                disabled={!isEditableLanguage}
               />
             </Col>
           </Row>
@@ -204,7 +207,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
             control={control}
             setValue={setValue}
             watch={watch}
-            disabled={!isEditableLanguage}
+            untranslatable={untranslatable}
           />
         </Form>
       </Dialog>

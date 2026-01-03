@@ -16,7 +16,7 @@ const QuestionRepeater = ({
   control,
   setValue,
   watch,
-  disabled,
+  untranslatable,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -66,6 +66,10 @@ const QuestionRepeater = ({
     append(cloneQuestion);
   };
 
+  const isDragDisabled = (index) => {
+    return questions.length <= 1 || typeof questions[index].id === 'number' || untranslatable;
+  };
+
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
@@ -95,7 +99,7 @@ const QuestionRepeater = ({
                   key={field.id}
                   draggableId={field.id}
                   index={index}
-                  isDragDisabled={questions.length <= 1 || typeof questions[index].id === 'number'}
+                  isDragDisabled={isDragDisabled(index)}
                 >
                   {(provided) => (
                     <div ref={provided.innerRef} {...provided.draggableProps}>
@@ -106,9 +110,9 @@ const QuestionRepeater = ({
                         control={control}
                         setValue={setValue}
                         watch={watch}
+                        untranslatable={untranslatable}
                         onClone={handleCloneQuestion}
                         onRemove={() => remove(index)}
-                        disabled={disabled}
                       />
                     </div>
                   )}
@@ -122,8 +126,8 @@ const QuestionRepeater = ({
         aria-label="Add Question"
         className="px-0"
         variant="link"
+        disabled={untranslatable}
         onClick={handleAddQuestion}
-        disabled={disabled}
       >
         <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
       </Button>
@@ -136,7 +140,7 @@ QuestionRepeater.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
-  disabled: PropTypes.bool,
+  untranslatable: PropTypes.bool,
 };
 
 export default withLocalize(QuestionRepeater);

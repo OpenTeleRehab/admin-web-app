@@ -12,6 +12,7 @@ const ActionRepeater = ({
   sectionIndex,
   control,
   watch,
+  untranslatable,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -32,7 +33,7 @@ const ActionRepeater = ({
       }
     }
 
-    return false;
+    return !!untranslatable;
   };
 
   const getTotalPoints = () => {
@@ -108,8 +109,9 @@ const ActionRepeater = ({
                     control={control}
                     name={`sections.${sectionIndex}.actions.${index}.from`}
                     type="number"
-                    min={getInitMinValue(index)}
                     placeholder={translate('screening_questionnaire.action.from.placeholder')}
+                    min={getInitMinValue(index)}
+                    disabled={untranslatable}
                     rules={{
                       required: translate('screening_questionnaire.action.from.required'),
                       min: {
@@ -128,8 +130,9 @@ const ActionRepeater = ({
                     control={control}
                     name={`sections.${sectionIndex}.actions.${index}.to`}
                     type="number"
-                    min={getEndMinValue(index)}
                     placeholder={translate('screening_questionnaire.action.to.placeholder')}
+                    min={getEndMinValue(index)}
+                    disabled={untranslatable}
                     rules={{
                       required: translate('screening_questionnaire.action.to.required'),
                       min: {
@@ -158,7 +161,7 @@ const ActionRepeater = ({
                     aria-label="Remove action"
                     variant="outline-danger"
                     className="remove-btn d-flex align-items-center justify-content-center mt-1"
-                    disabled={index < fields.length - 1}
+                    disabled={index < fields.length - 1 || untranslatable}
                     onClick={() => remove(index)}
                   >
                     <BsX size={16} />
@@ -188,6 +191,7 @@ ActionRepeater.propTypes = {
   sectionIndex: PropTypes.number,
   control: PropTypes.object,
   watch: PropTypes.func,
+  untranslatable: PropTypes.bool,
 };
 
 export default withLocalize(ActionRepeater);

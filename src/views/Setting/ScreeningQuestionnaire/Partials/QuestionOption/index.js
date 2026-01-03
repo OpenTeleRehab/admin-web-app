@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import { useFieldArray } from 'react-hook-form';
+import { useEditableLanguage } from '../../../../../hooks/useEditableLanguage';
 import Input from '../../../../../components/V2/Form/Input';
 import FileUpload from '../../../../../components/V2/Form/FileUpload';
 import {
@@ -20,7 +21,7 @@ const QuestionOption = ({
   control,
   setValue,
   watch,
-  disabled,
+  untranslatable,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -78,7 +79,6 @@ const QuestionOption = ({
                       name={`${fieldName}.${index}.option_text`}
                       placeholder={translate('question.option_text.placeholder')}
                       rules={{ required: translate('question.option_text.required') }}
-                      disabled={disabled}
                     />
                   </div>
                 </div>
@@ -90,6 +90,7 @@ const QuestionOption = ({
                   type="number"
                   min={0}
                   placeholder={translate('question.point.placeholder')}
+                  disabled={untranslatable}
                   rules={{ required: translate('question.point.required') }}
                 />
               </Col>
@@ -109,7 +110,7 @@ const QuestionOption = ({
                   control={control}
                   name={`${fieldName}.${index}.file`}
                   label={translate('question.media_upload')}
-                  disabled={disabled}
+                  disabled={untranslatable}
                 />
               </Col>
             </Row>
@@ -119,6 +120,7 @@ const QuestionOption = ({
               <Button
                 aria-label="Add more option"
                 className="py-0"
+                disabled={untranslatable}
                 variant="link"
                 onClick={handleAddOption}
               >
@@ -152,6 +154,7 @@ const QuestionOption = ({
           <Col xs={4} md={3}>
             <Input
               control={control}
+              disabled={untranslatable}
               name={`${fieldName}.0.option_point`}
               type="number"
               min={0}
@@ -162,6 +165,7 @@ const QuestionOption = ({
           <Col xs={4} md={3}>
             <Input
               control={control}
+              disabled={untranslatable}
               name={`${fieldName}.0.threshold`}
               type="number"
               min={0}
@@ -180,6 +184,7 @@ const QuestionOption = ({
                 label={translate('question.min')}
                 name={`${fieldName}.0.min`}
                 type="number"
+                disabled={untranslatable}
                 min={0}
                 rules={{
                   required: translate('question.min.required'),
@@ -193,6 +198,7 @@ const QuestionOption = ({
             <Col xs={4}>
               <Input
                 control={control}
+                disabled={untranslatable}
                 label={translate('question.min_note')}
                 name={`${fieldName}.0.min_note`}
                 rules={{ required: translate('question.min_note.required') }}
@@ -206,6 +212,7 @@ const QuestionOption = ({
                 label={translate('question.max')}
                 name={`${fieldName}.0.max`}
                 type="number"
+                disabled={untranslatable}
                 min={0}
                 rules={{
                   required: translate('question.max.required'),
@@ -221,6 +228,7 @@ const QuestionOption = ({
                 control={control}
                 label={translate('question.max_note')}
                 name={`${fieldName}.0.max_note`}
+                disabled={untranslatable}
                 rules={{ required: translate('question.max_note.required') }}
               />
             </Col>
@@ -235,7 +243,6 @@ const QuestionOption = ({
               name={`${fieldName}.0.option_text`}
               placeholder={translate('question.answer.note.placeholder')}
               rules={{ required: translate('question.answer.note.required') }}
-              disabled={disabled}
             />
           </Col>
         </Row>
@@ -250,7 +257,7 @@ QuestionOption.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
-  disabled: PropTypes.bool,
+  untranslatable: PropTypes.bool,
 };
 
 export default withLocalize(QuestionOption);
