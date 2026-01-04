@@ -13,8 +13,9 @@ const getScreeningQuestionnaires = payload => {
     });
 };
 
-const getScreeningQuestionnaire = (id) => {
-  return axios.get(`/screening-questionnaires/${id}`)
+const getScreeningQuestionnaire = (id, language) => {
+  const langParam = language ? `?lang=${language}` : '';
+  return axios.get(`/screening-questionnaires/${id}` + langParam)
     .then(
       res => {
         return res.data;

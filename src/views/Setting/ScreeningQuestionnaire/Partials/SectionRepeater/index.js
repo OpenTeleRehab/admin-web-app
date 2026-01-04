@@ -16,7 +16,7 @@ const SectionRepeater = ({
   control,
   setValue,
   watch,
-  disabled,
+  untranslatable,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -61,20 +61,20 @@ const SectionRepeater = ({
               label="Title"
               placeholder={translate('questionnaire.title.placeholder')}
               rules={{ required: translate('questionnaire.title.required') }}
-              disabled={disabled}
             />
             <QuestionRepeater
               sectionIndex={index}
               control={control}
               setValue={setValue}
               watch={watch}
-              disabled={disabled}
+              untranslatable={untranslatable}
             />
           </Card.Body>
           <ActionRepeater
             sectionIndex={index}
             control={control}
             watch={watch}
+            untranslatable={untranslatable}
           />
         </Card>
       ))}
@@ -82,6 +82,7 @@ const SectionRepeater = ({
         aria-label="Add Section"
         className="px-0"
         variant="link"
+        disabled={untranslatable}
         onClick={() => append(defaultValues)}
       >
         <BsPlusCircle size={20} /> {translate('questionnaire.new.section')}
@@ -94,7 +95,7 @@ SectionRepeater.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
-  disabled: PropTypes.bool,
+  untranslatable: PropTypes.bool,
 };
 
 export default withLocalize(SectionRepeater);

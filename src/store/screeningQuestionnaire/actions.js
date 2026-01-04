@@ -14,10 +14,10 @@ export const getScreeningQuestionnaires = (payload) => async dispatch => {
   }
 };
 
-export const getScreeningQuestionnaire = (id) => async (dispatch) => {
+export const getScreeningQuestionnaire = (id, lang) => async (dispatch) => {
   dispatch(mutation.getScreeningQuestionnaireRequest());
   dispatch(showSpinner(true));
-  const data = await ScreeningQuestionnaire.getScreeningQuestionnaire(id);
+  const data = await ScreeningQuestionnaire.getScreeningQuestionnaire(id, lang);
   if (data) {
     dispatch(mutation.getScreeningQuestionnaireSuccess(data.data));
     dispatch(showSpinner(false));

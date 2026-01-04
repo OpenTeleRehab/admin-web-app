@@ -20,9 +20,9 @@ const QuestionItem = ({
   control,
   setValue,
   watch,
+  untranslatable,
   onClone,
   onRemove,
-  disabled,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -31,10 +31,10 @@ const QuestionItem = ({
   const questions = watch(`sections.${sectionIndex}.questions`);
   const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
 
-  const disableMove = questions?.length <= 1 || typeof question.id === 'number';
-  const disableSetting = questionIndex === 0;
-  const disableRemoveQuestion = questions?.length <= 1 || typeof question.id === 'number';
-  const disableQuestionType = typeof question.id === 'number';
+  const disableMove = questions?.length <= 1 || typeof question.id === 'number' || untranslatable;
+  const disableSetting = questionIndex === 0 || untranslatable;
+  const disableRemoveQuestion = questions?.length <= 1 || typeof question.id === 'number' || untranslatable;
+  const disableQuestionType = typeof question.id === 'number' || untranslatable;
 
   useEffect(() => {
     if (questionIndex === 0) {
@@ -53,10 +53,10 @@ const QuestionItem = ({
           <div {...provided.dragHandleProps}>
             <Button
               aria-label="Move question"
+              disabled={disableMove}
               variant="link"
               size="sm"
               className="text-dark drag-button"
-              disabled={disableMove || disabled}
             >
               <BsArrowsMove size={20} />
             </Button>
@@ -64,8 +64,8 @@ const QuestionItem = ({
 
           <div className="d-flex gap-3">
             <Button
-              disabled={disableSetting || disabled}
               aria-label="Setting"
+              disabled={disableSetting}
               variant="link"
               size="sm"
               className="text-primary px-0 ml-2"
@@ -79,11 +79,11 @@ const QuestionItem = ({
             </Button>
             <Button
               aria-label="Clone Question"
+              disabled={untranslatable}
               variant="link"
               size="sm"
               className="text-primary px-0 ml-2"
               onClick={() => onClone(questionIndex)}
-              disabled={disabled}
             >
               <FaCopy size={20} />
             </Button>
@@ -92,7 +92,7 @@ const QuestionItem = ({
               variant="link"
               size="sm"
               className="text-danger px-0 ml-2"
-              disabled={disableRemoveQuestion || disabled}
+              disabled={disableRemoveQuestion}
               onClick={onRemove}
             >
               <BsTrash size={20} />
@@ -106,7 +106,6 @@ const QuestionItem = ({
               name={`sections.${sectionIndex}.questions.${questionIndex}.question_text`}
               placeholder={translate('questionnaire.question_text.placeholder')}
               rules={{ required: translate('questionnaire.title.required') }}
-              disabled={disabled}
             />
           </Col>
           <Col lg={5}>
@@ -122,7 +121,6 @@ const QuestionItem = ({
                 { value: SCREENING_QUESTION_TYPE.NOTE, label: translate('question.type.note') },
               ]}
               isDisabled={disableQuestionType}
-              disabled={disabled}
             />
           </Col>
         </Row>
@@ -132,7 +130,7 @@ const QuestionItem = ({
               control={control}
               name={`sections.${sectionIndex}.questions.${questionIndex}.file`}
               label={translate('question.media_upload')}
-              disabled={disabled}
+              disabled={untranslatable}
             />
           </Col>
         </Row>
@@ -146,14 +144,14 @@ const QuestionItem = ({
               control={control}
               setValue={setValue}
               watch={watch}
-              disabled={disabled}
+              untranslatable={untranslatable}
             />
           </div>
           <Checkbox
             control={control}
             name={`sections.${sectionIndex}.questions.${questionIndex}.mandatory`}
             label={translate('question.mandatory')}
-            disabled={disabled}
+            disabled={untranslatable}
           />
         </div>
         <div className={showSetting ? '' : 'd-none'}>
@@ -163,7 +161,6 @@ const QuestionItem = ({
             control={control}
             watch={watch}
             onClose={setShowSetting}
-            disabled={disabled}
           />
         </div>
       </Card.Body>
@@ -178,9 +175,9 @@ QuestionItem.propTypes = {
   control: PropTypes.object,
   setValue: PropTypes.func,
   watch: PropTypes.func,
+  untranslatable: PropTypes.bool,
   onClone: PropTypes.func,
   onRemove: PropTypes.func,
-  disabled: PropTypes.bool,
 };
 
 export default withLocalize(QuestionItem);
