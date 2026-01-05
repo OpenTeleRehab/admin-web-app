@@ -321,6 +321,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             name="therapist_limit"
             onChange={handleChange}
             type="number"
+            min={0}
             placeholder={translate('placeholder.country.therapist_limit')}
             isInvalid={!!errorTherapistLimit}
             value={formFields.therapist_limit}

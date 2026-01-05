@@ -121,6 +121,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
               label={t('common.therapist_limit')}
               placeholder={t('common.therapist_limit.placeholder')}
               type='number'
+              min={0}
               rules={{
                 required: t('common.therapist_limit.error'),
                 validate: (value) => {
@@ -157,6 +158,7 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
               label={t('common.phc_worker_limit')}
               placeholder={t('common.phc_worker_limit.placeholder')}
               type='number'
+              min={0}
               rules={{
                 required: t('common.phc_worker_limit.error'),
                 validate: (value) => {
