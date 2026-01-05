@@ -5,6 +5,7 @@ import { Button, Card, Col, Row } from 'react-bootstrap';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import { FaCopy } from 'react-icons/fa';
 import { BsArrowsMove, BsGear, BsGearFill, BsTrash } from 'react-icons/bs';
+import { useEditableLanguage } from '../../../../../hooks/useEditableLanguage';
 import { SCREENING_QUESTION_TYPE } from '../../../../../variables/questionnaire';
 import Input from '../../../../../components/V2/Form/Input';
 import Select from '../../../../../components/V2/Form/Select';
@@ -30,6 +31,8 @@ const QuestionItem = ({
 
   const questions = watch(`sections.${sectionIndex}.questions`);
   const question = watch(`sections.${sectionIndex}.questions.${questionIndex}`);
+
+  const isEditableLanguage = useEditableLanguage(watch('lang'));
 
   const disableMove = questions?.length <= 1 || typeof question.id === 'number' || untranslatable;
   const disableSetting = questionIndex === 0 || untranslatable;
@@ -105,6 +108,7 @@ const QuestionItem = ({
               control={control}
               name={`sections.${sectionIndex}.questions.${questionIndex}.question_text`}
               placeholder={translate('questionnaire.question_text.placeholder')}
+              disabled={!isEditableLanguage}
               rules={{ required: translate('questionnaire.title.required') }}
             />
           </Col>
