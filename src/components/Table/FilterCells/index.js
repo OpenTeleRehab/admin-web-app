@@ -15,6 +15,7 @@ import UserGroupFilterCell from './UserGroupFilterCell';
 import ProvinceFilterCell from './ProvinceFilterCell';
 import ProfessionTypeFilterCell from './ProfessionTypeFilterCell';
 import PhcServiceFilterCell from './PhcServiceFilterCell';
+import RegionFilterCell from './RegionFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -26,7 +27,7 @@ const FilterCell = (props) => {
     return <DateRangeFilterCell {...props} />;
   } else if (column.name === 'action' ||
     column.name === 'next_appointment' || column.name === 'treatment_plan' ||
-    column.name === 'treatment_status' || column.name === 'region' ||
+    column.name === 'treatment_status' ||
     column.name === 'storage_used' || column.name === 'on_going_treatment' ||
     column.name === 'total_patient' || column.name === 'assigned_patient' ||
     column.name === 'identity' ||
@@ -58,6 +59,8 @@ const FilterCell = (props) => {
     return <ProfessionTypeFilterCell {...props} />;
   } else if (column.name === 'phc_service') {
     return <PhcServiceFilterCell {...props} />;
+  } else if (column.name === 'region') {
+    return <RegionFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
