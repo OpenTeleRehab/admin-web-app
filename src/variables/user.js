@@ -89,6 +89,7 @@ export const USER_ROLES = {
   VIEW_PROVINCE_LIST: 'view_province_list',
   MANAGE_PHC_WORKER_GUIDANCE: 'manage_phc_worker_guidance',
   TRANSLATE_PHC_WORKER_GUIDANCE: 'translate_phc_worker_guidance',
+  MANAGE_API_CLIENT: 'manage_api_client',
 };
 
 export const SETTING_ROLES = [
