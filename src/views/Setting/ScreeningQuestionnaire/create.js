@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
+import { useEditableLanguage } from 'hooks/useEditableLanguage';
 import SectionRepeater from './Partials/SectionRepeater';
 import Dialog from '../../../components/Dialog';
 import Input from '../../../components/V2/Form/Input';
@@ -27,10 +28,12 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const { screeningQuestionnaire } = useSelector(state => state.screeningQuestionnaire);
   const { languages } = useSelector(state => state.language);
   const [language, setLanguage] = useState(languages.length ? languages[0].id : null);
+  const [isLoading, setIsLoading] = useState(false);
   const [showConfirmUpdate, setShowConfirmUpdate] = useState(false);
 
   const languageObj = languages.find(item => item.id === parseInt(language, 10));
   const untranslatable = languageObj && languageObj.code !== languageObj.fallback;
+  const isEditableLanguage = useEditableLanguage(language);
 
   const {
     control,
@@ -143,16 +146,20 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   }, [editId, screeningQuestionnaire]);
 
   const onSubmit = (data) => {
+    setIsLoading(true);
+
     if (editId) {
       // TODO: Show used questionnaire confirm dialog
       dispatch(updateScreeningQuestionnaire(editId, data)).then((response) => {
         if (response) {
+          setIsLoading(false);
           handleClose();
         }
       });
     } else {
       dispatch(createScreeningQuestionnaire(data)).then((response) => {
         if (response) {
+          setIsLoading(false);
           handleClose();
         }
       });
@@ -168,7 +175,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
         size="xl"
         onConfirm={handleSubmit(onSubmit)}
         onCancel={handleClose}
-        disabled={!isDirty}
+        disabled={!isDirty || isLoading}
       >
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>
@@ -178,6 +185,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
                 name="title"
                 label={translate('questionnaire.title')}
                 placeholder={translate('questionnaire.title.placeholder')}
+                disabled={!isEditableLanguage}
                 rules={{ required: translate('questionnaire.title.required') }}
               />
             </Col>
@@ -200,6 +208,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
                 name="description"
                 label={translate('questionnaire.description')}
                 placeholder={translate('questionnaire.description.placeholder')}
+                disabled={!isEditableLanguage}
               />
             </Col>
           </Row>

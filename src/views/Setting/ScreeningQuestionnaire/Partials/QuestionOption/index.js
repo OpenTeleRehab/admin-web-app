@@ -31,6 +31,8 @@ const QuestionOption = ({
 
   const fieldName = `sections.${sectionIndex}.questions.${questionIndex}.options`;
 
+  const isEditableLanguage = useEditableLanguage(watch('lang'));
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: fieldName,
@@ -78,6 +80,7 @@ const QuestionOption = ({
                       control={control}
                       name={`${fieldName}.${index}.option_text`}
                       placeholder={translate('question.option_text.placeholder')}
+                      disabled={!isEditableLanguage}
                       rules={{ required: translate('question.option_text.required') }}
                     />
                   </div>
@@ -198,9 +201,9 @@ const QuestionOption = ({
             <Col xs={4}>
               <Input
                 control={control}
-                disabled={untranslatable}
                 label={translate('question.min_note')}
                 name={`${fieldName}.0.min_note`}
+                disabled={!isEditableLanguage}
                 rules={{ required: translate('question.min_note.required') }}
               />
             </Col>
@@ -228,7 +231,7 @@ const QuestionOption = ({
                 control={control}
                 label={translate('question.max_note')}
                 name={`${fieldName}.0.max_note`}
-                disabled={untranslatable}
+                disabled={!isEditableLanguage}
                 rules={{ required: translate('question.max_note.required') }}
               />
             </Col>
@@ -242,6 +245,7 @@ const QuestionOption = ({
               control={control}
               name={`${fieldName}.0.option_text`}
               placeholder={translate('question.answer.note.placeholder')}
+              disabled={!isEditableLanguage}
               rules={{ required: translate('question.answer.note.required') }}
             />
           </Col>

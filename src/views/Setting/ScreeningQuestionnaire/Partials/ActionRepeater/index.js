@@ -5,7 +5,7 @@ import { getTranslate, withLocalize } from 'react-localize-redux';
 import { useFieldArray } from 'react-hook-form';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { BsPlusCircle, BsX } from 'react-icons/bs';
-import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables/questionnaire';
+import { useEditableLanguage } from '../../../../../hooks/useEditableLanguage';
 import Input from '../../../../../components/V2/Form/Input';
 
 const ActionRepeater = ({
@@ -16,6 +16,8 @@ const ActionRepeater = ({
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+
+  const isEditableLanguage = useEditableLanguage(watch('lang'));
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -151,6 +153,7 @@ const ActionRepeater = ({
                     control={control}
                     name={`sections.${sectionIndex}.actions.${index}.action_text`}
                     placeholder={translate('screening_questionnaire.action.action_text.placeholder')}
+                    disabled={!isEditableLanguage}
                     rules={{
                       required: translate('screening_questionnaire.action.action_text.required'),
                     }}
