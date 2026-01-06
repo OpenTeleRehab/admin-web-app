@@ -70,7 +70,6 @@ const PatientList = ({ translate, setDownloadfilter }) => {
         type: profile.type,
         country: profile.type === USER_GROUPS.CLINIC_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN ? profile.country_id : '',
         clinic: profile.type === USER_GROUPS.CLINIC_ADMIN ? profile.clinic_id : '',
-        phc_service_id: profile.type === USER_GROUPS.PHC_SERVICE_ADMIN ? profile.phc_service.id : undefined,
         filters
       })).then(result => {
         if (result) {
