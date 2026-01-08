@@ -3,9 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import CustomTable from 'components/Table';
-import { getCountryName } from 'utils/country';
-import { getClinicName } from 'utils/clinic';
-import { getPhcServiceName } from 'utils/phcService';
 import AgeCalculation from 'utils/age';
 import { deleteGlobalPatient, getGlobalPatients } from 'store/globalPatient/actions';
 import { renderStatusBadge } from 'utils/treatmentPlan';
@@ -21,9 +18,6 @@ const PatientList = ({ translate, setDownloadfilter }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const patients = useSelector(state => state.patient.patients);
-  const countries = useSelector(state => state.country.countries);
-  const clinics = useSelector(state => state.clinic.clinics);
-  const phcServices = useSelector(state => state.phcService);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const { profile } = useSelector(state => state.auth);
 
@@ -147,9 +141,9 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             email: patient.email,
             gender: translate(`common.${patient.gender}`),
             age: patient.date_of_birth !== null ? AgeCalculation(patient.date_of_birth, translate) : '',
-            country: getCountryName(patient.country_id, countries),
-            clinic: getClinicName(patient.clinic_id, clinics),
-            phcService: getPhcServiceName(patient.phc_service_id, phcServices),
+            country: patient.country_name,
+            clinic: patient.clinic_name,
+            phc_service: patient.phc_service_name,
             treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.upcomingTreatmentPlan ? patient.upcomingTreatmentPlan : patient.lastTreatmentPlan),
             action
           };
