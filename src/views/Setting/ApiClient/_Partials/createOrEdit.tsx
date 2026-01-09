@@ -38,7 +38,7 @@ const CreateOrEditApiClient = ({ apiClient }: CreateOrEditApiClientProps) => {
   const onSubmit = handleSubmit(async (data) => {
     const payload = {
       ...data,
-      allow_ips: data.allow_ips ? data.allow_ips.split(',').map(ip => ip.trim()) : undefined,
+      allow_ips: data.allow_ips ? data.allow_ips.split(',').map(ip => ip.trim()) : null,
     };
 
     if (apiClient) {
