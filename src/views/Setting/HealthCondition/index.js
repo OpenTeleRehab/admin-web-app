@@ -12,11 +12,14 @@ import HealthConditionCard from './_Partials/HealthConditionCard';
 import SearchInput from 'components/Form/SearchInput';
 import { getHealthConditionGroups } from 'store/healthConditionGroup/actions';
 import customColorScheme from '../../../utils/customColorScheme';
+import { useKeycloak } from '@react-keycloak/web';
+import { USER_ROLES } from 'variables/user';
 
 const HealthCondition = ({ translate }) => {
   const dispatch = useDispatch();
   const { healthConditionGroups } = useSelector((state) => state.healthConditionGroup);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { keycloak } = useKeycloak();
 
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
@@ -70,6 +73,7 @@ const HealthCondition = ({ translate }) => {
               variant="outline-primary"
               className="btn-circle float-right"
               onClick={() => handleCreate()}
+              disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION)}
             >
               <BsPlus size={20} />
             </Button>

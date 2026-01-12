@@ -364,6 +364,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
           <Form.Label>{translate('term_and_condition.content')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Editor
+            key={language}
             apiKey={settings.tinymce.apiKey}
             name="content"
             isInvalid={errorContent}

@@ -17,6 +17,7 @@ import {
   updateScreeningQuestionnaire,
 } from '../../../store/screeningQuestionnaire/actions';
 import _ from 'lodash';
+import { USER_GROUPS } from 'variables/user';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES;
 const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].options;
@@ -24,6 +25,7 @@ const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].optio
 const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
+  const profile = useSelector((state) => state.auth.profile);
   const translate = getTranslate(localize);
   const { screeningQuestionnaire } = useSelector(state => state.screeningQuestionnaire);
   const { languages } = useSelector(state => state.language);
@@ -32,7 +34,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const [showConfirmUpdate, setShowConfirmUpdate] = useState(false);
 
   const languageObj = languages.find(item => item.id === parseInt(language, 10));
-  const untranslatable = languageObj && languageObj.code !== languageObj.fallback;
+  const untranslatable = languageObj && (languageObj.code !== languageObj.fallback || profile.type === USER_GROUPS.TRANSLATOR);
   const isEditableLanguage = useEditableLanguage(language);
 
   const {

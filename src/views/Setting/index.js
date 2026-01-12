@@ -235,6 +235,7 @@ const Setting = ({ translate }) => {
       [VIEW_SCREENING_QUESTIONNAIRE]: USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE,
       [VIEW_REGION]: USER_ROLES.MANAGE_REGION,
       [VIEW_PROVINCE]: USER_ROLES.MANAGE_PROVINCE,
+      [VIEW_GUIDANCE_PAGE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_PHC_WORKER_GUIDANCE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_SURVEY]: USER_ROLES.MANAGE_SURVEY,
     };
@@ -444,7 +445,7 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
+        { hasAnyRole([USER_ROLES.MANAGE_HEALTH_CONDITION, USER_ROLES.TRANSLATE_HEALTH_CONDITION]) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_HEALTH_CONDITION} eventKey={VIEW_HEALTH_CONDITION}>
               {translate('setting.health_conditions')}
@@ -485,7 +486,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
       { hasAnyRole([USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE, USER_ROLES.TRANSLATE_SCREENING_QUESTIONNAIRE]) && view === VIEW_SCREENING_QUESTIONNAIRE && <ScreeningQuestionnaire handleRowEdit={handleEdit} /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
+      { hasAnyRole([USER_ROLES.MANAGE_HEALTH_CONDITION, USER_ROLES.TRANSLATE_HEALTH_CONDITION]) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && view === VIEW_PROVINCE && <Province /> }

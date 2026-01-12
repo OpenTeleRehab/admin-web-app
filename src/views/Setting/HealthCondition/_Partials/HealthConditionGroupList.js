@@ -6,11 +6,13 @@ import { getTranslate } from 'react-localize-redux';
 import Dialog from '../../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteHealthConditionGroup } from '../../../../store/healthConditionGroup/actions';
+import { useKeycloak } from '@react-keycloak/web';
 
 const HealthConditionGroupList = ({ resultHealthConditionGroups, healthConditionGroups, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
 
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
