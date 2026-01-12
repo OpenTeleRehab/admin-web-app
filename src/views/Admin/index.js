@@ -26,11 +26,8 @@ const Admin = ({ translate }) => {
   const [show, setShow] = useState(false);
   const [type, setType] = useState(undefined);
   const [editId, setEditId] = useState('');
-  const [errorCountryInUsed, setErrorCountryInUsed] = useState('');
-  const [countryId, setCountryId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showSwitchStatusDialog, setShowSwitchStatusDialog] = useState(false);
-  const users = useSelector(state => state.user.users);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [id, setId] = useState(null);
   const [formFields, setFormFields] = useState({
@@ -117,10 +114,6 @@ const Admin = ({ translate }) => {
     setId(id);
     setFormFields({ ...formFields, enabled: enabled, type: type });
     setShowSwitchStatusDialog(true);
-    if (countryId) {
-      setCountryId(countryId);
-    }
-    setErrorCountryInUsed('');
   };
 
   const handleSwitchStatusDialogClose = () => {
@@ -129,24 +122,11 @@ const Admin = ({ translate }) => {
   };
 
   const handleSwitchStatusDialogConfirm = () => {
-    if (countryId) {
-      const user = users.find(user => user.country_id === countryId);
-      if (user && user.id === id && user.enabled === 1) {
-        setErrorCountryInUsed(translate('error.country.in_used'));
-      } else {
-        dispatch(updateUserStatus(id, formFields)).then(result => {
-          if (result) {
-            handleSwitchStatusDialogClose();
-          }
-        });
+    dispatch(updateUserStatus(id, formFields)).then(result => {
+      if (result) {
+        handleSwitchStatusDialogClose();
       }
-    } else {
-      dispatch(updateUserStatus(id, formFields)).then(result => {
-        if (result) {
-          handleSwitchStatusDialogClose();
-        }
-      });
-    }
+    });
   };
 
   const handleSelectTab = (key) => {
@@ -213,10 +193,7 @@ const Admin = ({ translate }) => {
         confirmLabel={translate('common.yes')}
         onConfirm={handleSwitchStatusDialogConfirm}
       >
-        <div>
-          <p>{translate('common.switchStatus_confirmation_message')}</p>
-          <p className="error-feedback">{errorCountryInUsed}</p>
-        </div>
+        <p>{translate('common.switchStatus_confirmation_message')}</p>
       </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
