@@ -21,7 +21,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   const invalidate = useInvalidate();
 
   const [errorName, setErrorName] = useState(false);
-  const [errorCity, setErrorCity] = useState(false);
   const [errorRegion, setErrorRegion] = useState(false);
   const [errorClass, setErrorClass] = useState('');
   const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
@@ -47,7 +46,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     country: '',
     region_id: '',
     province_id: '',
-    city: '',
     country_iso: '',
     phone: '',
     therapist_limit: ''
@@ -68,7 +66,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
         country_id: clinic.country_id,
         region_id: profile.region_id,
         province_id: clinic.province?.id,
-        city: clinic.city,
         country_iso: getCountryISO(profile.country_id, countries),
         phone: clinic.phone || '',
         therapist_limit: clinic.therapist_limit,
@@ -116,13 +113,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       setErrorProvince(true);
     } else {
       setErrorProvince(false);
-    }
-
-    if (formFields.city === '') {
-      canSave = false;
-      setErrorCity(true);
-    } else {
-      setErrorCity(false);
     }
 
     if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
@@ -255,22 +245,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
           </Form.Group>
         </Form.Row>
         <Form.Row>
-          <Form.Group as={Col} controlId="city">
-            <Form.Label>{translate('clinic.city')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Form.Control
-              name="city"
-              onChange={handleChange}
-              type="text"
-              placeholder={translate('placeholder.clinic.city')}
-              isInvalid={errorCity}
-              value={formFields.city}
-              maxLength={settings.textMaxLength}
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.clinic.city')}
-            </Form.Control.Feedback>
-          </Form.Group>
           <Form.Group as={Col} controlId="province">
             <Form.Label>{translate('clinic.province')}</Form.Label>
             <span className="text-dark ml-1">*</span>
