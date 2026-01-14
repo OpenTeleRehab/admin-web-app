@@ -12,6 +12,7 @@ export const END_POINTS = {
   PHC_SERVICES: 'phc-services',
   PROVINCES_LIMITATION: 'provinces-limitation',
   COUNT_THERAPIST_BY_CLINIC: 'clinic/therapist/count/by-clinic',
+  CLINIC: 'clinic',
   PROFESSIONS: 'profession',
   PROFESSION_LIST: 'profession/list',
   PHC_SERVICES_BY_PROVINCE: 'phc-services-by-province',

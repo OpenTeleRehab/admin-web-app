@@ -10,15 +10,17 @@ import Dialog from 'components/Dialog';
 import { deleteClinic } from 'store/clinic/actions';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import useDialog from 'components/V2/Dialog';
+import { useAlertDialog } from 'components/V2/AlertDialog';
+import DeleteClinicConfirmation from './Partial/deleteConfirmation';
 
 const Clinic = ({ translate, handleRowEdit }) => {
+  const { openDialog, closeDialog } = useDialog();
+  const { showAlert } = useAlertDialog();
   const clinics = useSelector(state => state.clinic.clinics);
   const countries = useSelector(state => state.country.countries);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
-
-  const [editId, setEditId] = useState('');
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const [columns] = useState([
     { name: 'id', title: translate('common.id') },
@@ -31,19 +33,28 @@ const Clinic = ({ translate, handleRowEdit }) => {
   ]);
 
   const handleDelete = (id) => {
-    setEditId(id);
-    setShowDeleteDialog(true);
-  };
-
-  const handleDeleteDialogClose = () => {
-    setEditId(null);
-    setShowDeleteDialog(false);
-  };
-
-  const handleDeleteDialogConfirm = () => {
-    dispatch(deleteClinic(editId)).then(result => {
-      if (result) {
-        handleDeleteDialogClose();
+    showAlert({
+      title: translate('clinic.delete_confirmation_title'),
+      message: translate('common.delete_confirmation_message'),
+      closeOnConfirm: false,
+      onConfirm: () => {
+        openDialog({
+          title: translate('clinic.delete_confirmation_title'),
+          content: (
+            <DeleteClinicConfirmation
+              clinicId={id}
+              onConfirm={() => {
+                dispatch(deleteClinic(id)).then((result) => {
+                  if (result) {
+                    closeDialog();
+                    closeDialog();
+                  }
+                });
+              }}
+            />
+          ),
+          props: { size: 'lg' }
+        });
       }
     });
   };
@@ -70,16 +81,6 @@ const Clinic = ({ translate, handleRowEdit }) => {
         })}
         columns={columns}
       />
-      <Dialog
-        show={showDeleteDialog}
-        title={translate('clinic.delete_confirmation_title')}
-        cancelLabel={translate('common.no')}
-        onCancel={handleDeleteDialogClose}
-        confirmLabel={translate('common.yes')}
-        onConfirm={handleDeleteDialogConfirm}
-      >
-        <p>{translate('common.delete_confirmation_message')}</p>
-      </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );

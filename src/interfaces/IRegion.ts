@@ -6,3 +6,15 @@ export interface IRegionResource {
   therapist_limit: number;
   phc_worker_limit: number;
 }
+
+export interface IRegionEntitiesCount {
+  regional_admin_count: number;
+  province_count: number;
+  rehab_service_count: number;
+  rehab_service_admin_count: number;
+  phc_service_count: number;
+  phc_service_admin_count: number;
+  therapist_count: number;
+  phc_worker_count: number;
+  patient_count: number;
+}

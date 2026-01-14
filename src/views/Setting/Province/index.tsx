@@ -13,6 +13,7 @@ import { END_POINTS } from 'variables/endPoint';
 import { IProvinceResource } from 'interfaces/IProvince';
 import { useEffect, useMemo, useState } from 'react';
 import BasicTable from 'components/Table/basic';
+import DeleteProvinceConfirmation from './_Partials/deleteConfirmation';
 
 const Province = () => {
   const dispatch = useDispatch();
@@ -59,12 +60,13 @@ const Province = () => {
           onSuccess: async (res) => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.REGION_LIMITATION);
+            closeDialog();
+            closeDialog();
             showToast({
               title: t('province.toast_title.delete'),
               message: t(res?.message),
               color: 'success'
             });
-            closeDialog();
           },
           onError: () => {
             dispatch(showSpinner(false));
@@ -78,7 +80,19 @@ const Province = () => {
     showAlert({
       title: t('province.delete_confirmation.title'),
       message: t('province.delete_confirmation.message'),
-      onConfirm: () => handleDelete(provinceId)
+      closeOnConfirm: false,
+      onConfirm: () => {
+        openDialog({
+          title: t('province.delete_confirmation.title'),
+          content: (
+            <DeleteProvinceConfirmation
+              provinceId={provinceId}
+              onConfirm={() => handleDelete(provinceId)}
+            />
+          ),
+          props: { size: 'lg' }
+        });
+      }
     });
   };
 
