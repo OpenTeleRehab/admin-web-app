@@ -10,12 +10,15 @@ import { getHealthConditions } from '../../../../store/healthCondition/actions';
 import customColorScheme from '../../../../utils/customColorScheme';
 import CreateHealthCondition from './CreateHealthCondition';
 import HealthConditionList from './HealthConditionList';
+import { useKeycloak } from '@react-keycloak/web';
+import { USER_ROLES } from 'variables/user';
 
 const HealthConditionCard = ({ activeHealthConditionGroup, active, setActive }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { keycloak } = useKeycloak();
   const { healthConditions } = useSelector((state) => state.healthCondition);
   const [searchValue, setSearchValue] = useState('');
   const [searchHealthConditions, setSearchHealthConditions] = useState([]);
@@ -72,6 +75,7 @@ const HealthConditionCard = ({ activeHealthConditionGroup, active, setActive }) 
             aria-label={translate('setting.health_condition.new')}
             variant="outline-primary"
             className="btn-circle"
+            disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION)}
             onClick={() => handleCreate(activeHealthConditionGroup.id, false)}
           >
             <BsPlus size={20} />

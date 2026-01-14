@@ -447,14 +447,12 @@ const CreateEducationMaterial = ({ translate }) => {
                     </Button>
                   </>
                 }
-                {isEditableLanguage && !enableRejectApprove() &&
-                  <Button
-                    onClick={handleSave}
-                    disabled={isLoading}
-                  >
-                    {translate('common.save')}
-                  </Button>
-                }
+                <Button
+                  onClick={handleSave}
+                  disabled={isLoading || !(isEditableLanguage && !enableRejectApprove())}
+                >
+                  {translate('common.save')}
+                </Button>
                 <Button
                   className="ml-2"
                   variant="outline-dark"

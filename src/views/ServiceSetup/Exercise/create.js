@@ -788,15 +788,13 @@ const CreateExercise = ({ translate }) => {
                             </Button>
                           </>
                       }
-                      {isEditableLanguage && !enableRejectApprove() &&
-                          <Button
-                            id="formSave"
-                            onClick={handleSave}
-                            disabled={isLoading}
-                          >
-                            {translate('common.save')}
-                          </Button>
-                      }
+                      <Button
+                        id="formSave"
+                        onClick={handleSave}
+                        disabled={isLoading || !(isEditableLanguage && !enableRejectApprove())}
+                      >
+                        {translate('common.save')}
+                      </Button>
                       <Button
                         className="ml-2"
                         variant="outline-dark"

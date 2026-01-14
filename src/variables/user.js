@@ -71,6 +71,7 @@ export const USER_ROLES = {
   TRANSLATE_CATEGORY: 'translate_category',
   TRANSLATE_ASSISTIVE_TECHNOLOGY: 'translate_assistive_technology',
   TRANSLATE_SCREENING_QUESTIONNAIRE: 'translate_screening_questionnaire',
+  TRANSLATE_HEALTH_CONDITION: 'translate_health_condition',
   VIEW_DASHBOARD: 'view_dashboard',
   SUPER_ADMIN: 'super_admin',
   MANAGE_SURVEY: 'manage_survey',
