@@ -41,7 +41,7 @@ const DeclineReferralForm = ({ referralId }: DeclineFormProps) => {
         <Input
           control={control}
           controlAs='textarea'
-          name='reason'
+          name='reject_reason'
           label={t('referral.reason')}
           rules={{ required: t('error.field.required') }}
           rows={4}

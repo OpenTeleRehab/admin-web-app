@@ -36,7 +36,7 @@ import TotalPatientPanel from './TotalPatientPanel';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions = [], pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover, showTotalPatient }) => {
+const CustomTable = ({ rows, columns, columnExtensions = [], pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, showInlineEdited, editingStateColumnExtensions, commitChanges, editingRowIds, setEditingRowIds, hideSearchFilter, hidePagination, onRowClick, hover, showTotalPatient, defaultHiddenColumnNames }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -89,7 +89,7 @@ const CustomTable = ({ rows, columns, columnExtensions = [], pageSize, setPageSi
       {showInlineEdited && <TableEditColumn showEditCommand /> }
       {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
-      <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} />
+      <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} defaultHiddenColumnNames={defaultHiddenColumnNames}/>
 
       {!hideSearchFilter && <Toolbar /> }
       {!hideSearchFilter && <SearchPanel inputComponent={SearchInput} /> }
@@ -122,7 +122,8 @@ CustomTable.propTypes = {
   hidePagination: PropTypes.bool,
   onRowClick: PropTypes.func,
   hover: PropTypes.string,
-  showTotalPatient: PropTypes.bool
+  showTotalPatient: PropTypes.bool,
+  defaultHiddenColumnNames: PropTypes.array,
 };
 
 export default CustomTable;

@@ -27,15 +27,24 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
 
   const columns = useMemo(() => [
     { name: 'identity', title: translate('common.id') },
+    { name: 'last_name', title: translate('common.last_name') },
+    { name: 'first_name', title: translate('common.first_name') },
     { name: 'date_of_birth', title: translate('common.date_of_birth') },
     { name: 'phc_workers', title: translate('referral.lead.and.supplementary') },
     { name: 'referred_by', title: translate('referral.referred_by') },
     { name: 'status', title: translate('common.status') },
-    { name: 'therapist_reason', title: translate('referral.reason') },
+    { name: 'request_reason', title: translate('referral.phc_request_reason') },
+    { name: 'therapist_reason', title: translate('referral.therapist_reject_reason') },
     { name: 'action', title: translate('common.action') },
   ], [translate]);
 
+  const defaultHiddenColumnNames = [
+    'referred_by',
+  ];
+
   const columnExtensions = [
+    { columnName: 'request_reason', wordWrapEnabled: true },
+    { columnName: 'therapist_reason', wordWrapEnabled: true },
     { columnName: 'action', align: 'right' }
   ];
 
@@ -76,7 +85,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
             disabled={pr.status === REFERRAL_STATUS.INVITED}
             onClick={() => onAccept(pr.id)}
           >
-            <FaCheck /> {translate('common.accept')}
+            <FaCheck /> {translate('common.assign')}
           </Button>
           <Button
             size="sm"
@@ -92,10 +101,13 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
 
       return {
         identity: pr.patient_identity,
+        last_name: pr.last_name,
+        first_name: pr.first_name,
         date_of_birth: pr.date_of_birth ? moment(pr.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(pr.lead_and_supplementary_phc) }}></span>,
         referred_by: pr.referred_by,
         status: <Badge pill variant='light'>{pr.status}</Badge>,
+        request_reason: pr.request_reason,
         therapist_reason: pr.therapist_reason,
         action,
       };
@@ -112,7 +124,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         setFilters={setFilters}
         filters={filters}
         columns={columns}
-        hideSearchFilter
+        defaultHiddenColumnNames={defaultHiddenColumnNames}
         columnExtensions={columnExtensions}
         hover="hover-primary"
         rows={rows}
