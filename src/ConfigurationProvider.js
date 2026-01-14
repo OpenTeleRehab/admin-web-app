@@ -44,7 +44,11 @@ const ConfigurationProvider = ({ children }) => {
       }
 
       dispatch(getLanguages());
-      dispatch(getDefaultLimitedPatients());
+
+      if (hasAnyRole([USER_ROLES.VIEW_DEFAULT_LIMITED_PATIENT])) {
+        dispatch(getDefaultLimitedPatients());
+      }
+
       if (hasAnyRole([USER_ROLES.MANAGE_ORGANIZATION, USER_ROLES.VIEW_MANAGE_ORGANIZATION])) {
         dispatch(getOrganizationTherapistAndTreatmentLimit(process.env.REACT_APP_NAME));
         dispatch(getOrganizations());

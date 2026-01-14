@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
-import { USER_ROLES, SETTING_ROLES } from 'variables/user';
+import { USER_ROLES, SETTING_ROLES, USER_GROUPS } from 'variables/user';
 import DownloadTracker from '../components/DownloadTracker';
 
 const navItems = [
@@ -38,19 +38,19 @@ const navItems = [
     label: 'therapist',
     to: ROUTES.THERAPIST,
     exact: true,
-    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_COUNTRY_ADMIN]
+    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.VIEW_THERAPIST_LIST]
   },
   {
     label: 'common.phc_worker',
     to: ROUTES.PHC_WORKER,
     exact: true,
-    roles: [USER_ROLES.MANAGE_PHC_WORKER]
+    roles: [USER_ROLES.MANAGE_PHC_WORKER, USER_ROLES.VIEW_PHC_WORKER_LIST]
   },
   {
     label: 'patient',
     to: ROUTES.PATIENT,
     exact: true,
-    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_PHC_WORKER]
+    roles: [USER_ROLES.MANAGE_GLOBAL_PATIENT]
   },
   {
     label: 'service_setup',
@@ -74,7 +74,7 @@ const navItems = [
     label: 'audit_logs',
     to: ROUTES.AUDIT_LOGS,
     exact: true,
-    roles: [USER_ROLES.ORGANIZATION_ADMIN, USER_ROLES.COUNTRY_ADMIN, USER_ROLES.CLINIC_ADMIN, USER_ROLES.MANAGE_ORGANIZATION_ADMIN, USER_ROLES.MANAGE_PHC_WORKER]
+    roles: [USER_ROLES.VIEW_AUDIT_LOG]
   }
 ];
 
@@ -152,18 +152,22 @@ const Navigation = ({ translate }) => {
                 <Dropdown.Item as={Link} to={ROUTES.PROFILE}>
                   {translate('profile.setting')}
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.FAQ}>
-                  {translate('profile.faq')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.TC}>
-                  {translate('profile.tc')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.PP}>
-                  {translate('profile.pp')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setShowDownloadTrackers(true)}>
-                  {translate('common.download.history')}
-                </Dropdown.Item>
+                {profile.type !== USER_GROUPS.SUPER_ADMIN && profile.type !== USER_GROUPS.TRANSLATOR && (
+                  <>
+                    <Dropdown.Item as={Link} to={ROUTES.FAQ}>
+                      {translate('profile.faq')}
+                    </Dropdown.Item>
+                    <Dropdown.Item as={Link} to={ROUTES.TC}>
+                      {translate('profile.tc')}
+                    </Dropdown.Item>
+                    <Dropdown.Item as={Link} to={ROUTES.PP}>
+                      {translate('profile.pp')}
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => setShowDownloadTrackers(true)}>
+                      {translate('common.download.history')}
+                    </Dropdown.Item>
+                  </>
+                )}
                 <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
                 <Dropdown.Item onClick={handleShow}>{translate('logout')}</Dropdown.Item>
                 <Dialog

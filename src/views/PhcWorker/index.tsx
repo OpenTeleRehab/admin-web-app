@@ -48,9 +48,9 @@ const PhcWorker = () => {
 
   const { data: phcWorkers } = useList<IPhcWorker>(END_POINTS.PHC_WORKERS,
     {
-      phc_service_id: profile ? profile.phc_service.id : null,
-      country_id: profile ? profile.country_id : null,
-      region_id: profile ? profile.region_id : null,
+      phc_service_id: profile?.phc_service?.id ?? null,
+      country_id: profile?.country_id ?? null,
+      region_id: profile?.region_id ?? null,
       filters,
       search_value: searchValue,
       user_type: profile.type,
@@ -63,7 +63,7 @@ const PhcWorker = () => {
     { enabled: (phcWorkers?.data ?? []).length > 0 }
   );
   const { data: professions } = useList<any>(END_POINTS.PROFESSIONS);
-  const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: true });
+  const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER) });
   const { mutate: updatePhcWorkerStatus } = useMutationAction(END_POINTS.PHC_WORKERS_UPDATE_STATUS);
   const { mutate: resendEmail } = useMutationAction(END_POINTS.PHC_WORKERS_RESEND_EMAIL);
   const { mutate: deletePhcWorker } = useMutationAction(END_POINTS.PHC_WORKERS_DELETE);
@@ -208,6 +208,9 @@ const PhcWorker = () => {
               <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker.id)} />
               {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(phcWorker.id)} disabled={phcWorker.last_login} />}
             </>
+          )}
+          {keycloak.hasRealmRole(USER_ROLES.DELETE_PHC_WORKER) && (
+            <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker.id)} />
           )}
         </>
       );

@@ -91,6 +91,16 @@ export const USER_ROLES = {
   MANAGE_PHC_WORKER_GUIDANCE: 'manage_phc_worker_guidance',
   TRANSLATE_PHC_WORKER_GUIDANCE: 'translate_phc_worker_guidance',
   MANAGE_API_CLIENT: 'manage_api_client',
+  VIEW_DEFAULT_LIMITED_PATIENT: 'view_default_limited_patient',
+  VIEW_EXERCISE_LIST: 'view_exercise_list',
+  VIEW_EDUCATIONAL_MATERIAL_LIST: 'view_educational_material_list',
+  VIEW_QUESTIONNAIRE_LIST: 'view_questionnaire_list',
+  VIEW_AUDIT_LOG: 'view_audit_log',
+  VIEW_THERAPIST_LIST: 'view_therapist_list',
+  VIEW_PHC_WORKER_LIST: 'view_phc_worker_list',
+  DELETE_THERAPIST: 'delete_therapist',
+  DELETE_PHC_WORKER: 'delete_phc_worker',
+  MANAGE_GLOBAL_PATIENT: 'manage_global_patient'
 };
 
 export const SETTING_ROLES = [
