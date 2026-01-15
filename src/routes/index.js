@@ -70,7 +70,7 @@ const routes = [
     component: Therapist,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.MANAGE_COUNTRY_ADMIN]
+    roles: [USER_ROLES.MANAGE_THERAPIST, USER_ROLES.VIEW_THERAPIST_LIST]
   },
   {
     title: 'common.phc_worker',
@@ -78,7 +78,7 @@ const routes = [
     component: PhcWorker,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_PHC_WORKER]
+    roles: [USER_ROLES.MANAGE_PHC_WORKER, USER_ROLES.VIEW_PHC_WORKER_LIST]
   },
   {
     title: 'patient',
@@ -86,7 +86,7 @@ const routes = [
     component: Patient,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.MANAGE_COUNTRY_ADMIN, USER_ROLES.MANAGE_CLINIC_ADMIN, USER_ROLES.MANAGE_THERAPIST, USER_ROLES.CLINIC_ADMIN, USER_ROLES.MANAGE_PHC_WORKER]
+    roles: [USER_ROLES.MANAGE_GLOBAL_PATIENT]
   },
   {
     title: 'patient.detail',
@@ -108,7 +108,7 @@ const routes = [
     component: ServiceSetupPage,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_EXERCISE, USER_ROLES.TRANSLATE_EXERCISE, USER_ROLES.TRANSLATE_QUESTIONNAIRE, USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL]
+    roles: [USER_ROLES.SETUP_EXERCISE, USER_ROLES.TRANSLATE_EXERCISE, USER_ROLES.TRANSLATE_QUESTIONNAIRE, USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL, USER_ROLES.VIEW_EXERCISE_LIST, USER_ROLES.VIEW_EDUCATIONAL_MATERIAL_LIST, USER_ROLES.VIEW_QUESTIONNAIRE_LIST]
   },
   {
     title: 'exercise.create',

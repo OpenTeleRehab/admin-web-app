@@ -256,7 +256,7 @@ const Therapist = ({ translate }) => {
                   {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
                 </>
               )}
-              {keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
+              {keycloak.hasRealmRole(USER_ROLES.DELETE_THERAPIST) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_THERAPIST) && (
                 <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
               )}
             </div>

@@ -46,7 +46,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
     columns.splice(3, 0, { name: 'phc_service', title: translate('common.phc_service') });
   }
 
-  if ([USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN].includes(profile.type)) {
+  if ([USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN, USER_GROUPS.REGIONAL_ADMIN].includes(profile.type)) {
     columns.push({ name: 'action', title: translate('common.action') });
   }
 
@@ -128,7 +128,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             <>
               <ViewAction className="ml-1" onClick={() => handleRowClick(patient)} />
 
-              {[USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN].includes(profile.type) && (
+              {[USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN, USER_GROUPS.REGIONAL_ADMIN].includes(profile.type) && (
                 <DeleteAction className="ml-1" onClick={() => handleDelete(patient.patient_id)} />
               )}
             </>
