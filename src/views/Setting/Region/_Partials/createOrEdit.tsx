@@ -127,11 +127,12 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                 validate: (value) => {
                   const numValue = Number(value);
                   const remainingTherapistLimit = countryLimitation ? countryLimitation.remaining_therapist_limit : 0;
+                  const usedTherapistLimit = countryLimitation ? countryLimitation.therapist_limit_used : 0;
                   const exceedremainingTherapistLimit = regionData ? numValue > remainingTherapistLimit + regionData.therapist_limit : numValue > remainingTherapistLimit;
                   const translateParams = {
                     allocated_therapist_limit: countryLimitation?.allocated_therapist_limit,
-                    remaining_therapist_limit: countryLimitation?.remaining_therapist_limit,
-                    therapist_limit_used: countryLimitation?.therapist_limit_used,
+                    remaining_therapist_limit: remainingTherapistLimit + (regionData?.therapist_limit ?? 0),
+                    therapist_limit_used: usedTherapistLimit - (regionData?.therapist_limit ?? 0),
                   };
 
                   if (value <= 0) {
@@ -164,11 +165,12 @@ const CreateOrEditRegion = ({ regionData }: CreateOrEditRegionProps) => {
                 validate: (value) => {
                   const numValue = Number(value);
                   const remainingPhcWorkerLimit = countryLimitation ? countryLimitation.remaining_phc_worker_limit : 0;
+                  const usedPhcWorkerLimit = countryLimitation ? countryLimitation.phc_worker_limit_used : 0;
                   const exceedremainingPhcWorkerLimit = regionData ? numValue > remainingPhcWorkerLimit + regionData.phc_worker_limit : numValue > remainingPhcWorkerLimit;
                   const translateParams = {
                     allocated_phc_worker_limit: countryLimitation?.allocated_phc_worker_limit,
-                    remaining_phc_worker_limit: countryLimitation?.remaining_phc_worker_limit,
-                    phc_worker_limit_used: countryLimitation?.phc_worker_limit_used,
+                    remaining_phc_worker_limit: remainingPhcWorkerLimit + (regionData?.phc_worker_limit ?? 0),
+                    phc_worker_limit_used: usedPhcWorkerLimit - (regionData?.phc_worker_limit ?? 0),
                   };
 
                   if (value <= 0) {

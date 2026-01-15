@@ -162,14 +162,20 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
                 validate: (value) => {
                   const numValue = Number(value);
                   const remainingPhcWorkerLimit = provinceLimitation ? provinceLimitation.remaining_phc_worker_limit : 0;
+                  const usedPhcworkerLimit = provinceLimitation ? provinceLimitation.phc_worker_limit_used : 0;
                   const exceedremainingPhcWorkerLimit = phcService ? numValue > remainingPhcWorkerLimit + phcService.phc_worker_limit : numValue > remainingPhcWorkerLimit;
+                  const translateParams = {
+                    allocated_phc_worker_limit: provinceLimitation?.allocated_phc_worker_limit,
+                    remaining_phc_worker_limit: remainingPhcWorkerLimit + (phcService?.phc_worker_limit ?? 0),
+                    phc_worker_limit_used: usedPhcworkerLimit - (phcService?.phc_worker_limit ?? 0),
+                  };
 
                   if (value <= 0) {
                     return t('error.phc_service.phc_worker_limit.equal_to.zero');
                   }
 
                   if (exceedremainingPhcWorkerLimit) {
-                    return t('error.phc_service.phc_worker_limit.greater_than.province.phc_worker_limit');
+                    return t('error.phc_service.phc_worker_limit.greater_than.province.phc_worker_limit', { ...translateParams });
                   }
 
                   return true;
