@@ -129,18 +129,24 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                 validate: (value) => {
                   const numValue = Number(value);
                   const remainingTherapistLimit = regionLimitation ? regionLimitation.remaining_therapist_limit : 0;
+                  const usedTherapistLimit = regionLimitation ? regionLimitation.therapist_limit_used : 0;
                   const exceedremainingTherapistLimit = provinceData ? numValue > remainingTherapistLimit + provinceData.therapist_limit : numValue > remainingTherapistLimit;
+                  const translateParams = {
+                    allocated_therapist_limit: regionLimitation?.allocated_therapist_limit,
+                    remaining_therapist_limit: remainingTherapistLimit + (provinceData?.therapist_limit ?? 0),
+                    therapist_limit_used: usedTherapistLimit - (provinceData?.therapist_limit ?? 0),
+                  };
 
                   if (value <= 0) {
                     return t('error.province.therapist_limit.equal_to.zero');
                   }
 
                   if (exceedremainingTherapistLimit) {
-                    return t('error.province.therapist_limit.greater_than.region.therapist_limit');
+                    return t('error.province.therapist_limit.greater_than.region.therapist_limit', { ...translateParams });
                   }
 
                   if (provinceLimitation?.therapist_limit_used > numValue) {
-                    return t('error.province.therapist_limit.less_than.total.clinic.therapist_limit');
+                    return t('error.province.therapist_limit.less_than.total.clinic.therapist_limit', { therapist_limit_used: provinceLimitation?.therapist_limit_used ?? 0 });
                   }
 
                   return true;
@@ -161,18 +167,24 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                 validate: (value) => {
                   const numValue = Number(value);
                   const remainingPhcWorkerLimit = regionLimitation ? regionLimitation.remaining_phc_worker_limit : 0;
+                  const usedPhcWorkerLimit = regionLimitation ? regionLimitation.phc_worker_limit_used : 0;
                   const exceedremainingPhcWorkerLimit = provinceData ? numValue > remainingPhcWorkerLimit + provinceData.phc_worker_limit : numValue > remainingPhcWorkerLimit;
+                  const translateParams = {
+                    allocated_phc_worker_limit: regionLimitation?.allocated_phc_worker_limit,
+                    remaining_phc_worker_limit: remainingPhcWorkerLimit + (provinceData?.phc_worker_limit ?? 0),
+                    phc_worker_limit_used: usedPhcWorkerLimit - (provinceData?.phc_worker_limit ?? 0),
+                  };
 
                   if (value <= 0) {
                     return t('error.province.phc_worker_limit.equal_to.zero');
                   }
 
                   if (exceedremainingPhcWorkerLimit) {
-                    return t('error.province.phc_worker_limit.greater_than.region.phc_worker_limit');
+                    return t('error.province.phc_worker_limit.greater_than.region.phc_worker_limit', { ...translateParams });
                   }
 
                   if (provinceLimitation?.phc_worker_limit_used > numValue) {
-                    return t('error.province.phc_worker_limit.less_than.total.clinic.phc_worker_limit');
+                    return t('error.province.phc_worker_limit.less_than.total.clinic.phc_worker_limit', { phc_worker_limit_used: provinceLimitation?.phc_worker_limit_used ?? 0 });
                   }
 
                   return true;
