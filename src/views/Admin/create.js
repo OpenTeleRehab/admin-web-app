@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,7 +23,6 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const [hintMessage, setHintMessage] = useState('');
   const { profile } = useSelector((state) => state.auth);
-
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorCountryMessage, setErrorCountryMessage] = useState('');
@@ -32,13 +31,34 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   const [errorLastName, setErrorLastName] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const regionOptions = useMemo(() => {
+    if (profile?.admin_regions?.length > 0) {
+      return profile.admin_regions.map((region) => ({
+        label: region.name,
+        value: region.id,
+      }));
+    }
+
+    if (profile?.region_id) {
+      return [
+        {
+          label: profile.region_name,
+          value: profile.region_id,
+        },
+      ];
+    }
+
+    return [];
+  }, [profile]);
+
   const [formFields, setFormFields] = useState({
     type: type,
     email: '',
     first_name: '',
     last_name: '',
     country_id: '',
-    clinic_id: ''
+    clinic_id: '',
+    region_id: ''
   });
 
   useEffect(() => {
@@ -50,7 +70,8 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
         first_name: editingData.first_name || '',
         last_name: editingData.last_name || '',
         country_id: editingData.country_id || '',
-        clinic_id: editingData.clinic_id || ''
+        clinic_id: editingData.clinic_id || '',
+        region_id: editingData.region_id || ''
       });
     }
   }, [editId, users]);
@@ -69,7 +90,8 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
         first_name: '',
         last_name: '',
         country_id: profile.country_id,
-        clinic_id: ''
+        clinic_id: '',
+        region_id: ''
       });
     }
 
@@ -89,7 +111,11 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   };
 
   const handleSingleSelectChange = (key, value) => {
-    setFormFields({ ...formFields, [key]: value });
+    if (key === 'region_id') {
+      setFormFields({ ...formFields, [key]: value, clinic_id: '' });
+    } else {
+      setFormFields({ ...formFields, [key]: value });
+    }
   };
 
   const handleConfirm = () => {
@@ -185,6 +211,16 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
       handleConfirm();
     }
   };
+
+  const clinicOptions = useMemo(() => {
+    if (formFields.region_id) {
+      return clinics.filter(clinic => {
+        const clinicRegionId = clinic.region_id || clinic.region?.id;
+        return parseInt(clinicRegionId) === parseInt(formFields.region_id);
+      });
+    }
+    return clinics;
+  }, [clinics, formFields.region_id]);
 
   return (
     <Dialog
@@ -289,17 +325,14 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
           </Form.Group>
         )}
         {(formFields.type === USER_GROUPS.CLINIC_ADMIN) && (
-          <Form.Group controlId="formCountry">
+          <Form.Group controlId="formRegion">
             <Form.Label>{translate('common.region')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Select
-              isDisabled
-              classNamePrefix="filter"
-              className={errorCountry ? 'is-invalid' : ''}
-              value={{
-                value: profile?.region_id,
-                label: profile?.region_name
-              }}
+              placeholder={translate('placeholder.region')}
+              options={regionOptions}
+              value={regionOptions.find(option => option.value === parseInt(formFields.region_id))}
+              onChange={(e) => handleSingleSelectChange('region_id', e ? e.value : '')}
               styles={customSelectStyles}
               aria-label="Region"
             />
@@ -316,10 +349,11 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
               placeholder={translate('placeholder.clinic')}
               classNamePrefix="filter"
               className={errorClinic ? 'is-invalid' : ''}
-              value={clinics.filter(option => option.id === parseInt(formFields.clinic_id))}
+              value={clinics.find(option => option.id === parseInt(formFields.clinic_id)) || null}
               getOptionLabel={option => option.name}
-              options={clinics}
-              onChange={(e) => handleSingleSelectChange('clinic_id', e.id)}
+              getOptionValue={option => option.id}
+              options={clinicOptions}
+              onChange={(e) => handleSingleSelectChange('clinic_id', e ? e.id : '')}
               styles={customSelectStyles}
               aria-label="Clinic"
             />

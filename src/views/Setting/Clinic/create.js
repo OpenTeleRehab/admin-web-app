@@ -60,13 +60,23 @@ const CreateClinic = ({ show, editId, handleClose }) => {
     return provinceLimitation;
   }, [provincesLimitation, formFields.province_id]);
 
+  const regionOptions = useMemo(() => {
+    if (profile?.admin_regions?.length) {
+      return profile.admin_regions;
+    }
+    if (profile?.region_id && regions?.data) {
+      return regions.data.filter(r => r.id === profile.region_id);
+    }
+    return regions?.data || [];
+  }, [profile, regions]);
+
   useEffect(() => {
     if (editId && clinics.length) {
       const clinic = clinics.find(clinic => clinic.id === editId);
       setFormFields({
         name: clinic.name,
         country_id: clinic.country_id,
-        region_id: profile.region_id,
+        region_id: clinic.region?.id || clinic.region_id,
         province_id: clinic.province?.id,
         city: clinic.city,
         country_iso: getCountryISO(profile.country_id, countries),
@@ -91,7 +101,11 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   };
 
   const handleSingleSelectChange = (key, value) => {
-    setFormFields({ ...formFields, [key]: value });
+    if (key === 'region_id') {
+      setFormFields({ ...formFields, [key]: value, province_id: '' });
+    } else {
+      setFormFields({ ...formFields, [key]: value });
+    }
   };
 
   const handleConfirm = () => {
@@ -241,12 +255,15 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             <Form.Label>{translate('clinic.region')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Select
-              isDisabled
+              isDisabled={regionOptions.length <= 1}
               placeholder={translate('placeholder.clinic.region')}
               classNamePrefix="filter"
               className={errorRegion ? 'is-invalid' : ''}
-              value={regions?.data?.find((region) => region.id === formFields.region_id)}
+              value={regionOptions?.find((region) => region.id === formFields.region_id) || null}
+              options={regionOptions}
+              onChange={(e) => handleSingleSelectChange('region_id', e.id)}
               getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
               aria-label="Region"
             />
             <Form.Control.Feedback type="invalid">
@@ -278,7 +295,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
               placeholder={translate('placeholder.clinic.province')}
               classNamePrefix="filter"
               className={errorProvince ? 'is-invalid' : ''}
-              value={provinceOptions.find(region => region.id === formFields.province_id)}
+              value={provinceOptions.find(region => region.id === formFields.province_id) || null}
               options={provinceOptions}
               onChange={(e) => handleSingleSelectChange('province_id', e.id)}
               getOptionLabel={(option) => option.name}

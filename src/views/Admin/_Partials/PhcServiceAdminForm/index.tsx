@@ -8,7 +8,7 @@ import { useCreate } from 'hooks/useCreate';
 import { useUpdate } from 'hooks/useUpdate';
 import { useList } from 'hooks/useList';
 import { useTranslate } from 'hooks/useTranslate';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,8 @@ import { showSpinner } from 'store/spinnerOverlay/actions';
 import { USER_GROUPS } from 'variables/user';
 import { END_POINTS } from 'variables/endPoint';
 import { IUser } from 'interfaces/IUser';
+import { IAdminRegion } from 'interfaces/IRegion';
+import { IProvinceResource } from 'interfaces/IProvince';
 
 const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUser }) => {
   const dispatch = useDispatch();
@@ -28,21 +30,66 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
   const { mutate: updateUserMutation } = useUpdate(END_POINTS.ADMIN);
   const { data: phcServices } = useList(END_POINTS.PHC_SERVICES_BY_PROVINCE, { province_id: watch('province_id') }, { enabled: !!watch('province_id') });
   const { data: provinces } = useList(END_POINTS.PROVINCE_BY_REGION);
+  const isRegionDirty = formState.dirtyFields.region_id;
   const isProvinceDirty = formState.dirtyFields.province_id;
+
+  const regionOptions = useMemo(() => {
+    if (profile?.admin_regions?.length > 0) {
+      return profile.admin_regions.map((region: IAdminRegion) => ({
+        label: region.name,
+        value: region.id,
+      }));
+    }
+
+    if (profile?.region_id) {
+      return [
+        {
+          label: profile.region_name,
+          value: profile.region_id,
+        },
+      ];
+    }
+
+    return [];
+  }, [profile]);
+
+  const provinceOptions = useMemo(() => {
+    const provinceData = provinces?.data || [];
+    const selectedRegionId = watch('region_id');
+    if (selectedRegionId) {
+      return provinceData
+        .filter((province: IProvinceResource) => province.region_id === parseInt(selectedRegionId))
+        .map((province: IProvinceResource) => ({
+          label: province.name,
+          value: province.id,
+        }));
+    }
+    return provinceData.map((province: IProvinceResource) => ({
+      label: province.name,
+      value: province.id,
+    }));
+  }, [provinces, watch('region_id')]);
 
   useEffect(() => {
     if (phcServiceAdmin) {
       reset(phcServiceAdmin);
       const province = provinces?.data.find((province) => province.id === phcServiceAdmin.phc_service?.province_id);
+      setValue('region_id', province?.region_id);
       setValue('province_id', province?.id);
       setValue('phc_service_id', phcServiceAdmin.phc_service?.id);
     } else {
       setValue('type', USER_GROUPS.PHC_SERVICE_ADMIN);
-      setValue('region_name', profile?.region_name);
-      setValue('country_id', profile?.country_id);
       setValue('region_id', profile?.region_id);
+      setValue('country_id', profile?.country_id);
     }
   }, [reset, phcServiceAdmin, setValue, profile, provinces]);
+
+  useEffect(() => {
+    if (isRegionDirty) {
+      setValue('province_id', null);
+      setValue('phc_service_id', null);
+    }
+  }, [isRegionDirty, setValue]);
 
   useEffect(() => {
     if (isProvinceDirty) {
@@ -94,22 +141,22 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
           rules={{ required: t('error.email') }}
           disabled={!!phcServiceAdmin}
         />
-        <Input
+        <Select
           control={control}
-          name='region_name'
+          name='region_id'
+          options={regionOptions}
           label={t('common.region')}
-          disabled
+          placeholder={t('placeholder.region')}
+          rules={{ required: t('region.required') }}
         />
         <Select
           control={control}
           name='province_id'
-          options={(provinces?.data || []).map((province) => ({
-            label: province.name,
-            value: province.id
-          }))}
+          options={provinceOptions}
           label={t('common.province')}
           placeholder={t('common.province.placeholder')}
           rules={{ required: t('province.required') }}
+          isDisabled={!watch('region_id')}
         />
         <Select
           control={control}

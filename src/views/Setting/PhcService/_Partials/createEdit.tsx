@@ -8,7 +8,7 @@ import { useCreate } from 'hooks/useCreate';
 import { useUpdate } from 'hooks/useUpdate';
 import { useOne } from 'hooks/useOne';
 import { useTranslate } from 'hooks/useTranslate';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +20,7 @@ import { ILimitation } from 'interfaces/ILimitation';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { useList } from 'hooks/useList';
 import { IProvinceResource } from 'interfaces/IProvince';
+import { IAdminRegion } from 'interfaces/IRegion';
 
 const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
   const dispatch = useDispatch();
@@ -35,17 +36,57 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
   const { data: provinceLimitation } = useOne<ILimitation>(END_POINTS.PROVINCE_LIMITATION, provinceId, { enabled: !!provinceId });
   const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE_BY_REGION);
 
+  const regionId = watch('region_id');
+
+  const regionOptions = useMemo(() => {
+     if (profile?.admin_regions?.length > 0) {
+      return profile.admin_regions.map((region: IAdminRegion) => ({
+        label: region.name,
+        value: region.id,
+      }));
+    }
+
+    if (profile?.region_id) {
+      return [
+        {
+          label: profile.region_name,
+          value: profile.region_id,
+        },
+      ];
+    }
+    return [];
+  }, [profile]);
+  const provinceOptions = useMemo(() => {
+    const filtered = (provinces?.data || []).filter((province: IProvinceResource) => province.region_id === regionId).map((province: IProvinceResource) => ({
+         label: province.name,
+         value: province.id,
+    }));
+    return filtered;
+  }, [provinces, regionId]);
+
   useEffect(() => {
     if (phcService) {
-      reset(phcService);
+      reset({
+        ...phcService,
+        region_id: phcService.region_id || phcService.province?.region_id,
+      });
     }
   }, [reset, phcService, setValue]);
 
   useEffect(() => {
-    if (profile) {
-      setValue('region_name', profile ? profile.region_name : '');
+    if (profile && !phcService) {
+      setValue('region_id', profile.region_id);
     }
-  }, [profile, setValue]);
+  }, [profile, setValue, phcService]);
+
+  useEffect(() => {
+     if (regionId) {
+        const isSameRegion = phcService?.region_id === regionId || phcService?.province?.region_id === regionId;
+        if (!isSameRegion) {
+        setValue('province_id', null);
+      }
+     }
+  }, [regionId, setValue, phcService]);
 
   const onSubmit = handleSubmit(async (data) => {
     dispatch(showSpinner(true));
@@ -71,7 +112,7 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
       return;
     }
 
-    createPhcServiceMutation({ ...data, region_id: profile.region_id }, {
+    createPhcServiceMutation(data, {
       onSuccess: async (res) => {
         dispatch(showSpinner(false));
         invalidate(END_POINTS.PROVINCE_LIMITATION);
@@ -105,11 +146,12 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
         </Row>
         <Row>
           <Col>
-            <Input
+            <Select
               control={control}
-              name='region_name'
+              name='region_id'
+              options={regionOptions}
               label={t('common.region')}
-              disabled
+              placeholder={t('common.region.placeholder')}
             />
           </Col>
         </Row>
@@ -118,10 +160,7 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
             <Select
               control={control}
               name='province_id'
-              options={(provinces?.data || []).map((province) => ({
-                label: province.name,
-                value: province.id
-              }))}
+              options={provinceOptions}
               label={t('common.province')}
               placeholder={t('common.province.placeholder')}
               rules={{ required: t('common.province.error') }}

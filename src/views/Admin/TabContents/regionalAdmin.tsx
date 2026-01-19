@@ -1,6 +1,12 @@
 import EnabledStatus from 'components/EnabledStatus';
 import BasicTable from 'components/Table/basic';
-import { DeleteAction, DisabledAction, EditAction, EnabledAction, MailSendAction } from 'components/V2/ActionIcons';
+import {
+  DeleteAction,
+  DisabledAction,
+  EditAction,
+  EnabledAction,
+  MailSendAction,
+} from 'components/V2/ActionIcons';
 import { useAlertDialog } from 'components/V2/AlertDialog';
 import useDialog from 'components/V2/Dialog';
 import useToast from 'components/V2/Toast';
@@ -36,9 +42,13 @@ const RegionalAdmin = () => {
     page_size: pageSize,
     page: currentPage + 1
   });
-  const { mutate: resendEmail } = useMutationAction(END_POINTS.ADMIN_RESEND_EMAIL);
+  const { mutate: resendEmail } = useMutationAction(
+    END_POINTS.ADMIN_RESEND_EMAIL
+  );
   const { mutate: deletePhcServiceAdmin } = useDelete(END_POINTS.ADMIN);
-  const { mutate: updateRegionalAdminStatus } = useMutationAction(END_POINTS.ADMIN_UPDATE_STATUS);
+  const { mutate: updateRegionalAdminStatus } = useMutationAction(
+    END_POINTS.ADMIN_UPDATE_STATUS
+  );
 
   useEffect(() => {
     if (regionalAdmins) {
@@ -46,40 +56,64 @@ const RegionalAdmin = () => {
     }
   }, [regionalAdmins]);
 
-  const columns = useMemo(() => [
-    { name: 'last_name', title: t('common.last_name') },
-    { name: 'first_name', title: t('common.first_name') },
-    { name: 'email', title: t('common.email') },
-    { name: 'region', title: t('common.region') },
-    { name: 'status', title: t('common.status') },
-    { name: 'last_login', title: t('common.last_login') },
-    { name: 'action', title: t('common.action') }
-  ], [t]);
+  const columns = useMemo(
+    () => [
+      { name: 'last_name', title: t('common.last_name') },
+      { name: 'first_name', title: t('common.first_name') },
+      { name: 'email', title: t('common.email') },
+      { name: 'region', title: t('common.region') },
+      { name: 'status', title: t('common.status') },
+      { name: 'last_login', title: t('common.last_login') },
+      { name: 'action', title: t('common.action') },
+    ],
+    [t]
+  );
 
-  const rows = useMemo(() =>
-    (regionalAdmins?.data || []).map((regionalAdmin) => {
-      const action = (
-        <>
-          {regionalAdmin.enabled
-            ? <EnabledAction onClick={() => handleSwitchStatus(regionalAdmin)} />
-            : <DisabledAction onClick={() => handleSwitchStatus(regionalAdmin)} />
-          }
-          <EditAction onClick={() => handleEdit(regionalAdmin)} />
-          <DeleteAction className="ml-1" onClick={() => handleDelete(regionalAdmin.id)} disabled={regionalAdmin.enabled} />
-          <MailSendAction onClick={() => handleSendMail(regionalAdmin.id)} disabled={regionalAdmin.last_login} />
-        </>
-      );
-
-      return {
-        last_name: regionalAdmin.last_name,
-        first_name: regionalAdmin.first_name,
-        email: regionalAdmin.email,
-        region: regionalAdmin.region_name,
-        status: <EnabledStatus enabled={!!regionalAdmin.enabled} />,
-        last_login: regionalAdmin.last_login ? moment.utc(regionalAdmin.last_login).local().format(settings.datetime_format) : '',
-        action
-      };
-    }),
+  const rows = useMemo(
+    () =>
+      (regionalAdmins?.data || []).map((regionalAdmin) => {
+        const action = (
+          <>
+            {regionalAdmin.enabled ? (
+              <EnabledAction
+                onClick={() => handleSwitchStatus(regionalAdmin)}
+              />
+            ) : (
+              <DisabledAction
+                onClick={() => handleSwitchStatus(regionalAdmin)}
+              />
+            )}
+            <EditAction onClick={() => handleEdit(regionalAdmin)} />
+            <DeleteAction
+              className="ml-1"
+              onClick={() => handleDelete(regionalAdmin.id)}
+              disabled={regionalAdmin.enabled}
+            />
+            <MailSendAction
+              onClick={() => handleSendMail(regionalAdmin.id)}
+              disabled={regionalAdmin.last_login}
+            />
+          </>
+        );
+        return {
+          last_name: regionalAdmin.last_name,
+          first_name: regionalAdmin.first_name,
+          email: regionalAdmin.email,
+          region:
+            regionalAdmin.region_name ??
+            (regionalAdmin as any).admin_regions
+              ?.map((region: any) => region.name)
+              .join(' / '),
+          status: <EnabledStatus enabled={!!regionalAdmin.enabled} />,
+          last_login: regionalAdmin.last_login
+            ? moment
+                .utc(regionalAdmin.last_login)
+                .local()
+                .format(settings.datetime_format)
+            : '',
+          action,
+        };
+      }),
     [regionalAdmins]
   );
 
@@ -87,7 +121,9 @@ const RegionalAdmin = () => {
     showAlert({
       title: t('user.switchStatus_confirmation_title'),
       message: t('common.switchStatus_confirmation_message'),
-      onConfirm: () => { handleSwitchStatusConfirm(regionalAdmin.id, !regionalAdmin.enabled); }
+      onConfirm: () => {
+        handleSwitchStatusConfirm(regionalAdmin.id, !regionalAdmin.enabled);
+      },
     });
   };
 
@@ -125,30 +161,29 @@ const RegionalAdmin = () => {
     showAlert({
       title: t('regional_admin.delete'),
       message: t('common.delete_confirmation_message'),
-      onConfirm: () => { handleDeleteConfirm(id); }
+      onConfirm: () => {
+        handleDeleteConfirm(id);
+      }
     });
   };
 
   const handleDeleteConfirm = async (id: number) => {
     if (id) {
       dispatch(showSpinner(true));
-      deletePhcServiceAdmin(
-        id,
-        {
-          onSuccess: async (res) => {
-            dispatch(showSpinner(false));
-            showToast({
-              title: t('toast_title.delete_admin_account'),
-              message: t(res?.message),
-              color: 'success'
-            });
-            closeDialog();
-          },
-          onError: () => {
-            dispatch(showSpinner(false));
-          }
+      deletePhcServiceAdmin(id, {
+        onSuccess: async (res) => {
+          dispatch(showSpinner(false));
+          showToast({
+            title: t('toast_title.delete_admin_account'),
+            message: t(res?.message),
+            color: 'success'
+          });
+          closeDialog();
+        },
+        onError: () => {
+          dispatch(showSpinner(false));
         }
-      );
+      });
     }
   };
 
@@ -169,9 +204,7 @@ const RegionalAdmin = () => {
 
   return (
     <div className="mt-3">
-      <p>
-        {t('common.regional_admin.management')}
-      </p>
+      <p>{t('common.regional_admin.management')}</p>
       <BasicTable
         showSearch={true}
         showPagination={true}

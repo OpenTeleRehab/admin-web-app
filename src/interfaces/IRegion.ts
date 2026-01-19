@@ -7,6 +7,11 @@ export interface IRegionResource {
   phc_worker_limit: number;
 }
 
+export interface IAdminRegion {
+  id: number;
+  name: string;
+}
+
 export interface IRegionEntitiesCount {
   regional_admin_count: number;
   province_count: number;
