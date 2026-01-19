@@ -100,7 +100,8 @@ export const USER_ROLES = {
   VIEW_PHC_WORKER_LIST: 'view_phc_worker_list',
   DELETE_THERAPIST: 'delete_therapist',
   DELETE_PHC_WORKER: 'delete_phc_worker',
-  MANAGE_GLOBAL_PATIENT: 'manage_global_patient'
+  MANAGE_GLOBAL_PATIENT: 'manage_global_patient',
+  VIEW_CATEGORY_LIST: 'view_category_list',
 };
 
 export const SETTING_ROLES = [

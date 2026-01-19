@@ -104,13 +104,11 @@ const Survey = ({ translate, handleRowEdit }) => {
             const action = (
               <>
                 <ViewAction onClick={() => handleViewSurvey(item)}/>
+                {!item.published_date && (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_SURVEY)) && (
+                  <EditAction onClick={() => handleRowEdit(item.id)} />
+                )}
                 {keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && (
-                  <>
-                    {!item.published_date && (
-                      <EditAction onClick={() => handleRowEdit(item.id)} />
-                    )}
-                    <PublishAction className="ml-1" onClick={() => handlePublish(item.id, item.role)} disabled={item.published_date} />
-                  </>
+                  <PublishAction className="ml-1" onClick={() => handlePublish(item.id, item.role)} disabled={item.published_date} />
                 )}
                 {keycloak.hasRealmRole(USER_ROLES.DOWNLOAD_SURVEY) && item.published_date && (
                   <DownloadAction className="ml-1" onClick={() => handleDownload(item.id, item.role)} />

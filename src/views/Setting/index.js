@@ -238,6 +238,7 @@ const Setting = ({ translate }) => {
       [VIEW_GUIDANCE_PAGE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_PHC_WORKER_GUIDANCE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_SURVEY]: USER_ROLES.MANAGE_SURVEY,
+      [VIEW_STATIC_PAGE]: USER_ROLES.MANAGE_STATIC_PAGE,
     };
 
     const excludedViews = [
@@ -396,7 +397,7 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_PHC_WORKER_GUIDANCE} eventKey={VIEW_PHC_WORKER_GUIDANCE}>
               {translate('setting.phc_worker_guidance')}
@@ -431,7 +432,7 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_SURVEY)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_SURVEY} eventKey={VIEW_SURVEY}>
               {translate('setting.survey')}
@@ -479,12 +480,12 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
       { hasAnyRole([USER_ROLES.MANAGE_PRIVACY_POLICY, USER_ROLES.VIEW_PRIVACY_POLICY, USER_ROLES.TRANSLATE_PRIVACY_POLICY]) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
-      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && view === VIEW_PHC_WORKER_GUIDANCE && <PhcWorkerGuidance /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_PHC_WORKER_GUIDANCE && <PhcWorkerGuidance /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_DISEASE) && view === VIEW_DISEASE && <Disease handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION) && view === VIEW_ORGANIZATION && <Organization handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_ASSISTIVE_TECHNOLOGY)) && view === VIEW_ASSISTIVE_TECHNOLOGY && <AssistiveTechnology handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COLOR_SCHEME) && view === VIEW_COLOR_SCHEME && <ColorScheme /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_SURVEY) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_SURVEY)) && view === VIEW_SURVEY && <Survey handleRowEdit={handleEdit} /> }
       { hasAnyRole([USER_ROLES.MANAGE_SCREENING_QUESTIONNAIRE, USER_ROLES.TRANSLATE_SCREENING_QUESTIONNAIRE]) && view === VIEW_SCREENING_QUESTIONNAIRE && <ScreeningQuestionnaire handleRowEdit={handleEdit} /> }
       { hasAnyRole([USER_ROLES.MANAGE_HEALTH_CONDITION, USER_ROLES.TRANSLATE_HEALTH_CONDITION]) && view === VIEW_HEALTH_CONDITION && <HealthCondition translate={translate} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_MFA_POLICY) && view === VIEW_MFA_POLICY && <MfaPolicy translate={translate} /> }
