@@ -62,7 +62,7 @@ const navItems = [
     label: 'category',
     to: ROUTES.CATEGORY,
     exact: true,
-    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
+    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY, USER_ROLES.VIEW_CATEGORY_LIST]
   },
   {
     label: 'setting',

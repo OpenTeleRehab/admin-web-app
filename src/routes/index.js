@@ -164,7 +164,7 @@ const routes = [
     component: CategoryPage,
     exact: true,
     type: PRIVATE,
-    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY]
+    roles: [USER_ROLES.SETUP_CATEGORY, USER_ROLES.TRANSLATE_CATEGORY, USER_ROLES.VIEW_CATEGORY_LIST]
   },
   {
     title: 'setting',

@@ -110,7 +110,7 @@ const PhcWorkerGuidance = () => {
                       <Card.Header className="d-flex justify-content-between align-items-center">
                         <h5>{guidancePage.title}</h5>
                         <div className="d-flex align-items-center">
-                          {keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) && (
+                          {keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && (
                             <>
                               <div {...provided.dragHandleProps}>
                                 <Button
@@ -125,7 +125,7 @@ const PhcWorkerGuidance = () => {
                               <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
                             </>
                           )}
-                          {(keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER_GUIDANCE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_PHC_WORKER_GUIDANCE)) && (
+                          {(keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && (
                             <Button
                               variant="link"
                               size="sm"

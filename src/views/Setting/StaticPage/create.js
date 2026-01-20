@@ -18,9 +18,10 @@ import { SketchPicker } from 'react-color';
 import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 import { useEditableLanguage } from 'hooks/useEditableLanguage';
+import keycloak from '../../../utils/keycloak';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -264,7 +265,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
           <Form.Label>{translate('setting.translations.platform')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Select
-            isDisabled={profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN}
+            isDisabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
             placeholder={translate('placeholder.platform')}
             classNamePrefix="filter"
             className={errorPlatform ? 'is-invalid' : ''}
@@ -293,7 +294,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               value={formFields.url}
               maxLength={settings.textMaxLength}
               isInvalid={errorUrl}
-              disabled={profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN}
+              disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
             />
 
             <Form.Control.Feedback type="invalid">

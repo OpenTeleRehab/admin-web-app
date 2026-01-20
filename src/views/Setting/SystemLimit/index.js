@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import CustomTable from 'components/Table';
 import { getSystemLimits, updateSystemLimit } from 'store/systemLimit/actions';
-import { USER_GROUPS } from '../../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import keycloak from '../../../utils/keycloak';
 
 const SystemLimit = ({ translate }) => {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const SystemLimit = ({ translate }) => {
   const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const [showInlineEdited] = useState(profile.type !== USER_GROUPS.ORGANIZATION_ADMIN);
+  const [showInlineEdited] = useState(keycloak.hasRealmRole(USER_ROLES.MANAGE_SYSTEM_LIMIT));
   const [editingStateColumnExtensions] = useState([
     { columnName: 'content_type', editingEnabled: false }
   ]);
