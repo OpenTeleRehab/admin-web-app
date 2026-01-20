@@ -9,3 +9,9 @@ export interface IPHCService {
   phc_worker_limit: number;
   dial_code: string;
 }
+
+export interface IPhcServiceEntitiesCount {
+  phc_service_admin_count: number;
+  phc_worker_count: number;
+  patient_count: number;
+}

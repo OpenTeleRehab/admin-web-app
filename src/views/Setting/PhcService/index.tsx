@@ -14,6 +14,7 @@ import { IPHCService } from '../../../interfaces/IPHCService';
 import { END_POINTS } from 'variables/endPoint';
 import BasicTable from 'components/Table/basic';
 import _ from 'lodash';
+import DeletePhcServiceConfirmation from './_Partials/deleteConfirmation';
 
 const PhcService = () => {
   const t = useTranslate();
@@ -56,31 +57,37 @@ const PhcService = () => {
     showAlert({
       title: t('phc_service.delete'),
       message: t('phc_service.delete_confirmation_message'),
-      onConfirm: () => handleDeleteConfirm(id)
+      closeOnConfirm: false,
+      onConfirm: () => {
+        openDialog({
+          title: t('phc_service.delete'),
+          content: (
+            <DeletePhcServiceConfirmation
+              phcServiceId={id}
+              onConfirm={() => {
+                dispatch(showSpinner(true));
+                deletePhcService(id, {
+                  onSuccess: async (res: any) => {
+                    dispatch(showSpinner(false));
+                    closeDialog();
+                    closeDialog();
+                    showToast({
+                      title: t('phc_service.toast_title.delete'),
+                      message: t(res.message),
+                      color: 'success'
+                    });
+                  },
+                  onError: () => {
+                    dispatch(showSpinner(false));
+                  }
+                });
+              }}
+            />
+          ),
+          props: { size: 'lg' }
+        });
+      }
     });
-  };
-
-  const handleDeleteConfirm = async (phcServiceId: number) => {
-    if (phcServiceId) {
-      dispatch(showSpinner(true));
-      deletePhcService(
-        phcServiceId,
-        {
-          onSuccess: async (res: any) => {
-            dispatch(showSpinner(false));
-            showToast({
-              title: t('phc_service.toast_title.delete'),
-              message: t(res.data.message),
-              color: 'success'
-            });
-            closeDialog();
-          },
-          onError: () => {
-            dispatch(showSpinner(false));
-          }
-        }
-      );
-    }
   };
 
   const rows = useMemo(() =>

@@ -13,6 +13,7 @@ import { useInvalidate } from 'hooks/useInvalidate';
 import { END_POINTS } from 'variables/endPoint';
 import { IRegionResource } from 'interfaces/IRegion';
 import { useEffect, useMemo, useState } from 'react';
+import DeleteRegionConfirmation from './_Partials/deleteConfirmation';
 
 const Region = () => {
   const dispatch = useDispatch();
@@ -78,7 +79,19 @@ const Region = () => {
     showAlert({
       title: t('region.delete_confirmation.title'),
       message: t('region.delete_confirmation.message'),
-      onConfirm: () => handleDelete(regionId)
+      closeOnConfirm: false,
+      onConfirm: () => {
+        openDialog({
+          title: t('region.delete_confirmation.title'),
+          content: (
+            <DeleteRegionConfirmation
+              regionId={regionId}
+              onConfirm={() => handleDelete(regionId)}
+            />
+          ),
+          props: { size: 'lg' }
+        });
+      }
     });
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import BasicTable from 'components/Table/basic';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getLanguageName } from 'utils/language';
-import Dialog from 'components/Dialog';
 import { getCountries } from 'store/country/actions';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
@@ -16,8 +15,13 @@ import { Spinner } from 'react-bootstrap';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { useDelete } from 'hooks/useDelete';
 import useToast from 'components/V2/Toast';
+import useDialog from 'components/V2/Dialog';
+import DeleteCountryConfirmation from './Partial/deleteConfirmation';
+import { useAlertDialog } from 'components/V2/AlertDialog';
 
 const Country = ({ translate, handleRowEdit }) => {
+  const { openDialog, closeDialog } = useDialog();
+  const { showAlert } = useAlertDialog();
   const { showToast } = useToast();
   const { data: countries, isLoading } = useList(END_POINTS.COUNTRY);
   const languages = useSelector(state => state.language.languages);
@@ -37,32 +41,38 @@ const Country = ({ translate, handleRowEdit }) => {
     { name: 'action', title: translate('common.action') }
   ];
 
-  const [deleteId, setDeleteId] = useState('');
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
   useEffect(() => {
     dispatch(getCountries());
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    setDeleteId(id);
-    setShowDeleteDialog(true);
-  };
-
-  const handleDeleteDialogClose = () => {
-    setDeleteId(null);
-    setShowDeleteDialog(false);
-  };
-
-  const handleDeleteDialogConfirm = () => {
-    deleteCountry(deleteId, {
-      onSuccess: (res) => {
-        invalidate(END_POINTS.COUNTRY_LIMITATION);
-        handleDeleteDialogClose();
-        showToast({
-          title: translate('toast_title.delete_country'),
-          message: translate(res?.message),
-          color: 'success'
+    showAlert({
+      title: translate('country.delete_confirmation_title'),
+      message: translate('common.delete_confirmation_message'),
+      closeOnConfirm: false,
+      onConfirm: () => {
+        openDialog({
+          title: translate('country.delete_confirmation_title'),
+          content: (
+            <DeleteCountryConfirmation
+              countryId={id}
+              onConfirm={() => {
+                deleteCountry(id, {
+                  onSuccess: (res) => {
+                    invalidate(END_POINTS.COUNTRY_LIMITATION);
+                    closeDialog();
+                    closeDialog();
+                    showToast({
+                      title: translate('toast_title.delete_country'),
+                      message: translate(res?.message),
+                      color: 'success'
+                    });
+                  }
+                });
+              }}
+            />
+          ),
+          props: { size: 'lg' }
         });
       }
     });
@@ -95,16 +105,6 @@ const Country = ({ translate, handleRowEdit }) => {
         })}
         columns={columns}
       />
-      <Dialog
-        show={showDeleteDialog}
-        title={translate('country.delete_confirmation_title')}
-        cancelLabel={translate('common.no')}
-        onCancel={handleDeleteDialogClose}
-        confirmLabel={translate('common.yes')}
-        onConfirm={handleDeleteDialogConfirm}
-      >
-        <p>{translate('common.delete_confirmation_message')}</p>
-      </Dialog>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
