@@ -43,27 +43,25 @@ const MfaPolicy = ({ translate }) => {
     }
   }, [mfaSettings, jobStatuses]);
 
-  const columns = useMemo(() => {
-    let cols = [
-      { name: 'role', title: translate('mfa.user_type') },
-      { name: 'organizations', title: translate('mfa.organizations') },
-      { name: 'countries', title: translate('mfa.countries') },
-      { name: 'clinics', title: translate('mfa.services') },
-      { name: 'attributes', title: translate('mfa.configs') },
-      { name: 'progress_status', title: translate('mfa.status') },
-      { name: 'action', title: translate('common.action') }
-    ];
+  const columns = useMemo(() => [
+    { name: 'role', title: translate('mfa.user_type') },
+    { name: 'organizations', title: translate('mfa.organizations') },
 
-    if (profile.type === USER_GROUPS.SUPER_ADMIN) {
-      cols = cols.filter(col => col.name !== 'countries');
-    }
+    ...(profile.type !== USER_GROUPS.SUPER_ADMIN
+      ? [{ name: 'countries', title: translate('mfa.countries') }]
+      : []),
 
-    if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) {
-      cols = cols.filter(col => col.name !== 'clinics');
-    }
+    { name: 'regions', title: translate('mfa.regions') },
 
-    return cols;
-  }, [translate, profile.type]);
+    ...((profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && profile.type !== USER_GROUPS.SUPER_ADMIN))
+      ? [{ name: 'clinics', title: translate('mfa.services') }]
+      : [],
+
+    { name: 'phc_services', title: translate('mfa.phc_services') },
+    { name: 'attributes', title: translate('mfa.configs') },
+    { name: 'progress_status', title: translate('mfa.status') },
+    { name: 'action', title: translate('common.action') }
+  ], [translate]);
 
   const handleEdit = (record) => {
     setEditingMfa(record);
@@ -85,7 +83,9 @@ const MfaPolicy = ({ translate }) => {
               role: <Translate id={`common.${mfaSetting.role}`} />,
               organizations: mfaSetting.organizations_name.join(', '),
               countries: mfaSetting.countries.join(', '),
+              regions: mfaSetting.regions?.join(', '),
               clinics: mfaSetting.clinics.join(', '),
+              phc_services: mfaSetting.phc_services?.join(', '),
               attributes: (
                 <ul style={{ paddingLeft: '1rem', marginTop: 0, marginBottom: 0 }}>
                   <li>
