@@ -7,7 +7,7 @@ import { useTranslate } from 'hooks/useTranslate';
 
 const PhcServiceFilterCell = ({ onFilter } : { onFilter: (value: any) => void }) => {
   const [phcService, setPhcService] = useState<number | string>('');
-  const { data: phcServices } = useList<IPHCService>(END_POINTS.PHC_SERVICES_BY_REGION);
+  const { data: phcServices } = useList<IPHCService>(END_POINTS.PHC_SERVICES_OPTION_LIST);
   const t = useTranslate();
 
   const customSelectStyles = {

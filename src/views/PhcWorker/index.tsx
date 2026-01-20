@@ -12,7 +12,7 @@ import {
   getTotalOnGoingTreatmentByPhcWorker,
   getTotalPatientByPhcWorker
 } from 'utils/patient';
-import { USER_ROLES } from '../../variables/user';
+import { USER_GROUPS, USER_ROLES } from '../../variables/user';
 import { useKeycloak } from '@react-keycloak/web';
 import _ from 'lodash';
 import { getProfessionName } from 'utils/profession';
@@ -28,6 +28,10 @@ import { useMutationAction } from 'hooks/useMutationAction';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import { IPhcWorker } from 'interfaces/IPhcWorker';
 import { checkFederatedUser } from 'utils/user';
+import { getCountryName } from 'utils/country';
+import DeletePhcWorker from './_Partials/delete';
+import { getRegionName } from 'utils/region';
+import { getPhcServiceName } from 'utils/phcService';
 
 const PhcWorker = () => {
   const dispatch = useDispatch();
@@ -37,7 +41,6 @@ const PhcWorker = () => {
   const { showAlert } = useAlertDialog();
   const { keycloak } = useKeycloak();
   const countries = useSelector((state: any) => state.country.countries);
-  const clinics = useSelector((state: any) => state.clinic.clinics);
   const { profile } = useSelector((state: any) => state.auth);
   const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const [pageSize, setPageSize] = useState(60);
@@ -63,10 +66,11 @@ const PhcWorker = () => {
     { enabled: (phcWorkers?.data ?? []).length > 0 }
   );
   const { data: professions } = useList<any>(END_POINTS.PROFESSIONS);
+  const { data: { data: regions = [] } = {} } = useList(END_POINTS.REGION, {}, { enabled: keycloak.hasRealmRole(USER_ROLES.VIEW_REGION_LIST) });
+  const { data: { data: phcServices = [] } = {} } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, {}, { enabled: keycloak.hasRealmRole(USER_ROLES.VIEW_PHC_SERVICE_LIST) });
   const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER) });
   const { mutate: updatePhcWorkerStatus } = useMutationAction(END_POINTS.PHC_WORKERS_UPDATE_STATUS);
   const { mutate: resendEmail } = useMutationAction(END_POINTS.PHC_WORKERS_RESEND_EMAIL);
-  const { mutate: deletePhcWorker } = useMutationAction(END_POINTS.PHC_WORKERS_DELETE);
 
   const PhcWorkerListTable = CustomTable as any;
 
@@ -80,7 +84,7 @@ const PhcWorker = () => {
     }
   }, [currentPage, pageSize, searchValue, filters, profile]);
 
-  const columns = useMemo(() => [
+  let columns = useMemo(() => [
     { name: 'id', title: t('common.id') },
     { name: 'last_name', title: t('common.last_name') },
     { name: 'first_name', title: t('common.first_name') },
@@ -92,6 +96,20 @@ const PhcWorker = () => {
     { name: 'last_login', title: t('common.last_login') },
     { name: 'action', title: t('common.action') }
   ], [t]);
+
+  if (profile?.type === USER_GROUPS.ORGANIZATION_ADMIN || profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) {
+    columns = useMemo(() => [
+      { name: 'id', title: t('common.id') },
+      { name: 'profession', title: t('common.profession') },
+      { name: (profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) ? 'phc_worker_country' : 'country', title: t('common.country') },
+      { name: profile?.type === USER_GROUPS.REGIONAL_ADMIN ? 'phc_worker_region' : 'region', title: t('common.region') },
+      { name: 'phc_service', title: t('common.phc_service') },
+      { name: 'total_patient', title: t('common.total_patient') },
+      { name: 'on_going_treatment', title: t('common.ongoing_treatment_plan') },
+      { name: 'limit_patient', title: t('common.on_going.treatment_let') },
+      { name: 'action', title: t('common.action') }
+    ], [t]);
+  }
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true, width: 250 },
@@ -161,35 +179,11 @@ const PhcWorker = () => {
     );
   };
 
-  const handleDelete = (id: number) => {
-    showAlert({
+  const handleDelete = (phcWorker: IPhcWorker) => {
+    openDialog({
       title: t('phc_worker.delete'),
-      message: t('common.delete_confirmation_message'),
-      onConfirm: () => { handleDeleteConfirm(id); }
+      content: <DeletePhcWorker phcWorker={phcWorker} />,
     });
-  };
-
-  const handleDeleteConfirm = async (id: number) => {
-    if (id) {
-      dispatch(showSpinner(true));
-      deletePhcWorker(
-        { id, invalidateKeys: [END_POINTS.PHC_WORKERS] },
-        {
-          onSuccess: async (res) => {
-            dispatch(showSpinner(false));
-            showToast({
-              title: t('phc_worker.delete'),
-              message: t(res?.message),
-              color: 'success'
-            });
-            closeDialog();
-          },
-          onError: () => {
-            dispatch(showSpinner(false));
-          }
-        }
-      );
-    }
   };
 
   const rows = useMemo(() =>
@@ -205,12 +199,12 @@ const PhcWorker = () => {
                 : <DisabledAction onClick={() => handleSwitchStatus(phcWorker)} />
               }
               <EditAction onClick={() => handleEdit(phcWorker)} />
-              <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker.id)} />
+              <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker)} />
               {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(phcWorker.id)} disabled={phcWorker.last_login} />}
             </>
           )}
           {keycloak.hasRealmRole(USER_ROLES.DELETE_PHC_WORKER) && (
-            <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker.id)} />
+            <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker)} />
           )}
         </>
       );
@@ -221,6 +215,11 @@ const PhcWorker = () => {
         last_name: phcWorker.last_name,
         email: phcWorker.email,
         profession: getProfessionName(phcWorker.profession_id, professions?.data || []),
+        country: getCountryName(phcWorker.country_id, countries),
+        phc_worker_country: getCountryName(phcWorker.country_id, countries),
+        region: getRegionName(phcWorker.region_id, regions),
+        phc_worker_region: getRegionName(phcWorker.region_id, regions),
+        phc_service: getPhcServiceName(phcWorker.phc_service_id, phcServices),
         total_patient: getTotalPatientByPhcWorker(phcWorker.id, patients?.data),
         on_going_treatment: getTotalOnGoingTreatmentByPhcWorker(phcWorker.id, patients?.data),
         assigned_patient: getTotalOnGoingTreatmentByPhcWorker(phcWorker.id, patients?.data),
@@ -230,7 +229,7 @@ const PhcWorker = () => {
         action
       };
     }),
-    [phcWorkers, handleEdit, handleSendMail, handleSwitchStatus, countries, clinics, professions, patients]
+    [phcWorkers, handleEdit, handleSendMail, handleSwitchStatus, countries, regions, phcServices, professions, patients]
   );
 
   return (

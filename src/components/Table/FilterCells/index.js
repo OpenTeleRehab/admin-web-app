@@ -31,7 +31,8 @@ const FilterCell = (props) => {
     column.name === 'storage_used' || column.name === 'on_going_treatment' ||
     column.name === 'total_patient' || column.name === 'assigned_patient' ||
     column.name === 'identity' ||
-    column.name === 'profession_name') {
+    column.name === 'profession_name' || column.name === 'phc_worker_country' ||
+    column.name === 'phc_worker_region') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'therapist_country') {
     return <CountryFilterCell {...props} />;
