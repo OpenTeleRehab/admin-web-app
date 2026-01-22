@@ -293,6 +293,8 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
             <span className="text-dark ml-1">*</span>
             <Form.Control
               name="limit_patient"
+              type="number"
+              min={0}
               onChange={handleChange}
               placeholder={translate('placeholder.limit_patient')}
               isInvalid={errorLimitPatient || errorOverDefaultLimit}

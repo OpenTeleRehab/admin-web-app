@@ -180,7 +180,7 @@ const CreateEditPhcWorker = ({ phcWorker } : {phcWorker?: IPhcWorker}) => {
                   }
 
                   if (numValue > maxPhcOngoingTreatmentPlans) {
-                    return t('error.over_default_limit_patient');
+                    return t('error.over_default_limit_patient_of_phc');
                   }
 
                   return true;
