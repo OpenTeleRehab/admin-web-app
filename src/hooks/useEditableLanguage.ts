@@ -4,7 +4,7 @@ import { USER_GROUPS } from 'variables/user';
 export const useEditableLanguage = (langId: number) => {
   const profile = useSelector((state: any) => state.auth.profile);
 
-  if (profile.type === USER_GROUPS.SUPER_ADMIN) {
+  if (profile.type !== USER_GROUPS.TRANSLATOR) {
     return true;
   }
 

@@ -385,6 +385,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      disabled={!isEditableLanguage}
       size="xl"
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>

@@ -406,7 +406,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               toolbar: settings.tinymce.toolbar
             }}
             onEditorChange={handleEditorChange}
-            disabled={!isEditableLanguage}
+            disabled={!isEditableLanguage || !keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
           />
           {errorContent &&
             <div className="invalid-feedback d-block">{translate('error.term_and_condition.content')}</div>

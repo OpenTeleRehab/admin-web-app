@@ -12,6 +12,8 @@ import {
 import Dialog from 'components/Dialog';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import { useKeycloak } from '@react-keycloak/web';
+import { USER_ROLES } from '../../../variables/user';
 
 const AssistiveTechnology = ({ translate, handleRowEdit }) => {
   const { assistiveTechnologies } = useSelector((state) => state.assistiveTechnology);
@@ -20,6 +22,7 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
   const [isUsed, setIsUsed] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
 
   useEffect(() => {
     dispatch(getAssistiveTechnologies());
@@ -60,7 +63,7 @@ const AssistiveTechnology = ({ translate, handleRowEdit }) => {
             const action = (
               <>
                 <EditAction onClick={() => handleRowEdit(item.id)} />
-                <DeleteAction className="ml-1" onClick={() => handleDelete(item.id, item.isUsed)} />
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY) && <DeleteAction className="ml-1" onClick={() => handleDelete(item.id, item.isUsed)} />}
               </>
             );
             return {
