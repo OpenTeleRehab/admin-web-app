@@ -14,7 +14,6 @@ import { IPhcWorker } from 'interfaces/IPhcWorker';
 import { END_POINTS } from 'variables/endPoint';
 import { useList } from 'hooks/useList';
 import { useOne } from 'hooks/useOne';
-import scssColors from 'scss/custom.scss';
 import { useMutationAction } from 'hooks/useMutationAction';
 import useToast from 'components/V2/Toast';
 import { showSpinner } from 'store/spinnerOverlay/actions';
@@ -53,7 +52,7 @@ const DeletePhcWorker = ({ phcWorker }: {phcWorker: IPhcWorker}) => {
       color: 'black',
       backgroundColor: 'white',
       '&:hover': {
-        backgroundColor: scssColors.infoLight
+        backgroundColor: '#DEE7FF'
       }
     })
   };
