@@ -10,11 +10,12 @@ import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import BasicTable from 'components/Table/basic';
 import customColorScheme from '../../../utils/customColorScheme';
 import keycloak from '../../../utils/keycloak';
+import { useRole } from 'hooks/useRole';
 
 const StaticPage = ({ translate, handleRowEdit }) => {
   const dispatch = useDispatch();
+  const { hasAnyRole } = useRole();
   const { staticPages } = useSelector(state => state.staticPage);
-  const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [pages, setPages] = useState(staticPages);
   const columns = [
@@ -24,18 +25,12 @@ const StaticPage = ({ translate, handleRowEdit }) => {
   ];
 
   useEffect(() => {
-    if (profile && profile.language_id) {
-      dispatch(getStaticPages());
-    }
-  }, [profile]);
+    dispatch(getStaticPages({ url: hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.TRANSLATE_STATIC_PAGE]) ? 'faq' : 'about-us' }));
+  }, []);
 
   useEffect(() => {
-    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
-      setPages(_.filter(staticPages, (item) => { return item.url === 'about-us'; }));
-    } else {
-      setPages(staticPages);
-    }
-  }, [staticPages, profile]);
+    setPages(staticPages);
+  }, [staticPages]);
 
   return (
     <>
@@ -44,7 +39,7 @@ const StaticPage = ({ translate, handleRowEdit }) => {
           rows={pages.map(staticPage => {
             const action = (
               <>
-                {(keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && (
+                {(keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && (
                   <EditAction className="ml-1" onClick={() => handleRowEdit(staticPage.id)} />
                 )}
               </>

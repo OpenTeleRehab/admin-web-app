@@ -86,6 +86,7 @@ import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { END_POINTS } from 'variables/endPoint';
 import { useList } from 'hooks/useList';
 import { useRole } from 'hooks/useRole';
+import _ from 'lodash';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -238,7 +239,7 @@ const Setting = ({ translate }) => {
       [VIEW_GUIDANCE_PAGE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_PHC_WORKER_GUIDANCE]: USER_ROLES.MANAGE_GUIDANCE_PAGE,
       [VIEW_SURVEY]: USER_ROLES.MANAGE_SURVEY,
-      [VIEW_STATIC_PAGE]: USER_ROLES.MANAGE_STATIC_PAGE,
+      [VIEW_STATIC_PAGE]: [USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE],
     };
 
     const excludedViews = [
@@ -250,8 +251,7 @@ const Setting = ({ translate }) => {
     if (excludedViews.includes(view)) return false;
 
     if (profile?.type === USER_GROUPS.SUPER_ADMIN) return true;
-
-    if (viewRoleMap[view] && keycloak.hasRealmRole(viewRoleMap[view])) return true;
+    if (viewRoleMap[view] && (_.isArray(viewRoleMap[view]) ? hasAnyRole(viewRoleMap[view]) : keycloak.hasRealmRole(viewRoleMap[view]))) return true;
 
     return false;
   };
@@ -383,7 +383,7 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
-        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && (
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && (
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.SETTING_STATIC_PAGE} eventKey={VIEW_STATIC_PAGE}>
               {translate('setting.static_page')}
@@ -477,7 +477,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && view === VIEW_CLINIC && <Clinic handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE) && view === VIEW_PHC_SERVICE && <PhcService /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION) && view === VIEW_PROFESSION && <Profession handleRowEdit={handleEdit} /> }
-      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
       { hasAnyRole([USER_ROLES.MANAGE_PRIVACY_POLICY, USER_ROLES.VIEW_PRIVACY_POLICY, USER_ROLES.TRANSLATE_PRIVACY_POLICY]) && view === VIEW_PRIVACY_POLICY && <PrivacyPolicy handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_GUIDANCE_PAGE && <GuidancePage handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && view === VIEW_PHC_WORKER_GUIDANCE && <PhcWorkerGuidance /> }
