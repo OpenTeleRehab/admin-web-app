@@ -15,4 +15,5 @@ export interface IPhcWorker {
   language_id?: number;
   limit_patient: number;
   last_login?: string;
+  chat_rooms?: string[];
 };

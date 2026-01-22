@@ -102,6 +102,8 @@ export const USER_ROLES = {
   DELETE_PHC_WORKER: 'delete_phc_worker',
   MANAGE_GLOBAL_PATIENT: 'manage_global_patient',
   VIEW_CATEGORY_LIST: 'view_category_list',
+  VIEW_REGION_LIST: 'view_region_list',
+  VIEW_PHC_SERVICE_LIST: 'view_phc_service_list',
 };
 
 export const SETTING_ROLES = [

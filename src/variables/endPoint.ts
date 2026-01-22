@@ -16,7 +16,7 @@ export const END_POINTS = {
   PROFESSIONS: 'profession',
   PROFESSION_LIST: 'profession/list',
   PHC_SERVICES_BY_PROVINCE: 'phc-services-by-province',
-  PHC_SERVICES_BY_REGION: 'phc-services-by-region',
+  PHC_SERVICES_OPTION_LIST: 'phc-services/option/list',
   ADMIN: 'admin',
   ADMIN_UPDATE_STATUS: 'admin/updateStatus',
   ADMIN_RESEND_EMAIL: 'admin/resend-email',
@@ -25,6 +25,7 @@ export const END_POINTS = {
   PHC_WORKERS_UPDATE_STATUS: 'phc-workers/updateStatus',
   PHC_WORKERS_RESEND_EMAIL: 'phc-workers/resend-email',
   PHC_WORKERS_DELETE: 'phc-workers/delete/by-id',
+  PHC_WORKER_LIST_BY_PHC_SERVICE: 'phc-workers/list/by-phc-service',
   PATIENT_REFERRAL: 'patient-referrals',
   THERAPIST_BY_CLINIC: 'therapist/list/by-clinic-id',
   PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
@@ -32,4 +33,6 @@ export const END_POINTS = {
   GUIDANCE_PAGE: 'guidance-page',
   GUIDANCE_PAGE_UPDATE_ORDER: 'guidance-page/update-order',
   TRANSLATOR: 'translator',
+  NUMBER_OF_TRANSFER_BY_THERAPIST: 'transfer/number/by-therapist',
+  PATIENT_LIST_FOR_PHC_WORKER_REMOVE: 'patient/list/for-phc-worker-remove',
 };
