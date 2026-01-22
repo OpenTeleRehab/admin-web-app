@@ -29,14 +29,16 @@ const EdiInformation = ({ editId }) => {
   const [disabled, setDisable] = useState(true);
 
   const [formFields, setFormFields] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    gender: '',
-    country_id: '',
-    clinic_id: '',
-    language_id: ''
+    first_name: profile.first_name,
+    last_name: profile.last_name,
+    email: profile.email,
+    gender: profile.gender ?? '',
+    country_id: profile.country_id ?? '',
+    clinic_id: profile.clinic_id ?? '',
+    language_id: profile.language_id ?? '',
+    notifiable: profile.notifiable,
   });
+
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
@@ -45,6 +47,12 @@ const EdiInformation = ({ editId }) => {
 
   const handleSingleSelectChange = (key, value) => {
     setFormFields({ ...formFields, [key]: value });
+    setDisable(false);
+  };
+
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
     setDisable(false);
   };
 
@@ -80,24 +88,6 @@ const EdiInformation = ({ editId }) => {
         });
     }
   };
-
-  useEffect(() => {
-    if (profile) {
-      setFormFields({
-        email: profile.email,
-        gender: profile.gender || '',
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        country_id: profile.country_id || '',
-        clinic_id: profile.clinic_id || '',
-        language_id: profile.language_id || ''
-      });
-    }
-  }, [profile]);
-
-  if (profile === undefined) {
-    return React.Fragment;
-  }
 
   const customSelectStyles = {
     option: (provided) => ({
@@ -228,6 +218,21 @@ const EdiInformation = ({ editId }) => {
                 options={clinics}
                 styles={customSelectStyles}
                 aria-label="Clinic"
+              />
+            </Form.Group>
+          </Form.Row>
+        )}
+
+        {[USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type) && (
+          <Form.Row>
+            <Form.Group className="col-sm-4 md-4" controlId="formNotifiable">
+              <Form.Check
+                name="notifiable"
+                aria-label={translate('common.turn_on_notification')}
+                label={translate('common.turn_on_notification')}
+                type="checkbox"
+                checked={formFields.notifiable}
+                onChange={handleCheckBoxChange}
               />
             </Form.Group>
           </Form.Row>
