@@ -493,7 +493,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                 </Form.Group>
                             }
                             <Form.Group controlId={`formCheckbox${index}`}>
-                              <Form.Check checked={question.mandatory} onChange={(event) => handleCheckboxChange(index, event)} type='checkbox' label="Mandatory" aria-label="checkbox"/>
+                              <Form.Check checked={question.mandatory} onChange={(event) => handleCheckboxChange(index, event)} type='checkbox' label="Mandatory" aria-label="checkbox" disabled={disabled} />
                             </Form.Group>
                           </div>
                         </Card.Body>
