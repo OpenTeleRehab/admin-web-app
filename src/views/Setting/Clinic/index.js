@@ -27,7 +27,6 @@ const Clinic = ({ translate, handleRowEdit }) => {
     { name: 'name', title: translate('common.name') },
     { name: 'country_iso', title: translate('common.country.iso_code') },
     { name: 'province', title: translate('common.province') },
-    { name: 'city', title: translate('common.city') },
     { name: 'therapist_limit', title: translate('common.therapist_limit') },
     { name: 'action', title: translate('common.action') }
   ]);
@@ -74,7 +73,6 @@ const Clinic = ({ translate, handleRowEdit }) => {
             name: clinic.name,
             country_iso: getCountryISO(clinic.country_id, countries),
             province: clinic.province?.name,
-            city: clinic.city,
             therapist_limit: clinic.therapist_limit,
             action
           };
