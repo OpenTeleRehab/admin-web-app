@@ -30,6 +30,7 @@ const Radio = ({ control, name, label, rules, options = [], ...props }) => {
                   {...props}
                   id={optionId}
                   label={opt.label}
+                  title={opt.title}
                   name={name}
                   type="radio"
                   value={opt.value}

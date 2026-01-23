@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
-const Select = ({ control, label, name, rules, options = [], isMulti = false, ...props }) => {
+const Select = ({ control, label, labelClassName = '', name, rules, options = [], isMulti = false, ...props }) => {
   return (
     <Controller
       name={name}
@@ -19,7 +19,7 @@ const Select = ({ control, label, name, rules, options = [], isMulti = false, ..
         return (
           <Form.Group controlId={sanitizedControlId}>
             {label && (
-              <Form.Label>
+              <Form.Label className={labelClassName}>
                 {label}
                 {rules && rules.required && <span className="text-dark ml-1">*</span>}
               </Form.Label>
@@ -59,6 +59,7 @@ const Select = ({ control, label, name, rules, options = [], isMulti = false, ..
 Select.propTypes = {
   control: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
+  labelClassName: PropTypes.string,
   rules: PropTypes.object,
   label: PropTypes.string,
   options: PropTypes.arrayOf(

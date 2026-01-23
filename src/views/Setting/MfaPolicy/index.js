@@ -9,9 +9,11 @@ import { JOB_STATUS } from 'variables/jobStatus';
 import CreateMfaPolicy from './create';
 import { EditAction } from 'components/ActionIcons';
 import { getMfaSettings } from 'store/mfaSetting/actions';
+import { USER_GROUPS } from 'variables/user';
 
 const MfaPolicy = ({ translate }) => {
   const dispatch = useDispatch();
+  const { profile } = useSelector(state => state.auth);
   const mfaSettings = useSelector(state => state.mfaSetting.mfaSettings);
   const [showEdit, setShowEdit] = useState(false);
   const [editingMfa, setEditingMfa] = useState(null);
@@ -41,15 +43,27 @@ const MfaPolicy = ({ translate }) => {
     }
   }, [mfaSettings, jobStatuses]);
 
-  const columns = useMemo(() => [
-    { name: 'role', title: translate('mfa.user_type') },
-    { name: 'organizations', title: translate('mfa.organizations') },
-    { name: 'countries', title: translate('mfa.countries') },
-    { name: 'clinics', title: translate('mfa.services') },
-    { name: 'attributes', title: translate('mfa.configs') },
-    { name: 'progress_status', title: translate('mfa.status') },
-    { name: 'action', title: translate('common.action') }
-  ], [translate]);
+  const columns = useMemo(() => {
+    let cols = [
+      { name: 'role', title: translate('mfa.user_type') },
+      { name: 'organizations', title: translate('mfa.organizations') },
+      { name: 'countries', title: translate('mfa.countries') },
+      { name: 'clinics', title: translate('mfa.services') },
+      { name: 'attributes', title: translate('mfa.configs') },
+      { name: 'progress_status', title: translate('mfa.status') },
+      { name: 'action', title: translate('common.action') }
+    ];
+
+    if (profile.type === USER_GROUPS.SUPER_ADMIN) {
+      cols = cols.filter(col => col.name !== 'countries');
+    }
+
+    if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) {
+      cols = cols.filter(col => col.name !== 'clinics');
+    }
+
+    return cols;
+  }, [translate, profile.type]);
 
   const handleEdit = (record) => {
     setEditingMfa(record);
@@ -80,12 +94,12 @@ const MfaPolicy = ({ translate }) => {
                   </li>
                   {mfaSetting && mfaSetting.mfa_expiration_duration && (
                     <li>
-                      <strong>{translate('mfa.mfa_expiration_duration')}</strong>: {mfaSetting.mfa_expiration_duration}
+                      <strong>{translate('mfa.mfa_expiration_duration')}</strong>: {mfaSetting.mfa_expiration_duration} {mfaSetting.mfa_expiration_unit}
                     </li>
                   )}
                   {mfaSetting && mfaSetting.skip_mfa_setup_duration && (
                     <li>
-                      <strong>{translate('mfa.skip_mfa_setup_duration')}</strong>: {mfaSetting.skip_mfa_setup_duration}
+                      <strong>{translate('mfa.skip_mfa_setup_duration')}</strong>: {mfaSetting.skip_mfa_setup_duration} {mfaSetting.skip_mfa_setup_unit}
                     </li>
                   )}
                 </ul>

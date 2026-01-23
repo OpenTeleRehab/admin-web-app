@@ -55,14 +55,12 @@ const Therapist = ({ translate }) => {
 
   let columns = [
     { name: 'id', title: translate('common.id') },
-    { name: 'last_name', title: translate('common.last_name') },
-    { name: 'first_name', title: translate('common.first_name') },
-    { name: 'email', title: translate('common.email') },
+    { name: 'profession', title: translate('common.profession') },
+    { name: 'region', title: translate('common.region') },
+    { name: 'therapist_clinic', title: translate('common.clinic') },
     { name: 'total_patient', title: translate('common.total_patient') },
-    { name: 'assigned_patient', title: translate('common.assigned_patient') },
+    { name: 'on_going_treatment', title: translate('common.ongoing_treatment_plan') },
     { name: 'limit_patient', title: translate('common.on_going.treatment_let') },
-    { name: 'status', title: translate('common.status') },
-    { name: 'last_login', title: translate('common.last_login') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -82,8 +80,8 @@ const Therapist = ({ translate }) => {
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true, width: 250 },
-    { columnName: 'last_name', wordWrapEnabled: true },
-    { columnName: 'first_name', wordWrapEnabled: true },
+    { columnName: 'profession', wordWrapEnabled: true },
+    { columnName: 'therapist_clinic', wordWrapEnabled: true },
     { columnName: 'limit_patient', wordWrapEnabled: true },
     { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
     { columnName: 'total_patient', wordWrapEnabled: true },

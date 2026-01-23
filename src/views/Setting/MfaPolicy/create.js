@@ -29,6 +29,14 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const { control, watch, handleSubmit, reset } = useForm();
   const role = watch('role');
 
+  const durationUnits = [
+    { label: 'Seconds', value: 'seconds' },
+    { label: 'Minutes', value: 'minutes' },
+    { label: 'Hours', value: 'hours' },
+    { label: 'Days', value: 'days' },
+    { label: 'Weeks', value: 'weeks' }
+  ];
+
   const roleOptions = useMemo(
     () =>
       profile.type === USER_GROUPS.ORGANIZATION_ADMIN
@@ -60,7 +68,9 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
       clinic_ids: initialData ? initialData.clinic_ids : [],
       mfa_enforcement: initialData ? initialData.mfa_enforcement : null,
       mfa_expiration_duration: initialData ? initialData.mfa_expiration_duration : '',
-      skip_mfa_setup_duration: initialData ? initialData.skip_mfa_setup_duration : ''
+      skip_mfa_setup_duration: initialData ? initialData.skip_mfa_setup_duration : '',
+      mfa_expiration_unit: initialData ? initialData.mfa_expiration_unit : 'seconds',
+      skip_mfa_setup_unit: initialData ? initialData.skip_mfa_setup_unit : 'seconds'
     });
   }, [initialData, reset]);
 
@@ -216,12 +226,22 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             {
               label: translate('mfa.enforcement.disable'),
               value: MFA_ENFORCEMENT.DISABLE,
-              disabled: ['recommend', 'force'].includes(mfaEnforcementValidation)
+              disabled: ['recommend', 'force'].includes(mfaEnforcementValidation),
+              ...(['recommend', 'force'].includes(mfaEnforcementValidation) && {
+                title: translate('mfa.enforcement.disable.description', {
+                  mfaEnforcementValidation: mfaEnforcementValidation
+                })
+              })
             },
             {
               label: translate('mfa.enforcement.recommend'),
               value: MFA_ENFORCEMENT.RECOMMEND,
-              disabled: ['force'].includes(mfaEnforcementValidation)
+              disabled: ['force'].includes(mfaEnforcementValidation),
+              ...(['force'].includes(mfaEnforcementValidation) && {
+                title: translate('mfa.enforcement.disable.description', {
+                  mfaEnforcementValidation: mfaEnforcementValidation
+                })
+              })
             },
             {
               label: translate('mfa.enforcement.force'),
@@ -231,7 +251,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         />
         {watch('mfa_enforcement') && watch('mfa_enforcement') !== MFA_ENFORCEMENT.DISABLE && (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) && (
           <Row>
-            <Col md={6}>
+            <Col md={4} className="pr-0">
               <Input
                 control={control}
                 type="number"
@@ -239,21 +259,43 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                 rules={{ required: 'This field is required' }}
                 label={translate('mfa.mfa_expiration_duration.label')}
                 placeholder={translate('mfa.expiration.duration.placeholder')}
-                endIcon={translate('common.seconds')}
+              />
+            </Col>
+            <Col md={2} className="pl-0">
+              <CustomSelect
+                control={control}
+                rules={{ required: translate('error.mfa_expiration_unit') }}
+                name="mfa_expiration_unit"
+                label={translate('mfa.mfa_expiration_unit.label')}
+                labelClassName="invisible"
+                options={durationUnits}
+                placeholder={translate('mfa.mfa_expiration_unit.placeholder')}
               />
             </Col>
             {watch('mfa_enforcement') === MFA_ENFORCEMENT.RECOMMEND && (
-              <Col md={6}>
-                <Input
-                  control={control}
-                  type="number"
-                  name="skip_mfa_setup_duration"
-                  rules={{ required: 'This field is required' }}
-                  label={translate('mfa.skip_mfa_setup_duration.label')}
-                  placeholder={translate('mfa.skip.setup.duration.placeholder')}
-                  endIcon={translate('common.seconds')}
-                />
-              </Col>
+              <>
+                <Col md={4} className="pr-0">
+                  <Input
+                    control={control}
+                    type="number"
+                    name="skip_mfa_setup_duration"
+                    rules={{ required: 'This field is required' }}
+                    label={translate('mfa.skip_mfa_setup_duration.label')}
+                    placeholder={translate('mfa.skip.setup.duration.placeholder')}
+                  />
+                </Col>
+                <Col md={2} className="pl-0">
+                  <CustomSelect
+                    control={control}
+                    rules={{ required: translate('error.skip_mfa_setup_unit') }}
+                    name="skip_mfa_setup_unit"
+                    label={translate('mfa.skip_mfa_setup_unit.label')}
+                    labelClassName="invisible"
+                    options={durationUnits}
+                    placeholder={translate('mfa.skip_mfa_setup_unit.placeholder')}
+                  />
+                </Col>
+              </>
             )}
           </Row>
         )}

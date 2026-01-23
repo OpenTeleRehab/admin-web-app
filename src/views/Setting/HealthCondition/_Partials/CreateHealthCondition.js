@@ -3,13 +3,14 @@ import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import { Form } from 'react-bootstrap';
-import { createHealthCondition, updateHealthCondition, getHealthCondition } from 'store/healthCondition/actions';
+import { createHealthCondition, updateHealthCondition, getHealthCondition, getHealthConditions } from 'store/healthCondition/actions';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import scssColors from '../../../../scss/custom.scss';
 import GoogleTranslationAttribute from '../../../../components/GoogleTranslationAttribute';
 import settings from '../../../../settings';
 import { useEditableLanguage } from 'hooks/useEditableLanguage';
+import { getHealthConditionGroups } from 'store/healthConditionGroup/actions';
 
 const CreateHealthCondition = ({ show, handleClose, editId, activeHealthConditionGroup }) => {
   const dispatch = useDispatch();
@@ -72,6 +73,8 @@ const CreateHealthCondition = ({ show, handleClose, editId, activeHealthConditio
         dispatch(updateHealthCondition(editId, { ...formFields, lang: language, health_condition_group: activeHealthConditionGroup.id }))
           .then(result => {
             if (result) {
+              dispatch(getHealthConditions({ parent_id: activeHealthConditionGroup.id }));
+              dispatch(getHealthConditionGroups());
               handleClose();
             }
           });
@@ -79,6 +82,8 @@ const CreateHealthCondition = ({ show, handleClose, editId, activeHealthConditio
         dispatch(createHealthCondition({ ...formFields, lang: language, health_condition_group: activeHealthConditionGroup.id }))
           .then(result => {
             if (result) {
+              dispatch(getHealthConditions({ parent_id: activeHealthConditionGroup.id }));
+              dispatch(getHealthConditionGroups());
               handleClose();
             }
           });
