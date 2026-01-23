@@ -39,7 +39,7 @@ export const updateStaticPage = (id, payload) => async dispatch => {
   const data = await staticPage.updateStaticPage(id, payload);
   if (data.success) {
     dispatch(mutation.updateStaticPageSuccess());
-    dispatch(getStaticPages());
+    dispatch(getStaticPages({ url: payload.url }));
     dispatch(showSuccessNotification('toast_title.update_static_page', data.message));
     return true;
   } else {
@@ -56,7 +56,7 @@ export const createStaticPage = (payload) => async (dispatch) => {
   const data = await staticPage.createStaticPage(payload);
   if (data.success) {
     dispatch(mutation.createStaticPageSuccess());
-    dispatch(getStaticPages());
+    dispatch(getStaticPages({ url: payload.url }));
     dispatch(showSuccessNotification('toast_title.new_static_page', data.message));
     dispatch(showSpinner(false));
     return true;

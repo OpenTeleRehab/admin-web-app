@@ -18,15 +18,17 @@ import { SketchPicker } from 'react-color';
 import Select from 'react-select';
 import { File } from '../../../services/file';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
+import { USER_ROLES } from '../../../variables/user';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 import { useEditableLanguage } from 'hooks/useEditableLanguage';
 import keycloak from '../../../utils/keycloak';
+import { useRole } from 'hooks/useRole';
 
 const CreateStaticPage = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const { hasAnyRole } = useRole();
   const { maxFileSize } = settings.educationMaterial;
 
   const [errorContent, setErrorContent] = useState(false);
@@ -43,7 +45,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
   const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     platform: '',
-    url: '',
+    url: keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) ? 'faq' : keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE) ? 'about-us' : '',
     private: false,
     title: '',
     background_color: '#fff',
@@ -235,7 +237,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
       title={translate(editId ? 'static_page.edit' : 'static_page.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
-      disabled={!isEditableLanguage}
+      disabled={!isEditableLanguage && !hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE])}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
@@ -265,7 +267,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
           <Form.Label>{translate('setting.translations.platform')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Select
-            isDisabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
+            isDisabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) && !keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE)}
             placeholder={translate('placeholder.platform')}
             classNamePrefix="filter"
             className={errorPlatform ? 'is-invalid' : ''}
@@ -294,7 +296,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               value={formFields.url}
               maxLength={settings.textMaxLength}
               isInvalid={errorUrl}
-              disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
+              disabled
             />
 
             <Form.Control.Feedback type="invalid">
@@ -339,7 +341,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             value={formFields.title}
             maxLength={settings.textMaxLength}
             isInvalid={errorTitle}
-            disabled={!isEditableLanguage}
+            disabled={!isEditableLanguage && !hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE])}
           />
           <Form.Control.Feedback type="invalid">
             {translate('error.static_page.title')}
@@ -406,7 +408,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
               toolbar: settings.tinymce.toolbar
             }}
             onEditorChange={handleEditorChange}
-            disabled={!isEditableLanguage || !keycloak.hasRealmRole(USER_ROLES.MANAGE_STATIC_PAGE)}
+            disabled={!isEditableLanguage && !hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE])}
           />
           {errorContent &&
             <div className="invalid-feedback d-block">{translate('error.term_and_condition.content')}</div>
