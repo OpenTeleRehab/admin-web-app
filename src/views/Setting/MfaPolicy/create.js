@@ -15,6 +15,7 @@ import Input from 'components/Form/Input';
 import { MFA_ENFORCEMENT } from 'variables/mfaEnforcement';
 import { createMfaSetting, updateMfaSetting, getMfaEnforcementValidation } from 'store/mfaSetting/actions';
 import { mutation } from 'store/mfaSetting/mutations';
+import { useList } from 'hooks/useList';
 
 const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const { profile } = useSelector((state) => state.auth);
@@ -25,6 +26,8 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const organizations = useSelector((state) => state.organization.organizations);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
+  const { data: regions } = useList('regions/by-auth-country');
+  const { data: phcServices } = useList('phc-services-by-region');
   const dispatch = useDispatch();
   const { control, watch, handleSubmit, reset } = useForm();
   const role = watch('role');
@@ -37,35 +40,60 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
     { label: 'Weeks', value: 'weeks' }
   ];
 
-  const roleOptions = useMemo(
-    () =>
-      profile.type === USER_GROUPS.ORGANIZATION_ADMIN
-        ? MFA_ROLES.filter(
-          (option) => option.value !== USER_GROUPS.ORGANIZATION_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
-        )
-        : profile.type === USER_GROUPS.COUNTRY_ADMIN
-          ? MFA_ROLES.filter(
-            (option) =>
-              option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
-              option.value !== USER_GROUPS.COUNTRY_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
-          )
-          : profile.type === USER_GROUPS.CLINIC_ADMIN
-            ? MFA_ROLES.filter(
-              (option) =>
-                option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
-              option.value !== USER_GROUPS.COUNTRY_ADMIN &&
-              option.value !== USER_GROUPS.CLINIC_ADMIN && option.value !== USER_GROUPS.TRANSLATOR
-            )
-            : MFA_ROLES,
-    [profile.type]
-  );
+  const EXCLUDED_ROLES_BY_PROFILE = {
+    [USER_GROUPS.ORGANIZATION_ADMIN]: [
+      USER_GROUPS.ORGANIZATION_ADMIN,
+      USER_GROUPS.TRANSLATOR,
+    ],
+    [USER_GROUPS.COUNTRY_ADMIN]: [
+      USER_GROUPS.ORGANIZATION_ADMIN,
+      USER_GROUPS.COUNTRY_ADMIN,
+      USER_GROUPS.TRANSLATOR,
+    ],
+    [USER_GROUPS.REGIONAL_ADMIN]: [
+      USER_GROUPS.ORGANIZATION_ADMIN,
+      USER_GROUPS.COUNTRY_ADMIN,
+      USER_GROUPS.REGIONAL_ADMIN,
+      USER_GROUPS.TRANSLATOR,
+    ],
+    [USER_GROUPS.PHC_SERVICE_ADMIN]: [
+      USER_GROUPS.REGIONAL_ADMIN,
+      USER_GROUPS.PHC_SERVICE_ADMIN,
+      USER_GROUPS.CLINIC_ADMIN,
+      USER_GROUPS.TRANSLATOR,
+      USER_GROUPS.THERAPIST,
+      USER_GROUPS.COUNTRY_ADMIN,
+      USER_GROUPS.ORGANIZATION_ADMIN,
+    ],
+    [USER_GROUPS.CLINIC_ADMIN]: [
+      USER_GROUPS.REGIONAL_ADMIN,
+      USER_GROUPS.PHC_SERVICE_ADMIN,
+      USER_GROUPS.ORGANIZATION_ADMIN,
+      USER_GROUPS.COUNTRY_ADMIN,
+      USER_GROUPS.CLINIC_ADMIN,
+      USER_GROUPS.PHC_WORKER,
+      USER_GROUPS.TRANSLATOR,
+    ],
+  };
+
+  const roleOptions = useMemo(() => {
+    const excluded = EXCLUDED_ROLES_BY_PROFILE[profile.type];
+
+    if (!excluded) return MFA_ROLES;
+
+    return MFA_ROLES.filter(
+      (option) => !excluded.includes(option.value)
+    );
+  }, [profile.type]);
 
   useEffect(() => {
     reset({
       role: initialData ? initialData.role : '',
       organizations: initialData ? initialData.organizations : [],
       country_ids: initialData ? initialData.country_ids : [],
+      region_ids: initialData ? initialData.region_ids : [],
       clinic_ids: initialData ? initialData.clinic_ids : [],
+      phc_service_ids: initialData ? initialData.phc_service_ids : [],
       mfa_enforcement: initialData ? initialData.mfa_enforcement : null,
       mfa_expiration_duration: initialData ? initialData.mfa_expiration_duration : '',
       skip_mfa_setup_duration: initialData ? initialData.skip_mfa_setup_duration : '',
@@ -82,43 +110,55 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
     return () => dispatch(mutation.clearMfaEnforcementValidation());
   }, [dispatch, role]);
 
-  const useAvailableOrgOptions = (mfaSetting, orgOptions, role, selectedOrgIds = []) => {
-    return useMemo(() => {
-      const usedOrgIds = new Set(
-        mfaSetting
-          .filter(setting => setting.role === role)
-          .flatMap(setting => setting.organizations)
-      );
+  const organizationOptions = useMemo(() => {
+    const usedOrganizationIds = new Set(
+      mfaSettings
+        ?.filter(setting => setting.role === role)
+        .flatMap(setting => setting.organizations)
+    );
 
-      return orgOptions.filter(
-        org => !usedOrgIds.has(org.id) || selectedOrgIds.includes(org.id)
-      );
-    }, [mfaSetting, orgOptions, role, selectedOrgIds]);
-  };
+    return organizations?.filter(organization => !usedOrganizationIds.has(organization.id) || initialData?.organizations?.includes(organization.id));
+  }, [mfaSettings, organizations, initialData, role]);
 
-  const useAvailableCountryOptions = (mfaSetting, countryOptions, role, selectedCountryIds = []) => {
-    return useMemo(() => {
-      const usedCountryIds = new Set(
-        mfaSetting
-          .filter(setting => setting.role === role)
-          .flatMap(setting => setting.country_ids)
-      );
+  const countryOptions = useMemo(() => {
+    const usedCountryIds = new Set(
+      mfaSettings
+        ?.filter(setting => setting.role === role)
+        .flatMap(setting => setting.country_ids)
+    );
 
-      return countryOptions.filter(country => !usedCountryIds.has(country.id) || selectedCountryIds.includes(country.id));
-    }, [mfaSetting, countryOptions, role, selectedCountryIds]);
-  };
+    return countries?.filter(country => !usedCountryIds.has(country.id) || initialData?.country_ids?.includes(country.id));
+  }, [mfaSettings, countries, role, initialData]);
 
-  const useAvailableClinicOptions = (mfaSetting, clinicOptions, role) => {
-    return useMemo(() => {
-      const usedClinicIds = new Set(
-        mfaSetting
-          .filter(setting => setting.role === role)
-          .flatMap(setting => setting.clinic_ids)
-      );
+  const regionOptions = useMemo(() => {
+    const usedRegionIds = new Set(
+      mfaSettings
+        ?.filter(setting => setting.role === role)
+        .flatMap(setting => setting.region_ids)
+    );
 
-      return clinicOptions.filter(clinic => !usedClinicIds.has(clinic.id));
-    }, [mfaSetting, clinicOptions, role]);
-  };
+    return regions?.data?.filter(region => !usedRegionIds.has(region.id) || initialData?.region_ids?.includes(region.id));
+  }, [mfaSettings, regions, role, initialData]);
+
+  const phcServiceOptions = useMemo(() => {
+    const usedPhcServiceIds = new Set(
+      mfaSettings
+        ?.filter(setting => setting.role === role)
+        .flatMap(setting => setting.phc_service_ids)
+    );
+
+    return phcServices?.data?.filter(phcService => !usedPhcServiceIds.has(phcService.id) || initialData?.phc_service_ids?.includes(phcService.id));
+  }, [mfaSettings, phcServices, role, initialData]);
+
+  const clinicOptions = useMemo(() => {
+    const usedClinicIds = new Set(
+      mfaSettings
+        ?.filter(setting => setting.role === role)
+        .flatMap(setting => setting.clinic_ids)
+    );
+
+    return clinics?.filter(clinic => !usedClinicIds.has(clinic.id) || initialData?.clinic_ids?.includes(clinic.id));
+  }, [mfaSettings, clinics, role, initialData]);
 
   const onConfirm = handleSubmit(async (data) => {
     if (data.role) {
@@ -174,7 +214,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
           <CustomSelect
             control={control}
             name="organizations"
-            options={useAvailableOrgOptions(mfaSettings, organizations, watch('role'), initialData && initialData.organizations).map(item => ({
+            options={organizationOptions?.map(item => ({
               value: item.id,
               label: item.name
             }))}
@@ -190,7 +230,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
           <CustomSelect
             control={control}
             name="country_ids"
-            options={useAvailableCountryOptions(mfaSettings, countries, watch('role'), initialData && initialData.country_ids).map(item => ({
+            options={countryOptions?.map(item => ({
               value: item.id,
               label: item.name
             }))}
@@ -205,8 +245,24 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         {profile.type === USER_GROUPS.COUNTRY_ADMIN && (
           <CustomSelect
             control={control}
+            name="region_ids"
+            options={regionOptions?.map(item => ({
+              value: item.id,
+              label: item.name
+            }))}
+            rules={{ required: translate('error.region') }}
+            isMulti
+            isClearable
+            aria-label="region"
+            label={translate('common.region')}
+            placeholder={translate('placeholder.region')}
+          />
+        )}
+        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.CLINIC_ADMIN || role === USER_GROUPS.THERAPIST) && (
+          <CustomSelect
+            control={control}
             name="clinic_ids"
-            options={useAvailableClinicOptions(mfaSettings, clinics, watch('role')).map(item => ({
+            options={clinicOptions?.map(item => ({
               value: item.id,
               label: item.name
             }))}
@@ -216,6 +272,22 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             aria-label="clinic"
             label={translate('common.clinic')}
             placeholder={translate('placeholder.clinic')}
+          />
+        )}
+        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.PHC_SERVICE_ADMIN || role === USER_GROUPS.PHC_WORKER) && (
+          <CustomSelect
+            control={control}
+            name="phc_service_ids"
+            options={phcServiceOptions?.map(item => ({
+              value: item.id,
+              label: item.name
+            }))}
+            rules={{ required: translate('error.phc_service') }}
+            isMulti
+            isClearable
+            aria-label="phcService"
+            label={translate('common.phc_service')}
+            placeholder={translate('placeholder.phc_service')}
           />
         )}
         <Radio
