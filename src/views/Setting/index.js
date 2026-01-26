@@ -83,8 +83,6 @@ import ApiClient from './ApiClient';
 import CreateEditPhcService from './PhcService/_Partials/createEdit';
 import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
-import { END_POINTS } from 'variables/endPoint';
-import { useList } from 'hooks/useList';
 import { useRole } from 'hooks/useRole';
 import _ from 'lodash';
 
@@ -99,7 +97,6 @@ const Setting = ({ translate }) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [editId, setEditId] = useState();
   const { openDialog } = useDialog();
-  useList(END_POINTS.PROVINCES_LIMITATION, null, { enabled: hasAnyRole([USER_ROLES.MANAGE_PROVINCE, USER_ROLES.VIEW_PROVINCE_LIST]) });
 
   useEffect(() => {
     if (hash.includes('#' + VIEW_TRANSLATION)) {

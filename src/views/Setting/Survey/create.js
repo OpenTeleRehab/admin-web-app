@@ -19,6 +19,10 @@ import moment from 'moment';
 import Questionnaire from './Partials/Questionnaire';
 import { USER_GROUPS } from 'variables/user';
 import { useEditableLanguage } from 'hooks/useEditableLanguage';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
+import { SURVEY_SERVICE_TYPES, SURVEY_SERVICE_TYPE_OPTIONS } from '../../../variables/survey';
+import _ from 'lodash';
 
 const CreateSurvey = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -43,6 +47,10 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   const [errorEndDate, setErrorEndDate] = useState(false);
   const [errorFrequency, setErrorFrequency] = useState(false);
   const [errorGender, setErrorGender] = useState(false);
+  const [errorRegion, setErrorRegion] = useState(false);
+  const [errorProvince, setErrorProvince] = useState(false);
+  const [errorPhcService, setErrorPhcService] = useState(false);
+  const [errorServiceType, setErrorServiceType] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [locale, setLocale] = useState('en-us');
@@ -50,10 +58,14 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     organization: [],
     role: '',
     country: [],
+    region: [],
+    province: [],
     gender: [],
     location: [],
     clinic: [],
-    frequency: ''
+    phc_service: [],
+    frequency: '',
+    service_type: '',
   });
   const [errorInclude, setErrorinclude] = useState(false);
   const [titleError, setTitleError] = useState(false);
@@ -65,6 +77,9 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   const [questionnaireId, setQuestionnaireId] = useState();
   const [language, setLanguage] = useState('');
   const isEditableLanguage = useEditableLanguage(language);
+  const { data: { data: regions = [] } = {} } = useList(END_POINTS.REGION, {}, { enabled: profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN });
+  const { data: { data: provinces = [] } = {} } = useList(END_POINTS.PROVINCE, {}, { enabled: profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN });
+  const { data: { data: phcServices = [] } = {} } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, {}, { enabled: profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN });
   const organizationOptions = organizations.map(item => ({
     value: item.id,
     label: item.name
@@ -73,15 +88,29 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     value: item.id,
     label: item.name
   }));
-  const clinicOptions = (profile.type === USER_GROUPS.SUPER_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN) ? clinics.filter(item => formFields.country.includes(item.country_id))
+  const clinicOptions = clinics.filter(item => formFields.province.includes(item.province?.id))
     .map(item => ({
       value: item.id,
       label: item.name
-    })) : profile.type === USER_GROUPS.COUNTRY_ADMIN ? clinics.filter(item => profile.country_id.includes(item.country_id))
+    }));
+
+  const regionOptions = profile.type === USER_GROUPS.REGIONAL_ADMIN ? profile.regions.map(item => ({ value: item.id, label: item.name }))
+    : regions.filter(item => profile.type === USER_GROUPS.ORGANIZATION_ADMIN ? formFields.country.includes(item.country_id) : profile.country_id === item.country_id).map(item => ({
+      value: item.id,
+      label: item.name
+    }));
+
+  const provinceOptions = provinces.filter(item => formFields.region.includes(item.region_id))
     .map(item => ({
       value: item.id,
       label: item.name
-    })) : profile.clinic_id;
+    }));
+
+  const phcServiceOptions = phcServices.filter(item => formFields.province.includes(item.province_id))
+    .map(item => ({
+      value: item.id,
+      label: item.name
+    }));
 
   useEffect(() => {
     if (languages.length && profile) {
@@ -106,6 +135,10 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
         organization: survey.organization,
         role: survey.role,
         country: survey.country,
+        region: survey.region || [],
+        province: survey.province || [],
+        phc_service: survey.phc_service || [],
+        service_type: survey.role === USER_GROUPS.PATIENT ? !_.isEmpty(survey.clinic) ? SURVEY_SERVICE_TYPES.CLINIC : SURVEY_SERVICE_TYPES.PHC_SERVICE : '',
         gender: survey.gender,
         location: survey.location,
         clinic: survey.clinic,
@@ -185,6 +218,24 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       }
     }
 
+    if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN) {
+      if (formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.region.length === 0) {
+        canSave = false;
+        setErrorRegion(true);
+      } else {
+        setErrorRegion(false);
+      }
+    }
+
+    if ((profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN)) {
+      if (formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.role !== USER_GROUPS.REGIONAL_ADMIN && formFields.province.length === 0) {
+        canSave = false;
+        setErrorProvince(true);
+      } else {
+        setErrorProvince(false);
+      }
+    }
+
     if (formFields.role === USER_GROUPS.PATIENT && !formFields.gender.length) {
       canSave = false;
       setErrorGender(true);
@@ -192,12 +243,30 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       setErrorGender(false);
     }
 
-    if (profile.type !== USER_GROUPS.CLINIC_ADMIN) {
-      if (formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && formFields.clinic.length === 0) {
+    if (profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN) {
+      if ((formFields.role === USER_GROUPS.CLINIC_ADMIN || formFields.role === USER_GROUPS.THERAPIST || formFields.role === USER_GROUPS.PATIENT || formFields.service_type === SURVEY_SERVICE_TYPES.CLINIC) && formFields.clinic.length === 0) {
         canSave = false;
         setErrorClinic(true);
       } else {
         setErrorClinic(false);
+      }
+    }
+
+    if (profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN) {
+      if ((formFields.role === USER_GROUPS.PHC_SERVICE_ADMIN || formFields.role === USER_GROUPS.PHC_WORKER || formFields.role === USER_GROUPS.PATIENT || formFields.service_type === SURVEY_SERVICE_TYPES.PHC_SERVICE) && formFields.phc_service.length === 0) {
+        canSave = false;
+        setErrorPhcService(true);
+      } else {
+        setErrorPhcService(false);
+      }
+    }
+
+    if (profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN) {
+      if (formFields.role === USER_GROUPS.PATIENT && formFields.service_type === '') {
+        canSave = false;
+        setErrorServiceType(true);
+      } else {
+        setErrorServiceType(false);
       }
     }
 
@@ -348,6 +417,10 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
       location: [],
       country: [],
       clinic: [],
+      region: [],
+      province: [],
+      phc_service: [],
+      service_type: '',
       include_at_the_end: false,
       include_at_the_start: false
     });
@@ -364,7 +437,6 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
   };
 
   const handleSingleSelectChange = (key, value) => {
-    console.log(key, value);
     setFormFields({
       ...formFields,
       [key]: value
@@ -434,11 +506,23 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                   : profile.type === USER_GROUPS.CLINIC_ADMIN
                     ? SURVEY_ROLES.filter(
                       (option) =>
-                        option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
-                          option.value !== USER_GROUPS.COUNTRY_ADMIN &&
-                          option.value !== USER_GROUPS.CLINIC_ADMIN
+                        option.value === USER_GROUPS.PATIENT ||
+                          option.value === USER_GROUPS.THERAPIST
                     )
-                    : SURVEY_ROLES
+                    : profile.type === USER_GROUPS.REGIONAL_ADMIN
+                      ? SURVEY_ROLES.filter(
+                        (option) =>
+                          option.value !== USER_GROUPS.ORGANIZATION_ADMIN &&
+                            option.value !== USER_GROUPS.COUNTRY_ADMIN &&
+                            option.value !== USER_GROUPS.REGIONAL_ADMIN
+                      )
+                      : profile.type === USER_GROUPS.PHC_SERVICE_ADMIN
+                        ? SURVEY_ROLES.filter(
+                          (option) =>
+                            option.value === USER_GROUPS.PATIENT ||
+                              option.value === USER_GROUPS.PHC_WORKER
+                        )
+                        : SURVEY_ROLES
             }
             onChange={(e) => { e == null ? handleRoleChange('role', null) : handleRoleChange('role', e.value); }}
             value={SURVEY_ROLES.filter(option => formFields.role && formFields.role.includes(option.value))}
@@ -462,7 +546,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                   name="country"
                   options={countryOptions}
                   isMulti
-                  onChange={handleMultipleSelectChange}
+                  onChange={(selected, e) => [setFormFields({ ...formFields, region: [], province: [], clinic: [], phc_service: [] }), handleMultipleSelectChange(selected, e)]}
                   value={countryOptions.filter(option => formFields.country.includes(option.value))}
                   placeholder={translate('placeholder.country')}
                   className={errorCountry ? 'is-invalid' : ''}
@@ -472,6 +556,123 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.country')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {(profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN || (profile.type === USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN)) && (
+              <Form.Group controlId="region">
+                <Form.Label>{translate('common.region')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="region"
+                  options={regionOptions}
+                  isMulti
+                  onChange={(selected, e) => [setFormFields({ ...formFields, province: [], clinic: [], phc_service: [] }), handleMultipleSelectChange(selected, e)]}
+                  value={regionOptions.filter(option => formFields.region.includes(option.value))}
+                  placeholder={translate('placeholder.region')}
+                  className={errorRegion ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="region"
+                  isDisabled={!formFields.country.length && profile.type !== USER_GROUPS.COUNTRY_ADMIN && profile.type !== USER_GROUPS.REGIONAL_ADMIN}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.survey.region')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {formFields.role === USER_GROUPS.PATIENT && profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN && (
+              <Form.Group controlId="serviceType">
+                <Form.Label>{translate('survey.service_type')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="service_type"
+                  getOptionLabel={option => translate('survey.service_type.' + option.value)}
+                  options={SURVEY_SERVICE_TYPE_OPTIONS}
+                  onChange={(e) => [setFormFields({ ...formFields, province: [], clinic: [], phc_service: [] }), handleSingleSelectChange('service_type', e ? e.value : '')]}
+                  value={SURVEY_SERVICE_TYPE_OPTIONS.filter(option => formFields.service_type === option.value)}
+                  placeholder={translate('survey.placeholder.service_type')}
+                  className={errorServiceType ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="service type"
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.survey.service_type')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {(formFields.role === USER_GROUPS.CLINIC_ADMIN ||
+              formFields.role === USER_GROUPS.PHC_SERVICE_ADMIN ||
+                formFields.role === USER_GROUPS.THERAPIST ||
+                  formFields.role === USER_GROUPS.PHC_WORKER ||
+                    formFields.service_type !== '') && profile.type !== USER_GROUPS.CLINIC_ADMIN && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN && (
+              <Form.Group controlId="province">
+                <Form.Label>{translate('common.province')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="province"
+                  options={provinceOptions}
+                  isMulti
+                  onChange={(selected, e) => [setFormFields({ ...formFields, clinic: [], phc_service: [] }), handleMultipleSelectChange(selected, e)]}
+                  value={provinceOptions.filter(option => formFields.province.includes(option.value))}
+                  placeholder={translate('placeholder.province')}
+                  className={errorProvince ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="province"
+                  isDisabled={!formFields.region.length}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.survey.province')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {(formFields.role === USER_GROUPS.CLINIC_ADMIN ||
+              formFields.role === USER_GROUPS.THERAPIST ||
+                formFields.service_type === SURVEY_SERVICE_TYPES.REHAB_SERVICE) && profile.type !== USER_GROUPS.CLINIC_ADMIN && (
+              <Form.Group controlId="clinic">
+                <Form.Label>{translate('common.clinic')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="clinic"
+                  options={clinicOptions}
+                  isMulti
+                  onChange={handleMultipleSelectChange}
+                  value={clinicOptions.filter(option => formFields.clinic.includes(option.value))}
+                  placeholder={translate('placeholder.clinic')}
+                  className={errorClinic ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="clinic"
+                  isDisabled={!formFields.province.length}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.clinic')}
+                </Form.Control.Feedback>
+              </Form.Group>
+            )}
+            {(formFields.role === USER_GROUPS.PHC_SERVICE_ADMIN ||
+              formFields.role === USER_GROUPS.PHC_WORKER ||
+                formFields.service_type === SURVEY_SERVICE_TYPES.PHC_SERVICE) && profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN && (
+              <Form.Group controlId="phc_service">
+                <Form.Label>{translate('common.phc_service')}</Form.Label>
+                <span className="text-dark ml-1">*</span>
+                <Select
+                  name="phc_service"
+                  options={phcServiceOptions}
+                  isMulti
+                  onChange={handleMultipleSelectChange}
+                  value={phcServiceOptions.filter(option => formFields.phc_service.includes(option.value))}
+                  placeholder={translate('placeholder.phc_service')}
+                  className={errorPhcService ? 'is-invalid' : ''}
+                  classNamePrefix="select"
+                  isClearable
+                  aria-label="phc_service"
+                  isDisabled={!formFields.province.length}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {translate('error.survey.phc_service')}
                 </Form.Control.Feedback>
               </Form.Group>
             )}
@@ -516,28 +717,6 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('survey.error.location')}
-                </Form.Control.Feedback>
-              </Form.Group>
-            )}
-            {formFields.role !== USER_GROUPS.ORGANIZATION_ADMIN && formFields.role !== USER_GROUPS.COUNTRY_ADMIN && profile.type !== USER_GROUPS.CLINIC_ADMIN && (
-              <Form.Group controlId="clinic">
-                <Form.Label>{translate('common.clinic')}</Form.Label>
-                <span className="text-dark ml-1">*</span>
-                <Select
-                  name="clinic"
-                  options={clinicOptions}
-                  isMulti
-                  onChange={handleMultipleSelectChange}
-                  value={clinicOptions.filter(option => formFields.clinic.includes(option.value))}
-                  placeholder={translate('placeholder.clinic')}
-                  className={errorClinic ? 'is-invalid' : ''}
-                  classNamePrefix="select"
-                  isClearable
-                  aria-label="clinic"
-                  isDisabled={(profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.SUPER_ADMIN) ? !formFields.country.length : false}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {translate('error.clinic')}
                 </Form.Control.Feedback>
               </Form.Group>
             )}
