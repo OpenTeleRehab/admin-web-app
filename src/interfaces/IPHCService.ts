@@ -8,6 +8,12 @@ export interface IPHCService {
   phone_number: string;
   phc_worker_limit: number;
   dial_code: string;
+  region_id?: number;
+  province?: {
+    id: number;
+    name: string;
+    region_id: number;
+  };
 }
 
 export interface IPhcServiceEntitiesCount {

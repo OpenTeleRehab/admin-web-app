@@ -14,7 +14,8 @@ export interface IUser {
   gender?: string;
   language_id?: number;
   region_name?: string;
-  region_id?: number;
+  region_id?: number | number[];
+  admin_regions?: { id: number; name: string }[];
   phc_service?: IPHCService ;
 }
 
@@ -23,6 +24,7 @@ export interface IRegionalAdminRequest {
   first_name: string;
   last_name: string;
   type: string;
-  region_id: number;
+  region_id?: number | number[];
+  edit_region_ids?: number[];
   country_name?: string;
 }

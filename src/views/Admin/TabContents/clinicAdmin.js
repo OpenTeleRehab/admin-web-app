@@ -26,6 +26,7 @@ const ClinicAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
     { name: 'first_name', title: translate('common.first_name') },
     { name: 'email', title: translate('common.email') },
     { name: 'clinic', title: translate('common.clinic') },
+    { name: 'region', title: translate('common.region') },
     { name: 'status', title: translate('common.status') },
     { name: 'last_login', title: translate('common.last_login') },
     { name: 'action', title: translate('common.action') }
@@ -104,6 +105,7 @@ const ClinicAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
             first_name: user.first_name,
             email: user.email,
             clinic: getClinicName(user.clinic_id, clinics),
+            region: user.region_name,
             status: <EnabledStatus enabled={!!user.enabled} />,
             last_login: user.last_login ? moment.utc(user.last_login).local().format(settings.datetime_format) : '',
             action

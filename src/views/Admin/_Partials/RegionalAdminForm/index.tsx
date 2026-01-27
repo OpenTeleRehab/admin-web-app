@@ -20,29 +20,38 @@ import { USER_GROUPS } from 'variables/user';
 
 type CreateOrEditProps = {
   regionalAdmin: IUser;
-}
+};
 
-const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
+const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
   const t = useTranslate();
   const dispatch = useDispatch();
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
   const profile = useSelector((state: any) => state.auth.profile);
-  const { control, setValue, handleSubmit, reset } = useForm<IRegionalAdminRequest>({
-    defaultValues: {
-      email: '',
-      first_name: '',
-      last_name: '',
-      type: USER_GROUPS.REGIONAL_ADMIN,
-      region_id: 0,
-      country_name: '',
-    }
-  });
+  const { control, setValue, handleSubmit, reset } =
+    useForm<IRegionalAdminRequest>({
+      defaultValues: {
+        email: '',
+        first_name: '',
+        last_name: '',
+        type: USER_GROUPS.REGIONAL_ADMIN,
+        region_id: [],
+        country_name: '',
+      },
+    });
   const { data: regions } = useList<IRegionResource>(END_POINTS.REGION);
-  const { mutate: createRegionalAdmin } = useCreate<IRegionalAdminRequest>(END_POINTS.ADMIN);
-  const { mutate: updateRegionalAdmin } = useUpdate<IRegionalAdminRequest>(END_POINTS.ADMIN);
+  const { mutate: createRegionalAdmin } = useCreate<IRegionalAdminRequest>(
+    END_POINTS.ADMIN
+  );
+  const { mutate: updateRegionalAdmin } = useUpdate<IRegionalAdminRequest>(
+    END_POINTS.ADMIN
+  );
 
-  const regionOptions = useMemo(() => (regions?.data || []).map((opt) => ({ label: opt.name, value: opt.id })), [regions]);
+  const regionOptions = useMemo(
+    () =>
+      (regions?.data || []).map((opt) => ({ label: opt.name, value: opt.id })),
+    [regions]
+  );
 
   useEffect(() => {
     if (profile) {
@@ -57,7 +66,7 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
         first_name: regionalAdmin.first_name,
         last_name: regionalAdmin.last_name,
         type: USER_GROUPS.REGIONAL_ADMIN,
-        region_id: regionalAdmin.region_id,
+        region_id: regionalAdmin.admin_regions?.map((r) => r.id) || [],
         country_name: regionalAdmin.country_name,
       });
     }
@@ -69,24 +78,32 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
       first_name: data.first_name,
       last_name: data.last_name,
       type: data.type,
-      region_id: data.region_id,
+      region_id: typeof data.region_id === 'number' ? [data.region_id] : data.region_id,
     };
 
     if (regionalAdmin) {
-      updateRegionalAdmin({ id: regionalAdmin.id, payload }, {
-        onSuccess: async (res) => {
-          dispatch(showSpinner(false));
-          showToast({
-            title: t('toast_title.edit_admin_account'),
-            message: t(res?.message),
-            color: 'success'
-          });
-          closeDialog();
-        },
-        onError: () => {
-          dispatch(showSpinner(false));
+      const updatePayload = {
+        ...payload,
+        edit_region_ids: payload.region_id as number[],
+      };
+      delete updatePayload.region_id;
+      updateRegionalAdmin(
+        { id: regionalAdmin.id, payload: updatePayload },
+        {
+          onSuccess: async (res) => {
+            dispatch(showSpinner(false));
+            showToast({
+              title: t('toast_title.edit_admin_account'),
+              message: t(res?.message),
+              color: 'success'
+            });
+            closeDialog();
+          },
+          onError: () => {
+            dispatch(showSpinner(false));
+          }
         }
-      });
+      );
 
       return;
     }
@@ -104,7 +121,7 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
       },
       onError: () => {
         dispatch(showSpinner(false));
-      }
+      },
     });
   });
 
@@ -146,11 +163,12 @@ const CreateOrEdit = ({ regionalAdmin } : CreateOrEditProps) => {
           control={control}
           name='region_id'
           options={regionOptions}
+          isMulti={true}
           label={t('common.region')}
           placeholder={t('placeholder.region')}
           rules={{
             required: true,
-            validate: (value) => value !== 0 || t('region.required')
+            validate: (value) => (Array.isArray(value) && value.length > 0) || t('region.required'),
           }}
         />
         <Row>
