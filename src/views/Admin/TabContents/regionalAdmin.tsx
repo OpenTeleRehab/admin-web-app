@@ -23,6 +23,7 @@ import { showSpinner } from 'store/spinnerOverlay/actions';
 import { END_POINTS } from 'variables/endPoint';
 import { USER_GROUPS } from 'variables/user';
 import EditRegionalAdmin from '../_Partials/RegionalAdminForm';
+import { IRegion } from 'interfaces/IRegion';
 
 const RegionalAdmin = () => {
   const dispatch = useDispatch();
@@ -100,9 +101,8 @@ const RegionalAdmin = () => {
           first_name: regionalAdmin.first_name,
           email: regionalAdmin.email,
           region:
-            regionalAdmin.region_name ??
-            (regionalAdmin as any).admin_regions
-              ?.map((region: any) => region.name)
+            (regionalAdmin as IUser).regions
+              ?.map((region: IRegion) => region.name)
               .join(' / '),
           status: <EnabledStatus enabled={!!regionalAdmin.enabled} />,
           last_login: regionalAdmin.last_login

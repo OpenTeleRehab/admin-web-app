@@ -7,7 +7,7 @@ export interface IRegionResource {
   phc_worker_limit: number;
 }
 
-export interface IAdminRegion {
+export interface IRegion {
   id: number;
   name: string;
 }
