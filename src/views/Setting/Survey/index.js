@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { withLocalize } from 'react-localize-redux';
@@ -35,6 +35,7 @@ const Survey = ({ translate, handleRowEdit }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
+  const profile = useSelector(state => state.auth.profile);
   const organizations = useSelector((state) => state.organization.organizations);
   const [showPublishedDialog, setShowPublishedDialog] = useState(false);
   const [publishedId, setPublishedId] = useState(null);
@@ -83,18 +84,20 @@ const Survey = ({ translate, handleRowEdit }) => {
     setShowViewDialog(false);
   };
 
-  const [columns] = useState([
+  const columns = useMemo(() => [
     { name: 'id', title: translate('common.id') },
-    { name: 'organization', title: translate('setting.organization') },
     { name: 'role', title: translate('survey.role') },
     { name: 'country', title: translate('common.country') },
+    { name: 'region', title: translate('common.region') },
+    { name: 'province', title: translate('common.province') },
+    { name: 'phc_service', title: translate('survey.phc_service') },
     { name: 'clinic', title: translate('common.clinic') },
     { name: 'location', title: translate('survey.location') },
     { name: 'frequency', title: translate('survey.frequency') },
     { name: 'status', title: translate('common.status') },
     { name: 'published_date', title: translate('survey.published_date') },
     { name: 'action', title: translate('common.action') }
-  ]);
+  ], [translate]);
 
   return (
     <div className="card">
@@ -122,9 +125,11 @@ const Survey = ({ translate, handleRowEdit }) => {
             );
             return {
               id: index + 1,
-              organization: getOrganizationNames(item.organization, organizations),
               role: translate(`common.${item.role}`),
               country: getCountryNames(item.country, countries),
+              region: item.regionNames.join(', '),
+              province: item.provinceNames.join(', '),
+              phc_service: item.phcServiceNames.join(', '),
               clinic: getClinicNames(item.clinic, clinics),
               location: getLocations(item.location, SURVEY_LOCATION, translate),
               frequency: translate(`survey.frequency.${item.frequency}`),

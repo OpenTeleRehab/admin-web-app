@@ -126,7 +126,7 @@ const skipSurvey = payload => {
 };
 
 const getPublishSurvey = (payload) => {
-  return axios.get('/get-publish-survey', { params: payload })
+  return axios.get('survey/list/publish-survey', { params: payload })
     .then(
       res => {
         return res.data;
