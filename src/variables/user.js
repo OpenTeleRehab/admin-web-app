@@ -107,6 +107,8 @@ export const USER_ROLES = {
   VIEW_CATEGORY_LIST: 'view_category_list',
   VIEW_REGION_LIST: 'view_region_list',
   VIEW_PHC_SERVICE_LIST: 'view_phc_service_list',
+  SUBMIT_SURVEY: 'submit_survey',
+  SKIP_SURVEY: 'skip_survey',
 };
 
 export const SETTING_ROLES = [

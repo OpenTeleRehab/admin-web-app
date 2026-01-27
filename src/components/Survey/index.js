@@ -3,9 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPublishSurvey } from '../../store/survey/actions';
 import SurveyModal from './SurveyModal';
 import { SURVEY_FREQUENCY } from 'variables/survey';
+import { USER_ROLES } from '../../variables/user';
+import { useKeycloak } from '@react-keycloak/web';
 
 const Survey = () => {
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
   const { publishSurveys } = useSelector(state => state.survey);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
@@ -13,13 +16,14 @@ const Survey = () => {
   const [currentSurvey, setCurrentSurvey] = useState(null);
 
   useEffect(() => {
+    if (!keycloak.hasRealmRole(USER_ROLES.SUBMIT_SURVEY)) return;
     dispatch(getPublishSurvey({
       lang: profile.language_id ? profile.language_id : languages.length ? languages[0].id : ''
     }));
   }, [profile, dispatch]);
 
   useEffect(() => {
-    if (publishSurveys.length) {
+    if (publishSurveys && publishSurveys.length) {
       setSurveys(publishSurveys);
     }
   }, [publishSurveys]);
