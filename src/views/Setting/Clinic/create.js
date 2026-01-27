@@ -59,8 +59,8 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   }, [provincesLimitation, formFields.province_id]);
 
   const regionOptions = useMemo(() => {
-    if (profile?.admin_regions?.length) {
-      return profile.admin_regions;
+    if (profile?.regions?.length) {
+      return profile.regions;
     }
     if (profile?.region_id && regions?.data) {
       return regions.data.filter(r => r.id === profile.region_id);

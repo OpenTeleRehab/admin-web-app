@@ -11,7 +11,7 @@ import { useTranslate } from 'hooks/useTranslate';
 import { useUpdate } from 'hooks/useUpdate';
 import { ILimitation } from 'interfaces/ILimitation';
 import { IProvinceResource } from 'interfaces/IProvince';
-import { IAdminRegion } from 'interfaces/IRegion';
+import { IRegion } from 'interfaces/IRegion';
 import { useEffect, useMemo } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -62,8 +62,8 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
   }, [reset, provinceData]);
 
   const regionOptions = useMemo(() => {
-    if (profile?.admin_regions?.length > 0) {
-      return profile.admin_regions.map((region: IAdminRegion) => ({
+    if (profile?.regions?.length > 0) {
+      return profile.regions.map((region: IRegion) => ({
         label: region.name,
         value: region.id,
       }));

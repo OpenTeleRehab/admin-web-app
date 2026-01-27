@@ -16,8 +16,8 @@ import { showSpinner } from 'store/spinnerOverlay/actions';
 import { USER_GROUPS } from 'variables/user';
 import { END_POINTS } from 'variables/endPoint';
 import { IUser } from 'interfaces/IUser';
-import { IAdminRegion } from 'interfaces/IRegion';
 import { IProvinceResource } from 'interfaces/IProvince';
+import { IRegion } from 'interfaces/IRegion';
 
 const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUser }) => {
   const dispatch = useDispatch();
@@ -34,8 +34,8 @@ const createEditPhcServiceAdmin = ({ phcServiceAdmin } : { phcServiceAdmin?: IUs
   const isProvinceDirty = formState.dirtyFields.province_id;
 
   const regionOptions = useMemo(() => {
-    if (profile?.admin_regions?.length > 0) {
-      return profile.admin_regions.map((region: IAdminRegion) => ({
+    if (profile?.regions?.length > 0) {
+      return profile.regions.map((region: IRegion) => ({
         label: region.name,
         value: region.id,
       }));

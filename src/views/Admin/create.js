@@ -32,8 +32,8 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const regionOptions = useMemo(() => {
-    if (profile?.admin_regions?.length > 0) {
-      return profile.admin_regions.map((region) => ({
+    if (profile?.regions?.length > 0) {
+      return profile.regions.map((region) => ({
         label: region.name,
         value: region.id,
       }));

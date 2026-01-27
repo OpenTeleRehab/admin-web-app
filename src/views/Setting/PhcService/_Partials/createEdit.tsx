@@ -20,7 +20,7 @@ import { ILimitation } from 'interfaces/ILimitation';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { useList } from 'hooks/useList';
 import { IProvinceResource } from 'interfaces/IProvince';
-import { IAdminRegion } from 'interfaces/IRegion';
+import { IRegion } from 'interfaces/IRegion';
 
 const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
   const dispatch = useDispatch();
@@ -39,8 +39,8 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
   const regionId = watch('region_id');
 
   const regionOptions = useMemo(() => {
-     if (profile?.admin_regions?.length > 0) {
-      return profile.admin_regions.map((region: IAdminRegion) => ({
+    if (profile?.regions?.length > 0) {
+      return profile.regions.map((region: IRegion) => ({
         label: region.name,
         value: region.id,
       }));

@@ -1,4 +1,5 @@
 import { IPHCService } from './IPHCService';
+import { IRegion } from './IRegion';
 
 export interface IUser {
   id: number;
@@ -15,8 +16,8 @@ export interface IUser {
   language_id?: number;
   region_name?: string;
   region_id?: number | number[];
-  admin_regions?: { id: number; name: string }[];
-  phc_service?: IPHCService ;
+  regions?: IRegion[];
+  phc_service?: IPHCService;
 }
 
 export interface IRegionalAdminRequest {

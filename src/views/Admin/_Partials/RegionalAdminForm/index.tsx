@@ -66,7 +66,7 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
         first_name: regionalAdmin.first_name,
         last_name: regionalAdmin.last_name,
         type: USER_GROUPS.REGIONAL_ADMIN,
-        region_id: regionalAdmin.admin_regions?.map((r) => r.id) || [],
+        region_id: regionalAdmin.regions?.map((r) => r.id) || [],
         country_name: regionalAdmin.country_name,
       });
     }
