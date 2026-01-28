@@ -245,7 +245,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             <Form.Label>{translate('clinic.region')}</Form.Label>
             <span className="text-dark ml-1">*</span>
             <Select
-              isDisabled={regionOptions.length <= 1}
               placeholder={translate('placeholder.clinic.region')}
               classNamePrefix="filter"
               className={errorRegion ? 'is-invalid' : ''}
