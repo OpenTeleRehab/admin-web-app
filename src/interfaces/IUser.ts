@@ -26,6 +26,6 @@ export interface IRegionalAdminRequest {
   last_name: string;
   type: string;
   region_id?: number | number[];
-  edit_region_ids?: number[];
+  region_ids?: number[];
   country_name?: string;
 }
