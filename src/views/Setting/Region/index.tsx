@@ -66,6 +66,7 @@ const Region = () => {
               color: 'success'
             });
             closeDialog();
+            closeDialog();
           },
           onError: () => {
             dispatch(showSpinner(false));
