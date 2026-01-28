@@ -35,7 +35,7 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
         first_name: '',
         last_name: '',
         type: USER_GROUPS.REGIONAL_ADMIN,
-        region_id: [],
+        region_ids: [],
         country_name: '',
       },
     });
@@ -66,29 +66,16 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
         first_name: regionalAdmin.first_name,
         last_name: regionalAdmin.last_name,
         type: USER_GROUPS.REGIONAL_ADMIN,
-        region_id: regionalAdmin.regions?.map((r) => r.id) || [],
+        region_ids: regionalAdmin.regions?.map((r) => r.id) || [],
         country_name: regionalAdmin.country_name,
       });
     }
   }, [regionalAdmin, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const payload: IRegionalAdminRequest = {
-      email: data.email,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      type: data.type,
-      region_id: typeof data.region_id === 'number' ? [data.region_id] : data.region_id,
-    };
-
     if (regionalAdmin) {
-      const updatePayload = {
-        ...payload,
-        edit_region_ids: payload.region_id as number[],
-      };
-      delete updatePayload.region_id;
       updateRegionalAdmin(
-        { id: regionalAdmin.id, payload: updatePayload },
+        { id: regionalAdmin.id, payload: data },
         {
           onSuccess: async (res) => {
             dispatch(showSpinner(false));
@@ -109,7 +96,7 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
     }
 
     dispatch(showSpinner(true));
-    createRegionalAdmin(payload, {
+    createRegionalAdmin(data, {
       onSuccess: async (res) => {
         dispatch(showSpinner(false));
         showToast({
@@ -160,10 +147,10 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
           disabled
         />
         <Select
+          isMulti
           control={control}
-          name='region_id'
+          name='region_ids'
           options={regionOptions}
-          isMulti={true}
           label={t('common.region')}
           placeholder={t('placeholder.region')}
           rules={{
