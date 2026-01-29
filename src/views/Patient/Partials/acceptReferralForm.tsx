@@ -38,6 +38,7 @@ const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
     const payload = {
       ...data,
       referral_id: referralId,
+      accepted_by: profile.id,
     };
 
     createReferral(payload, {

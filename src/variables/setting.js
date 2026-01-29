@@ -21,6 +21,7 @@ export const VIEW_REGION = 'region';
 export const VIEW_PROVINCE = 'province';
 export const VIEW_PHC_SERVICE = 'phc_service';
 export const VIEW_API_CLIENT = 'api_client';
+export const VIEW_EMAIL_TEMPLATE = 'email_template';
 
 export const SETTINGS = [
   VIEW_COUNTRY,
@@ -46,6 +47,7 @@ export const SETTINGS = [
   VIEW_PROVINCE,
   VIEW_PHC_SERVICE,
   VIEW_API_CLIENT,
+  VIEW_EMAIL_TEMPLATE,
 ];
 
 export const TEXT_MAX_LENGTH = {

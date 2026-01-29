@@ -23,6 +23,7 @@ import Disease from 'views/Setting/Disease';
 import ColorScheme from 'views/Setting/ColorScheme';
 import Organization from './Organization';
 import AssistiveTechnology from './AssistiveTechnology';
+import EmailTemplate from './EmailTemplate';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -54,7 +55,8 @@ import {
   VIEW_REGION,
   VIEW_PROVINCE,
   VIEW_PHC_SERVICE,
-  VIEW_API_CLIENT
+  VIEW_API_CLIENT,
+  VIEW_EMAIL_TEMPLATE,
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
 import CreateClinic from 'views/Setting/Clinic/create';
@@ -84,6 +86,7 @@ import CreateEditPhcService from './PhcService/_Partials/createEdit';
 import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { useRole } from 'hooks/useRole';
+import { EMAIL_TEMPLATE } from '../../variables/routes';
 import _ from 'lodash';
 
 const Setting = ({ translate }) => {
@@ -143,6 +146,8 @@ const Setting = ({ translate }) => {
       setView(VIEW_PROVINCE);
     } else if (hash.includes('#' + VIEW_API_CLIENT)) {
       setView(VIEW_API_CLIENT);
+    } else if (hash.includes('#' + VIEW_EMAIL_TEMPLATE)) {
+      setView(VIEW_EMAIL_TEMPLATE);
     } else {
       if (keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) {
         history.push(ROUTES.SETTING_TRANSLATIONS);
@@ -464,6 +469,13 @@ const Setting = ({ translate }) => {
             </Nav.Link>
           </Nav.Item>
         )}
+        { (keycloak.hasRealmRole(USER_ROLES.MANAGE_EMAIL_TEMPLATE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EMAIL_TEMPLATE)) && (
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.EMAIL_TEMPLATE} eventKey={VIEW_EMAIL_TEMPLATE}>
+              {translate('setting.email_templates')}
+            </Nav.Link>
+          </Nav.Item>
+        )}
       </Nav>
 
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_COUNTRY) && view === VIEW_COUNTRY && <Country handleRowEdit={handleEdit} /> }
@@ -489,6 +501,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_REGION) && view === VIEW_REGION && <Region /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && view === VIEW_PROVINCE && <Province /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_API_CLIENT) && view === VIEW_API_CLIENT && <ApiClient /> }
+      { (keycloak.hasRealmRole(USER_ROLES.MANAGE_EMAIL_TEMPLATE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EMAIL_TEMPLATE)) && view === VIEW_EMAIL_TEMPLATE && <EmailTemplate /> }
     </>
   );
 };

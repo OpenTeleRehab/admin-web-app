@@ -35,4 +35,5 @@ export const END_POINTS = {
   TRANSLATOR: 'translator',
   NUMBER_OF_TRANSFER_BY_THERAPIST: 'transfer/number/by-therapist',
   PATIENT_LIST_FOR_PHC_WORKER_REMOVE: 'patient/list/for-phc-worker-remove',
+  EMAIL_TEMPLATE: 'email-templates',
 };
