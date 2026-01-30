@@ -11,6 +11,7 @@ import DeclineForm from './declineReferralForm';
 import { REFERRAL_STATUS } from 'variables/referralStatus';
 import { FaCheck } from 'react-icons/fa6';
 import { IoClose } from 'react-icons/io5';
+import InterviewHistoryDialog from './InterviewHistoryDialog';
 
 type PatientReferralProps = {
   translate: any;
@@ -24,6 +25,13 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
   const [filters, setFilters] = useState([]);
   const { data: patientReferrals } = useList<IReferralResource>(END_POINTS.PATIENT_REFERRAL);
   const { openDialog } = useDialog();
+  const [showInterviewHistory, setShowInterviewHistory] = useState(false);
+  const [interviewPatientId, setInterviewPatientId] = useState<number | null>(null);
+
+  const handleViewHistory = (patientId: number) => {
+    setInterviewPatientId(patientId);
+    setShowInterviewHistory(true);
+  };
 
   const columns = useMemo(() => [
     { name: 'identity', title: translate('common.id') },
@@ -35,6 +43,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
     { name: 'status', title: translate('common.status') },
     { name: 'request_reason', title: translate('referral.phc_request_reason') },
     { name: 'therapist_reason', title: translate('referral.therapist_reject_reason') },
+    { name: 'interview_history', title: translate('common.interview_history') },
     { name: 'action', title: translate('common.action') },
   ], [translate]);
 
@@ -109,6 +118,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         status: <Badge pill variant='light'>{pr.status}</Badge>,
         request_reason: pr.request_reason,
         therapist_reason: pr.therapist_reason,
+        interview_history: <p className="text-primary" style={{ cursor: 'pointer' }} onClick={() => handleViewHistory(pr.patient_id)}>{translate('common.view_history')}</p>,
         action,
       };
     });
@@ -129,6 +139,13 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         hover="hover-primary"
         rows={rows}
       />
+      <InterviewHistoryDialog
+        show={showInterviewHistory}
+        onClose={() => setShowInterviewHistory(false)}
+        patientId={interviewPatientId}
+        translate={translate}
+      />
+
     </div>
   );
 };
