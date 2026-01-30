@@ -1,5 +1,6 @@
 export interface IReferralResource {
   id: number;
+  patient_id: number;
   patient_identity: string;
   first_name: string;
   last_name: string;

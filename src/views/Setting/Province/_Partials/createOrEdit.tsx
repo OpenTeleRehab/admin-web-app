@@ -40,7 +40,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
     END_POINTS.REGION_LIMITATION,
     null,
     {
-      enabled: true,
+      enabled: !!selectedRegionId,
       params: { region_id: selectedRegionId },
     },
   );
@@ -168,24 +168,25 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                 required: t('common.therapist_limit.error'),
                 validate: (value) => {
                   const numValue = Number(value);
+                  const isSameRegion = provinceData && provinceData.region_id === selectedRegionId;
+                  const currentLimitCredit = isSameRegion ? (provinceData?.therapist_limit ?? 0) : 0;
+
                   const remainingTherapistLimit = regionLimitation
                     ? regionLimitation.remaining_therapist_limit
                     : 0;
                   const usedTherapistLimit = regionLimitation
                     ? regionLimitation.therapist_limit_used
                     : 0;
-                  const exceedremainingTherapistLimit = provinceData
-                    ? numValue >
-                      remainingTherapistLimit + provinceData.therapist_limit
-                    : numValue > remainingTherapistLimit;
+
+                  const exceedremainingTherapistLimit = numValue > remainingTherapistLimit + currentLimitCredit;
+
                   const translateParams = {
                     allocated_therapist_limit:
                       regionLimitation?.allocated_therapist_limit,
                     remaining_therapist_limit:
-                      remainingTherapistLimit +
-                      (provinceData?.therapist_limit ?? 0),
+                      remainingTherapistLimit + currentLimitCredit,
                     therapist_limit_used:
-                      usedTherapistLimit - (provinceData?.therapist_limit ?? 0),
+                      usedTherapistLimit - currentLimitCredit,
                   };
 
                   if (value <= 0) {
@@ -204,7 +205,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                   ) {
                     return t(
                       'error.province.therapist_limit.less_than.total.clinic.therapist_limit',
-                      { phc_worker_limit_used: provinceLimitation?.phc_worker_limit_used ?? 0 }
+                      { therapist_limit_used: provinceLimitation?.therapist_limit_used ?? 0 }
                     );
                   }
 
@@ -225,13 +226,26 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                 required: t('common.phc_worker_limit.error'),
                 validate: (value) => {
                   const numValue = Number(value);
+                  const isSameRegion = provinceData && provinceData.region_id === selectedRegionId;
+                  const currentLimitCredit = isSameRegion ? (provinceData?.phc_worker_limit ?? 0) : 0;
                   const remainingPhcWorkerLimit = regionLimitation
                     ? regionLimitation.remaining_phc_worker_limit
                     : 0;
-                  const exceedremainingPhcWorkerLimit = provinceData
-                    ? numValue >
-                      remainingPhcWorkerLimit + provinceData.phc_worker_limit
-                    : numValue > remainingPhcWorkerLimit;
+
+                  const usedPhcWorkerLimit = regionLimitation
+                    ? regionLimitation.phc_worker_limit_used
+                    : 0;
+
+                  const exceedremainingPhcWorkerLimit = numValue > remainingPhcWorkerLimit + currentLimitCredit;
+
+                  const translateParams = {
+                    allocated_phc_worker_limit:
+                      regionLimitation?.allocated_phc_worker_limit,
+                    remaining_phc_worker_limit:
+                      remainingPhcWorkerLimit + currentLimitCredit,
+                    phc_worker_limit_used:
+                      usedPhcWorkerLimit - currentLimitCredit,
+                  };
 
                   if (value <= 0) {
                     return t('error.province.phc_worker_limit.equal_to.zero');
@@ -240,6 +254,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
                   if (exceedremainingPhcWorkerLimit) {
                     return t(
                       'error.province.phc_worker_limit.greater_than.region.phc_worker_limit',
+                      { ...translateParams }
                     );
                   }
 

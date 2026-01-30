@@ -27,6 +27,7 @@ export const END_POINTS = {
   PHC_WORKERS_DELETE: 'phc-workers/delete/by-id',
   PHC_WORKER_LIST_BY_PHC_SERVICE: 'phc-workers/list/by-phc-service',
   PATIENT_REFERRAL: 'patient-referrals',
+  INTERVIEW_HISTORY: 'screening-questionnaires-history-by-patient-list',
   THERAPIST_BY_CLINIC: 'therapist/list/by-clinic-id',
   PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
   PATIENT_LIST_BY_PHC_WORKER_IDS: 'patient/list/by-phc-worker-ids',
