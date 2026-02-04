@@ -30,7 +30,7 @@ const questionShape = PropTypes.shape({
   })),
 });
 
-const API_BASE_URL = process.env.REACT_APP_ADMIN_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const getFileUrl = (file:any) => {
   if (!file?.id) return null;

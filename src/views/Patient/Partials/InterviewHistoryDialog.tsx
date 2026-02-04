@@ -135,6 +135,43 @@ const InterviewHistoryDialog = ({ show, onClose, patientId, translate }: Props) 
     }
   }, [show]);
 
+  const getSectionMaxScores = (section:any) => {
+    const sectionMax = (section?.questions || [])?.reduce((sum:any, q:any) => {
+      const options = q?.options || [];
+
+      const points = options
+        ?.map((o:any) => Number(o?.option_point ?? 0))
+        ?.filter((n:any) => !Number.isNaN(n));
+
+      let questionMax = 0;
+
+      switch (q?.question_type) {
+        case 'radio':
+          questionMax = points.length ? Math.max(...points) : 0;
+          break;
+
+        case 'checkbox':
+          questionMax = points.reduce((s:any, p:any) => s + (p > 0 ? p : 0), 0);
+          break;
+
+        case 'rating':
+          questionMax = Number(q?.options?.[0]?.max ?? 0) || 0;
+          break;
+
+        case 'open-number':
+          questionMax = Number(q?.options?.[0]?.option_point ?? 0);
+          break;
+
+        default:
+          questionMax = points.length ? Math.max(...points) : 0;
+          break;
+      }
+      return sum + questionMax;
+    }, 0);
+
+    return sectionMax;
+  };
+
   return (
     <>
       {/* Main List Dialog */}
@@ -166,7 +203,7 @@ const InterviewHistoryDialog = ({ show, onClose, patientId, translate }: Props) 
                     <p className="m-0 font-weight-bold">
                       {interviewHistory.questionnaire.title}
                     </p>
-                    <p className="m-0 text-info">
+                    <p className="m-0 text-primary">
                       {statusText}
                     </p>
                   </div>
@@ -215,7 +252,7 @@ const InterviewHistoryDialog = ({ show, onClose, patientId, translate }: Props) 
                 <div className="d-flex justify-content-between align-items-center mt-2">
                   <span>{currentSection.title}</span>
                   <span className="font-weight-bold">
-                    {translate('phc.interview_total_score', { total_score: totalScore })}
+                    {translate('common.interview_total_score_of_max_score', { total_score: totalScore, max_score: getSectionMaxScores(currentSection) })}
                   </span>
                 </div>
                 {actionText && (
