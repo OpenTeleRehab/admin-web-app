@@ -25,6 +25,10 @@ const Dashboard = () => {
         setDashboardId(process.env.REACT_APP_SUPERSET_DASHBOARD_ID_FOR_CLINIC_ADMIN);
       } else if (profile.type === USER_GROUPS.COUNTRY_ADMIN) {
         setDashboardId(process.env.REACT_APP_SUPERSET_DASHBOARD_ID_FOR_COUNTRY_ADMIN);
+      } else if (profile.type === USER_GROUPS.REGIONAL_ADMIN) {
+        setDashboardId(process.env.REACT_APP_SUPERSET_DASHBOARD_ID_FOR_REGIONAL_ADMIN);
+      } else if (profile.type === USER_GROUPS.PHC_SERVICE_ADMIN) {
+        setDashboardId(process.env.REACT_APP_SUPERSET_DASHBOARD_ID_FOR_PHC_SERVICE_ADMIN);
       } else {
         setDashboardId(process.env.REACT_APP_SUPERSET_DASHBOARD_ID_FOR_GLOBAL_ADMIN);
       }
