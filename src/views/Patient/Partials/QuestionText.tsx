@@ -1,18 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const QuestionText = ({ questionText, required }: { questionText: string, required?: boolean }) => {
+const QuestionText = ({ questionText, required }: { questionText: string, required?: number | boolean }) => {
+  const isRequired = required === true || required === 1;
+
   return (
     <div className='mb-2'>
-      <span dangerouslySetInnerHTML={{ __html: questionText }} />
-      {required && <span className="text-danger ml-1">*</span>}
+      <span dangerouslySetInnerHTML={{ __html: questionText }}/>
+      {isRequired && <span className="text-danger ml-1">*</span>}
     </div>
   );
-};
-
-QuestionText.propTypes = {
-  questionText: PropTypes.string,
-  required: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
 };
 
 export default QuestionText;
