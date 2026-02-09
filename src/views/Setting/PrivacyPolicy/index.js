@@ -67,11 +67,7 @@ const PrivacyPolicy = ({ translate, handleRowEdit }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
-      setPrivacyPolicyData(_.filter(privacyPolicies, (item) => { return item.status === STATUSES.PUBLISHED; }));
-    } else {
-      setPrivacyPolicyData(privacyPolicies);
-    }
+    setPrivacyPolicyData(privacyPolicies);
   }, [profile, privacyPolicies]);
 
   const handlePublish = (id) => {

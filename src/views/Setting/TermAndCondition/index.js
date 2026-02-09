@@ -67,11 +67,7 @@ const TermAndCondition = ({ translate, handleRowEdit }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
-      setTermsConditionsData(_.filter(termAndConditions, (item) => { return item.status === STATUSES.PUBLISHED; }));
-    } else {
-      setTermsConditionsData(termAndConditions);
-    }
+    setTermsConditionsData(termAndConditions);
   }, [profile, termAndConditions]);
 
   const handlePublish = (id) => {
