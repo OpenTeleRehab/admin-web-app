@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import BasicTable from 'components/Table/basic';
 import DeleteProvinceConfirmation from './_Partials/deleteConfirmation';
 import customColorScheme from 'utils/customColorScheme';
+import _ from 'lodash';
 
 const Province = () => {
   const dispatch = useDispatch();
