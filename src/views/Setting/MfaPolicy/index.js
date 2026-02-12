@@ -10,11 +10,14 @@ import CreateMfaPolicy from './create';
 import { EditAction } from 'components/ActionIcons';
 import { getMfaSettings } from 'store/mfaSetting/actions';
 import { USER_GROUPS } from 'variables/user';
+import customColorScheme from 'utils/customColorScheme';
+import _ from 'lodash';
 
 const MfaPolicy = ({ translate }) => {
   const dispatch = useDispatch();
   const { profile } = useSelector(state => state.auth);
   const mfaSettings = useSelector(state => state.mfaSetting.mfaSettings);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [showEdit, setShowEdit] = useState(false);
   const [editingMfa, setEditingMfa] = useState(null);
   const [rows, setRows] = useState([]);
@@ -129,6 +132,7 @@ const MfaPolicy = ({ translate }) => {
           initialData={editingMfa}
         />
       )}
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };
