@@ -5,7 +5,7 @@ import EditRegion from './_Partials/createOrEdit';
 import BasicTable from 'components/Table/basic';
 import { useList } from 'hooks/useList';
 import { useDelete } from 'hooks/useDelete';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useToast from 'components/V2/Toast';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import { useAlertDialog } from 'components/V2/AlertDialog';
@@ -14,10 +14,13 @@ import { END_POINTS } from 'variables/endPoint';
 import { IRegionResource } from 'interfaces/IRegion';
 import { useEffect, useMemo, useState } from 'react';
 import DeleteRegionConfirmation from './_Partials/deleteConfirmation';
+import customColorScheme from 'utils/customColorScheme';
+import _ from 'lodash';
 
 const Region = () => {
   const dispatch = useDispatch();
   const t = useTranslate();
+  const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const { showToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
   const { showAlert } = useAlertDialog();
@@ -117,18 +120,21 @@ const Region = () => {
   );
 
   return (
-    <BasicTable
-      rows={rows}
-      columns={columns}
-      showSearch={true}
-      showPagination={true}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
-      totalCount={totalCount}
-      setSearchValue={setSearchValue}
-    />
+    <>
+      <BasicTable
+        rows={rows}
+        columns={columns}
+        showSearch={true}
+        showPagination={true}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalCount={totalCount}
+        setSearchValue={setSearchValue}
+      />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+    </>
   );
 };
 

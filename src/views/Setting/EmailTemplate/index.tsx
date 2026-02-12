@@ -7,12 +7,16 @@ import { EditAction } from 'components/V2/ActionIcons';
 import useDialog from '../../../components/V2/Dialog';
 import EditReferralEmailTemplate from './edit';
 import Table from '../../../components/Table';
+import customColorScheme from 'utils/customColorScheme';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 const CustomTable: any = Table;
 
 const EmailTemplate = () => {
   const t = useTranslate();
   const { openDialog } = useDialog();
+  const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const { data: { data = [] } = {} } = useList<IEmailTemplateResource>(END_POINTS.EMAIL_TEMPLATE);
 
   const columns = useMemo(() => [
@@ -52,6 +56,7 @@ const EmailTemplate = () => {
         hideSearchFilter
         hidePagination
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

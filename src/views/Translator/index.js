@@ -19,12 +19,15 @@ import CreateOrEditTranslator from './_Partials/createOrEdit';
 import { useList } from 'hooks/useList';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { END_POINTS } from 'variables/endPoint';
+import customColorScheme from 'utils/customColorScheme';
+import _ from 'lodash';
 
 const Translator = () => {
   const dispatch = useDispatch();
   const translate = useTranslate();
   const invalidate = useInvalidate();
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const { openDialog } = useDialog();
 
   const columns = [
@@ -191,6 +194,7 @@ const Translator = () => {
           <p>{translate('common.switchStatus_confirmation_message')}</p>
         </div>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };

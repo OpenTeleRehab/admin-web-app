@@ -16,16 +16,18 @@ import { reorderArray } from 'utils/array';
 import useDialog from 'components/V2/Dialog';
 import CreateEditPhcWorkerGuidance from './createOrEdit';
 import { useDelete } from 'hooks/useDelete';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import useToast from 'components/V2/Toast';
 import { useTranslate } from 'hooks/useTranslate';
 import { useAlertDialog } from 'components/V2/AlertDialog';
+import customColorScheme from 'utils/customColorScheme';
 
 const PhcWorkerGuidance = () => {
   const dispatch = useDispatch();
   const invalidate = useInvalidate();
   const t: any = useTranslate();
+  const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const { openDialog, closeDialog } = useDialog();
   const { showToast } = useToast();
   const { showAlert } = useAlertDialog();
@@ -98,59 +100,62 @@ const PhcWorkerGuidance = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={(e) => onDragEnd(e)}>
-      <Droppable droppableId="droppable">
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {phcWorkerGuidances.map((guidancePage, index) => (
-              <Draggable key={index} draggableId={`guidancePage${index}`} index={index}>
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.draggableProps}>
-                    <Card className="guidance-card mb-3">
-                      <Card.Header className="d-flex justify-content-between align-items-center">
-                        <h5>{guidancePage.title}</h5>
-                        <div className="d-flex align-items-center">
-                          {keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && (
-                            <>
-                              <div {...provided.dragHandleProps}>
-                                <Button
-                                  variant="link"
-                                  size="sm"
-                                  className="text-dark drag-button"
-                                  aria-label="Drag button"
-                                >
-                                  <BsArrowsMove size={20}/>
-                                </Button>
-                              </div>
-                              <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
-                            </>
-                          )}
-                          {(keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && (
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="text-primary p-0"
-                              onClick={() => handleEdit(guidancePage.id)}
-                              aria-label="Edit"
-                            >
-                              <FaEdit size={20} />
-                            </Button>
-                          )}
-                        </div>
-                      </Card.Header>
-                      <Card.Body>
-                        <div dangerouslySetInnerHTML={{ __html: guidancePage.content }} />
-                      </Card.Body>
-                    </Card>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <DragDropContext onDragEnd={(e) => onDragEnd(e)}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {phcWorkerGuidances.map((guidancePage, index) => (
+                <Draggable key={index} draggableId={`guidancePage${index}`} index={index}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                      <Card className="guidance-card mb-3">
+                        <Card.Header className="d-flex justify-content-between align-items-center">
+                          <h5>{guidancePage.title}</h5>
+                          <div className="d-flex align-items-center">
+                            {keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) && (
+                              <>
+                                <div {...provided.dragHandleProps}>
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="text-dark drag-button"
+                                    aria-label="Drag button"
+                                  >
+                                    <BsArrowsMove size={20}/>
+                                  </Button>
+                                </div>
+                                <DeleteAction className="mr-2" onClick={() => handleDelete(guidancePage.id)} key={guidancePage.id} />
+                              </>
+                            )}
+                            {(keycloak.hasRealmRole(USER_ROLES.MANAGE_GUIDANCE_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_GUIDANCE_PAGE)) && (
+                              <Button
+                                variant="link"
+                                size="sm"
+                                className="text-primary p-0"
+                                onClick={() => handleEdit(guidancePage.id)}
+                                aria-label="Edit"
+                              >
+                                <FaEdit size={20} />
+                              </Button>
+                            )}
+                          </div>
+                        </Card.Header>
+                        <Card.Body>
+                          <div dangerouslySetInnerHTML={{ __html: guidancePage.content }} />
+                        </Card.Body>
+                      </Card>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+    </>
   );
 };
 

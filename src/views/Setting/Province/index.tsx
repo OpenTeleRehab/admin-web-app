@@ -4,7 +4,7 @@ import { useTranslate } from 'hooks/useTranslate';
 import EditProvince from './_Partials/createOrEdit';
 import { useList } from 'hooks/useList';
 import { useDelete } from 'hooks/useDelete';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useToast from 'components/V2/Toast';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import { useAlertDialog } from 'components/V2/AlertDialog';
@@ -14,10 +14,12 @@ import { IProvinceResource } from 'interfaces/IProvince';
 import { useEffect, useMemo, useState } from 'react';
 import BasicTable from 'components/Table/basic';
 import DeleteProvinceConfirmation from './_Partials/deleteConfirmation';
+import customColorScheme from 'utils/customColorScheme';
 
 const Province = () => {
   const dispatch = useDispatch();
   const t = useTranslate();
+  const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const { showToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
   const { showAlert } = useAlertDialog();
@@ -119,18 +121,21 @@ const Province = () => {
   );
 
   return (
-    <BasicTable
-      showSearch={true}
-      showPagination={true}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
-      totalCount={totalCount}
-      setSearchValue={setSearchValue}
-      columns={columns}
-      rows={rows}
-    />
+    <>
+      <BasicTable
+        showSearch={true}
+        showPagination={true}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalCount={totalCount}
+        setSearchValue={setSearchValue}
+        columns={columns}
+        rows={rows}
+      />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+    </>
   );
 };
 

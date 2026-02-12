@@ -14,11 +14,15 @@ import { useAlertDialog } from 'components/V2/AlertDialog';
 import { MdOutlineRotateLeft } from 'react-icons/md';
 import SuccessDialog from './_Partials/successDialog';
 import { useDelete } from 'hooks/useDelete';
+import customColorScheme from 'utils/customColorScheme';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 const CustomTable: any = Table;
 const ApiClient = () => {
   const t: any = useTranslate();
   const { openDialog, closeDialog } = useDialog();
+  const { colorScheme } = useSelector((state: any) => state.colorScheme);
   const { showToast } = useToast();
   const { showAlert } = useAlertDialog();
   const { data: apiClients } = useList<IApiClientResource>(END_POINTS.API_CLIENT);
@@ -143,6 +147,7 @@ const ApiClient = () => {
         hideSearchFilter
         hidePagination
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </div>
   );
 };
