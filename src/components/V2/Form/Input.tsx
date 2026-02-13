@@ -48,6 +48,11 @@ const Input = <T extends FieldValues>({
             rows={rows}
             as={controlAs}
             isInvalid={!!fieldState.error}
+            onKeyDown={props.type === 'number' ? (e: any) => {
+              if (e.key === '-' || e.key === 'e') {
+                e.preventDefault();
+              }
+            } : undefined}
           />
 
           {fieldState.error && (
