@@ -24,6 +24,7 @@ import { END_POINTS } from 'variables/endPoint';
 import { USER_GROUPS } from 'variables/user';
 import EditRegionalAdmin from '../_Partials/RegionalAdminForm';
 import { IRegion } from 'interfaces/IRegion';
+import { checkFederatedUser } from 'utils/user';
 
 const RegionalAdmin = () => {
   const dispatch = useDispatch();
@@ -73,6 +74,7 @@ const RegionalAdmin = () => {
   const rows = useMemo(
     () =>
       (regionalAdmins?.data || []).map((regionalAdmin) => {
+        const isFederatedUser = checkFederatedUser(regionalAdmin.email);
         const action = (
           <>
             {regionalAdmin.enabled ? (
@@ -90,10 +92,12 @@ const RegionalAdmin = () => {
               onClick={() => handleDelete(regionalAdmin.id)}
               disabled={regionalAdmin.enabled}
             />
-            <MailSendAction
-              onClick={() => handleSendMail(regionalAdmin.id)}
-              disabled={regionalAdmin.last_login}
-            />
+            {!isFederatedUser && (
+              <MailSendAction
+                onClick={() => handleSendMail(regionalAdmin.id)}
+                disabled={regionalAdmin.last_login}
+              />
+            )}
           </>
         );
         return {
