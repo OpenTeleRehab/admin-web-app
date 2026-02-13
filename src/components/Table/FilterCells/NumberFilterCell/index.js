@@ -8,7 +8,20 @@ const NumberFilterCell = ({ filter, onFilter }) => {
   const translate = getTranslate(localize);
   return (
     <th>
-      <input type="number" className="form-control" onChange={(e) => onFilter(e.target.value ? { value: e.target.value } : null)} placeholder={translate('common.search.placeholder')} aria-label="Number"/>
+      <input
+        type="number"
+        className="form-control"
+        onChange={(e) => onFilter(e.target.value ? { value: e.target.value } : null)}
+        placeholder={translate('common.search.placeholder')}
+        aria-label="Number"
+        min={0}
+        onKeyDown={(e) => {
+          // Prevent typing minus or scientific notation
+          if (e.key === '-' || e.key === 'e') {
+            e.preventDefault();
+          }
+        }}
+      />
     </th>
   );
 };

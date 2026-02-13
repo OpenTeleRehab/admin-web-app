@@ -147,6 +147,7 @@ const PatientList = ({ translate, setDownloadfilter }) => {
             country: patient.country_name,
             clinic: patient.clinic_name,
             phc_service: patient.phc_service_name,
+            region: patient.region_name,
             treatment_status: renderStatusBadge(patient.ongoingTreatmentPlan.length ? patient.ongoingTreatmentPlan[0] : patient.upcomingTreatmentPlan ? patient.upcomingTreatmentPlan : patient.lastTreatmentPlan),
             health_condition_groups: patient.healthConditionGroups,
             health_conditions: patient.healthConditions,
