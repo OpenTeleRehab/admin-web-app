@@ -244,20 +244,24 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
     }
 
     if (profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN) {
-      if ((formFields.role === USER_GROUPS.CLINIC_ADMIN || formFields.role === USER_GROUPS.THERAPIST || formFields.role === USER_GROUPS.PATIENT || formFields.service_type === SURVEY_SERVICE_TYPES.CLINIC) && formFields.clinic.length === 0) {
-        canSave = false;
-        setErrorClinic(true);
-      } else {
-        setErrorClinic(false);
+      if ((formFields.role === USER_GROUPS.CLINIC_ADMIN || formFields.role === USER_GROUPS.THERAPIST) || (formFields.role === USER_GROUPS.PATIENT && formFields.service_type === SURVEY_SERVICE_TYPES.REHAB_SERVICE)) {
+        if (formFields.clinic.length === 0) {
+          canSave = false;
+          setErrorClinic(true);
+        } else {
+          setErrorClinic(false);
+        }
       }
     }
 
     if (profile.type === USER_GROUPS.COUNTRY_ADMIN || profile.type === USER_GROUPS.ORGANIZATION_ADMIN || profile.type === USER_GROUPS.REGIONAL_ADMIN) {
-      if ((formFields.role === USER_GROUPS.PHC_SERVICE_ADMIN || formFields.role === USER_GROUPS.PHC_WORKER || formFields.role === USER_GROUPS.PATIENT || formFields.service_type === SURVEY_SERVICE_TYPES.PHC_SERVICE) && formFields.phc_service.length === 0) {
-        canSave = false;
-        setErrorPhcService(true);
-      } else {
-        setErrorPhcService(false);
+      if ((formFields.role === USER_GROUPS.PHC_SERVICE_ADMIN || formFields.role === USER_GROUPS.PHC_WORKER) || (formFields.role === USER_GROUPS.PATIENT && formFields.service_type === SURVEY_SERVICE_TYPES.PHC_SERVICE)) {
+        if (formFields.phc_service.length === 0) {
+          canSave = false;
+          setErrorPhcService(true);
+        } else {
+          setErrorPhcService(false);
+        }
       }
     }
 
