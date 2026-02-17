@@ -16,6 +16,7 @@ import { MFA_ENFORCEMENT } from 'variables/mfaEnforcement';
 import { createMfaSetting, updateMfaSetting, getMfaEnforcementValidation } from 'store/mfaSetting/actions';
 import { mutation } from 'store/mfaSetting/mutations';
 import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
 
 const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const { profile } = useSelector((state) => state.auth);
@@ -26,8 +27,8 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const organizations = useSelector((state) => state.organization.organizations);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
-  const { data: regions } = useList('regions/by-auth-country');
-  const { data: phcServices } = useList('phc-services-by-region');
+  const { data: regions } = useList(END_POINTS.REGION_BY_AUTH_COUNTRY);
+  const { data: phcServices } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST);
   const dispatch = useDispatch();
   const { control, watch, handleSubmit, reset } = useForm();
   const role = watch('role');
@@ -282,7 +283,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
               value: item.id,
               label: item.name
             }))}
-            rules={{ required: translate('error.phc_service') }}
+            rules={{ required: translate('mfa.error.phc_service') }}
             isMulti
             isClearable
             aria-label="phcService"
