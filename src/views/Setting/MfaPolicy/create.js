@@ -323,51 +323,63 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         />
         {watch('mfa_enforcement') && watch('mfa_enforcement') !== MFA_ENFORCEMENT.DISABLE && (profile && profile.type === USER_GROUPS.ORGANIZATION_ADMIN) && (
           <Row>
-            <Col md={4} className="pr-0">
-              <Input
-                control={control}
-                type="number"
-                name="mfa_expiration_duration"
-                rules={{ required: 'This field is required' }}
-                label={translate('mfa.mfa_expiration_duration.label')}
-                placeholder={translate('mfa.expiration.duration.placeholder')}
-              />
-            </Col>
-            <Col md={2} className="pl-0">
-              <CustomSelect
-                control={control}
-                rules={{ required: translate('error.mfa_expiration_unit') }}
-                name="mfa_expiration_unit"
-                label={translate('mfa.mfa_expiration_unit.label')}
-                labelClassName="invisible"
-                options={durationUnits}
-                placeholder={translate('mfa.mfa_expiration_unit.placeholder')}
-              />
+            <Col md={6}>
+              <Form.Group>
+                <Form.Label className='mb-0'>{translate('mfa.mfa_expiration_duration.label')}</Form.Label>
+                <Form.Text className="text-muted mb-1">
+                  {translate('mfa.expiration.duration.description')}
+                </Form.Text>
+                <Row>
+                  <Col md={8} className="pr-0">
+                    <Input
+                      control={control}
+                      type="number"
+                      name="mfa_expiration_duration"
+                      rules={{ required: 'This field is required' }}
+                      placeholder={translate('mfa.expiration.duration.placeholder')}
+                    />
+                  </Col>
+                  <Col md={4} className="pl-0">
+                    <CustomSelect
+                      control={control}
+                      rules={{ required: translate('error.mfa_expiration_unit') }}
+                      name="mfa_expiration_unit"
+                      options={durationUnits}
+                      placeholder={translate('mfa.mfa_expiration_unit.placeholder')}
+                    />
+                  </Col>
+                </Row>
+              </Form.Group>
             </Col>
             {watch('mfa_enforcement') === MFA_ENFORCEMENT.RECOMMEND && (
-              <>
-                <Col md={4} className="pr-0">
-                  <Input
-                    control={control}
-                    type="number"
-                    name="skip_mfa_setup_duration"
-                    rules={{ required: 'This field is required' }}
-                    label={translate('mfa.skip_mfa_setup_duration.label')}
-                    placeholder={translate('mfa.skip.setup.duration.placeholder')}
-                  />
-                </Col>
-                <Col md={2} className="pl-0">
-                  <CustomSelect
-                    control={control}
-                    rules={{ required: translate('error.skip_mfa_setup_unit') }}
-                    name="skip_mfa_setup_unit"
-                    label={translate('mfa.skip_mfa_setup_unit.label')}
-                    labelClassName="invisible"
-                    options={durationUnits}
-                    placeholder={translate('mfa.skip_mfa_setup_unit.placeholder')}
-                  />
-                </Col>
-              </>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label className='mb-0'>{translate('mfa.skip_mfa_setup_duration.label')}</Form.Label>
+                  <Form.Text className="text-muted mb-1">
+                    {translate('mfa.skip.setup.duration.description')}
+                  </Form.Text>
+                  <Row>
+                    <Col md={8} className="pr-0">
+                      <Input
+                        control={control}
+                        type="number"
+                        name="skip_mfa_setup_duration"
+                        rules={{ required: 'This field is required' }}
+                        placeholder={translate('mfa.skip.setup.duration.placeholder')}
+                      />
+                    </Col>
+                    <Col md={4} className="pl-0">
+                      <CustomSelect
+                        control={control}
+                        rules={{ required: translate('error.skip_mfa_setup_unit') }}
+                        name="skip_mfa_setup_unit"
+                        options={durationUnits}
+                        placeholder={translate('mfa.skip_mfa_setup_unit.placeholder')}
+                      />
+                    </Col>
+                  </Row>
+                </Form.Group>
+              </Col>
             )}
           </Row>
         )}
