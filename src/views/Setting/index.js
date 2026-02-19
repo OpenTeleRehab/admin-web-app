@@ -95,6 +95,7 @@ const Setting = ({ translate }) => {
   const { hasAnyRole } = useRole();
   const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
+  const mfaSettings = useSelector(state => state.mfaSetting.mfaSettings);
   const [view, setView] = useState(undefined);
   const [show, setShow] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
@@ -252,7 +253,16 @@ const Setting = ({ translate }) => {
 
     if (excludedViews.includes(view)) return false;
 
+    if (
+      view === VIEW_MFA_POLICY &&
+      mfaSettings.length &&
+      [USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile?.type)
+    ) {
+      return false;
+    }
+
     if (profile?.type === USER_GROUPS.SUPER_ADMIN) return true;
+
     if (viewRoleMap[view] && (_.isArray(viewRoleMap[view]) ? hasAnyRole(viewRoleMap[view]) : keycloak.hasRealmRole(viewRoleMap[view]))) return true;
 
     return false;

@@ -48,19 +48,26 @@ const MfaPolicy = ({ translate }) => {
 
   const columns = useMemo(() => [
     { name: 'role', title: translate('mfa.user_type') },
-    { name: 'organizations', title: translate('mfa.organizations') },
+    ...(![USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.REGIONAL_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type)
+      ? [{ name: 'organizations', title: translate('mfa.organizations') }]
+      : []),
 
-    ...(profile.type !== USER_GROUPS.SUPER_ADMIN
+    ...(![USER_GROUPS.SUPER_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.REGIONAL_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type)
       ? [{ name: 'countries', title: translate('mfa.countries') }]
       : []),
 
-    { name: 'regions', title: translate('mfa.regions') },
+    ...(![USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type)
+      ? [{ name: 'regions', title: translate('mfa.regions') }]
+      : []),
 
-    ...((profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && profile.type !== USER_GROUPS.SUPER_ADMIN))
+    ...(![USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type))
       ? [{ name: 'clinics', title: translate('mfa.services') }]
       : [],
 
-    { name: 'phc_services', title: translate('mfa.phc_services') },
+    ...(![USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN].includes(profile.type)
+      ? [{ name: 'phc_services', title: translate('mfa.phc_services') }]
+      : []),
+
     { name: 'attributes', title: translate('mfa.configs') },
     { name: 'progress_status', title: translate('mfa.status') },
     { name: 'action', title: translate('common.action') }
