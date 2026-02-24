@@ -13,6 +13,7 @@ import { useOne } from 'hooks/useOne';
 import { END_POINTS } from 'variables/endPoint';
 import Select from 'react-select';
 import { useInvalidate } from 'hooks/useInvalidate';
+import { preventInvalidNumberInput } from 'utils/general';
 
 const CreateClinic = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -94,7 +95,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
 
   const handleChange = e => {
     const { name, value, type } = e.target;
-    setFormFields({ ...formFields, [name]: type === 'number' ? Number(value) : value });
+    setFormFields({ ...formFields, [name]: value });
   };
 
   const handleSingleSelectChange = (key, value) => {
@@ -168,7 +169,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       setErrorTherapistLimit(translate('error.clinic.therapist_limit'));
     } else if (formFields.therapist_limit < totalTherapist?.therapistTotal) {
       canSave = false;
-      setErrorTherapistLimit(translate('error.clinic.therapist_limit.less_than.total.therapist'));
+      setErrorTherapistLimit(translate('error.clinic.therapist_limit.less_than.total.therapist', { total_therapist: totalTherapist?.therapistTotal }));
     } else if (exceedRemainingTherapistLimit) {
       canSave = false;
       setErrorTherapistLimit(translate('error.clinic.therapist_limit.greater_than.province.therapist_limit', { ...translateParams }));
@@ -315,6 +316,7 @@ const CreateClinic = ({ show, editId, handleClose }) => {
             placeholder={translate('placeholder.country.therapist_limit')}
             isInvalid={!!errorTherapistLimit}
             value={formFields.therapist_limit}
+            onKeyDown={(e) => preventInvalidNumberInput(e)}
           />
           <Form.Control.Feedback type="invalid">
             {errorTherapistLimit}

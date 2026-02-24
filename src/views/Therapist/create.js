@@ -17,6 +17,7 @@ import {
   getTotalOnGoingTreatment
 } from 'utils/patient';
 import PhoneInput from 'react-phone-input-2';
+import { preventInvalidNumberInput } from '../../utils/general';
 
 const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient }) => {
   const localize = useSelector((state) => state.localize);
@@ -299,6 +300,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               placeholder={translate('placeholder.limit_patient')}
               isInvalid={errorLimitPatient || errorOverDefaultLimit}
               value={formFields.limit_patient}
+              onKeyDown={(e) => preventInvalidNumberInput(e)}
             />
             <Form.Control.Feedback type="invalid">
               {errorLimitPatientMessage}

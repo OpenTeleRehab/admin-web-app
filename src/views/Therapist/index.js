@@ -55,8 +55,10 @@ const Therapist = ({ translate }) => {
 
   let columns = [
     { name: 'id', title: translate('common.id') },
+    { name: 'last_name', title: translate('common.last_name') },
+    { name: 'first_name', title: translate('common.first_name') },
+    { name: 'email', title: translate('common.email') },
     { name: 'profession', title: translate('common.profession') },
-    { name: 'region', title: translate('common.region') },
     { name: 'therapist_clinic', title: translate('common.clinic') },
     { name: 'total_patient', title: translate('common.total_patient') },
     { name: 'on_going_treatment', title: translate('common.ongoing_treatment_plan') },
@@ -64,11 +66,11 @@ const Therapist = ({ translate }) => {
     { name: 'action', title: translate('common.action') }
   ];
 
-  if (keycloak.hasRealmRole(USER_ROLES.MANAGE_ORGANIZATION_ADMIN)) {
+  if (profile?.type === USER_GROUPS.ORGANIZATION_ADMIN || profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) {
     columns = [
       { name: 'id', title: translate('common.id') },
       { name: 'profession', title: translate('common.profession') },
-      { name: 'therapist_country', title: translate('common.country') },
+      { name: (profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) ? 'country_name' : 'country', title: translate('common.country') },
       { name: 'region', title: translate('common.region') },
       { name: 'therapist_clinic', title: translate('common.clinic') },
       { name: 'total_patient', title: translate('common.total_patient') },
@@ -80,6 +82,8 @@ const Therapist = ({ translate }) => {
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true, width: 250 },
+    { columnName: 'last_name', wordWrapEnabled: true },
+    { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'profession', wordWrapEnabled: true },
     { columnName: 'therapist_clinic', wordWrapEnabled: true },
     { columnName: 'limit_patient', wordWrapEnabled: true },
@@ -266,7 +270,8 @@ const Therapist = ({ translate }) => {
             last_name: user.last_name,
             email: user.email,
             profession: getProfessionName(user.profession_id, professions),
-            therapist_country: getCountryName(user.country_id, countries),
+            country: getCountryName(user.country_id, countries),
+            country_name: getCountryName(user.country_id, countries),
             region: getClinicRegion(user.clinic_id, clinics),
             therapist_clinic: getClinicName(user.clinic_id, clinics),
             total_patient: getTotalPatient(user.id, patients),

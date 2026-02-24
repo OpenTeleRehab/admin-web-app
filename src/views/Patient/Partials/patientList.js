@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -21,37 +21,37 @@ const PatientList = ({ translate, setDownloadfilter }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
   const { profile } = useSelector(state => state.auth);
 
-  const columns = [
+  const allColumns = [
     { name: 'identity', title: translate('common.id') },
     { name: 'gender', title: translate('gender') },
     { name: 'age', title: translate('common.age') },
+    { name: 'country', title: translate('common.country') },
     { name: 'region', title: translate('common.region') },
+    { name: 'clinic', title: translate('common.clinic') },
+    { name: 'phc_service', title: translate('common.phc_service') },
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'health_condition_groups', title: translate('common.health_condition_group') },
-    { name: 'health_conditions', title: translate('common.health_condition') }
+    { name: 'health_conditions', title: translate('common.health_condition') },
+    { name: 'action', title: translate('common.action') }
   ];
+
+  const hiddenColumnsByRole = {
+    [USER_GROUPS.COUNTRY_ADMIN]: ['country'],
+    [USER_GROUPS.REGIONAL_ADMIN]: ['country'],
+    [USER_GROUPS.CLINIC_ADMIN]: ['country', 'region', 'phc_service', 'clinic'],
+    [USER_GROUPS.PHC_SERVICE_ADMIN]: ['country', 'region', 'phc_service', 'clinic'],
+  };
+
+  const columns = useMemo(() => {
+    const hiddenColumns = hiddenColumnsByRole[profile.type] || [];
+    return allColumns.filter(col => !hiddenColumns.includes(col.name));
+  }, [profile.type, translate]);
 
   const columnExtensions = [
     { columnName: 'id', wordWrapEnabled: true },
     { columnName: 'treatment_plan', wordWrapEnabled: true },
     { columnName: 'treatment_status', wordWrapEnabled: true }
   ];
-
-  if ([USER_GROUPS.SUPER_ADMIN, USER_GROUPS.ORGANIZATION_ADMIN].includes(profile.type)) {
-    columns.splice(2, 0, { name: 'country', title: translate('common.country') });
-  }
-
-  if (profile.type !== USER_GROUPS.CLINIC_ADMIN) {
-    columns.splice(3, 0, { name: 'clinic', title: translate('common.clinic') });
-  }
-
-  if (profile.type !== USER_GROUPS.PHC_SERVICE_ADMIN) {
-    columns.splice(3, 0, { name: 'phc_service', title: translate('common.phc_service') });
-  }
-
-  if ([USER_GROUPS.ORGANIZATION_ADMIN, USER_GROUPS.COUNTRY_ADMIN, USER_GROUPS.CLINIC_ADMIN, USER_GROUPS.PHC_SERVICE_ADMIN, USER_GROUPS.REGIONAL_ADMIN].includes(profile.type)) {
-    columns.push({ name: 'action', title: translate('common.action') });
-  }
 
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
