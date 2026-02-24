@@ -89,13 +89,22 @@ const QuestionSetting = ({
     const question = questions.find(item => item.id === logic.target_question_id);
 
     if (question?.options?.length) {
-      return question.options.map((item) => ({
+      return question?.options?.map((item) => ({
         value: item.id,
         label: item.option_text,
       }));
     }
 
     return [];
+  };
+
+  const getMinTargetQuestionValue = (index) => {
+    const logic = watch(`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}`);
+    const questions = watch(`sections.${sectionIndex}.questions`);
+    const question = questions.find(item => item.id === logic.target_question_id);
+    const minValue = question.options[0].min;
+    const maxValue = question.options[0].max;
+    return { minValue, maxValue };
   };
 
   const showTargetQuestionOptions = (index) => {
@@ -163,7 +172,13 @@ const QuestionSetting = ({
                           control={control}
                           name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.condition_rule`}
                           options={getConditionRuleOptions(index)}
-                          rules={{ required: translate('question.condition_rule.required') }}
+                          rules={{
+                            validate: (v) => {
+                              const opts = getConditionRuleOptions(index);
+                              if (!opts.length) return true;
+                              return v ? true : translate('question.condition_rule.required');
+                            },
+                          }}
                         />
                       )}
                     </Col>
@@ -175,7 +190,13 @@ const QuestionSetting = ({
                               control={control}
                               name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_id`}
                               options={getTargetQuestionOptions(index)}
-                              rules={{ required: translate('question.target_option_id.required') }}
+                              rules={{
+                                validate: (v) => {
+                                  const opts = getConditionRuleOptions(index);
+                                  if (!opts.length) return true;
+                                  return v ? true : translate('question.target_option_id.required');
+                                },
+                              }}
                             />
                           )}
                           {[SCREENING_QUESTION_TYPE.RATING].includes(getTargetQuestionType(index)) && (
@@ -183,9 +204,21 @@ const QuestionSetting = ({
                               control={control}
                               name={`sections.${sectionIndex}.questions.${questionIndex}.logics.${index}.target_option_value`}
                               type="number"
-                              min={0}
+                              min={getMinTargetQuestionValue(index).minValue}
+                              max={getMinTargetQuestionValue(index).maxValue}
                               placeholder={translate('question.target_option_value.placeholder')}
-                              rules={{ required: translate('question.target_option_value.required') }}
+                              rules={{
+                                required: translate('question.target_option_value.required'),
+                                valueAsNumber: true,
+                                min: {
+                                  value: Number(getMinTargetQuestionValue(index).minValue),
+                                  message: translate('screening_questionnaire.target_option_min_value.validate', { min: getMinTargetQuestionValue(index).minValue })
+                                },
+                                max: {
+                                  value: Number(getMinTargetQuestionValue(index).maxValue),
+                                  message: translate('screening_questionnaire.target_option_max_value.validate', { max: getMinTargetQuestionValue(index).maxValue })
+                                },
+                              }}
                             />
                           )}
                         </>

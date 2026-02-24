@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { getTranslate, withLocalize } from 'react-localize-redux';
@@ -10,6 +10,7 @@ import { DEFAULT_SCREENING_QUESTIONNAIRE_VALUES } from '../../../../../variables
 import Input from '../../../../../components/V2/Form/Input';
 import QuestionRepeater from '../QuestionRepeater';
 import ActionRepeater from '../ActionRepeater';
+import Dialog from '../../../../../components/Dialog';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0];
 
@@ -18,6 +19,7 @@ const SectionRepeater = ({
   setValue,
   watch,
   untranslatable,
+  isDraft
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -29,11 +31,29 @@ const SectionRepeater = ({
     name: 'sections',
   });
 
+  const [showConfrimDeleteSection, setShowConfirmDeleteSection] = useState(false);
+  const [removeIndex, setRemoveIndex] = useState(null);
   const disableRemoveSection = (index) => {
-    const sections = watch('sections');
+    const sections = watch('sections') ?? [];
     const section = sections[index];
 
+    if (isDraft) return sections.length <= 1;
     return sections.length <= 1 || typeof section?.id === 'number';
+  };
+
+  const handleRemoveSection = (index) => {
+    setShowConfirmDeleteSection(true);
+    setRemoveIndex(index);
+  };
+  const handleCancelRemoveSection = () => {
+    setShowConfirmDeleteSection(false);
+    setRemoveIndex(null);
+  };
+  const handleConfirmRemoveSection = () => {
+    if (removeIndex === null) return;
+    remove(removeIndex);
+    setShowConfirmDeleteSection(false);
+    setRemoveIndex(null);
   };
 
   return (
@@ -51,7 +71,7 @@ const SectionRepeater = ({
                 size="sm"
                 className="text-danger px-0"
                 disabled={disableRemoveSection(index)}
-                onClick={() => remove(index)}
+                onClick={() => handleRemoveSection(index)}
               >
                 <BsTrash size={20} />
               </Button>
@@ -72,6 +92,7 @@ const SectionRepeater = ({
               setValue={setValue}
               watch={watch}
               untranslatable={untranslatable}
+              isDraft={isDraft}
             />
           </Card.Body>
           <ActionRepeater
@@ -91,6 +112,16 @@ const SectionRepeater = ({
       >
         <BsPlusCircle size={20} /> {translate('questionnaire.new.section')}
       </Button>
+      <Dialog
+        show={showConfrimDeleteSection}
+        title={translate('screening_questionnaire.delete_section')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleCancelRemoveSection}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleConfirmRemoveSection}
+      >
+        <p>{translate('screening_questionnaire.delete_section_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };
@@ -100,6 +131,7 @@ SectionRepeater.propTypes = {
   setValue: PropTypes.func,
   watch: PropTypes.func,
   untranslatable: PropTypes.bool,
+  isDraft: PropTypes.bool,
 };
 
 export default withLocalize(SectionRepeater);

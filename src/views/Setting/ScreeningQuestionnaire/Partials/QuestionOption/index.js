@@ -13,7 +13,8 @@ import {
   SCREENING_QUESTION_TYPE,
 } from '../../../../../variables/questionnaire';
 
-const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0].questions[0].options[0];
+const defaultValues =
+  DEFAULT_SCREENING_QUESTIONNAIRE_VALUES.sections[0].questions[0].options[0];
 
 const QuestionOption = ({
   sectionIndex,
@@ -22,6 +23,7 @@ const QuestionOption = ({
   setValue,
   watch,
   untranslatable,
+  isDraft,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -58,7 +60,11 @@ const QuestionOption = ({
   const disableRemoveOption = (index) => {
     const option = watch(`sections.${sectionIndex}.questions.${questionIndex}.options.${index}`);
 
-    return question.options.length <= 2 || typeof option.id === 'number';
+    if (isDraft) {
+      return question?.options?.length <= 2;
+    } else {
+      return question?.options?.length <= 2 || typeof option?.id === 'number';
+    }
   };
 
   return (
@@ -262,6 +268,7 @@ QuestionOption.propTypes = {
   setValue: PropTypes.func,
   watch: PropTypes.func,
   untranslatable: PropTypes.bool,
+  isDraft: PropTypes.bool,
 };
 
 export default withLocalize(QuestionOption);

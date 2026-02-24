@@ -17,11 +17,12 @@ const QuestionRepeater = ({
   setValue,
   watch,
   untranslatable,
+  isDraft,
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
-  const questions = watch(`sections.${sectionIndex}.questions`);
+  const questions = watch(`sections.${sectionIndex}.questions`) ?? [];
 
   const { fields, append, move, remove } = useFieldArray({
     control,
@@ -52,7 +53,7 @@ const QuestionRepeater = ({
       ...question,
       id: crypto.randomUUID(),
       file: null,
-      options: question.options.map(option => ({
+      options: question?.options?.map(option => ({
         ...option,
         id: crypto.randomUUID(),
         file: null,
@@ -67,7 +68,7 @@ const QuestionRepeater = ({
   };
 
   const isDragDisabled = (index) => {
-    return questions.length <= 1 || typeof questions[index].id === 'number' || untranslatable;
+    return questions.length <= 1 || typeof questions[index]?.id === 'number' || untranslatable;
   };
 
   const onDragEnd = (result) => {
@@ -78,7 +79,7 @@ const QuestionRepeater = ({
     const { source, destination } = result;
 
     // Prevent dropping in disabled
-    if (typeof questions[destination.index].id === 'number') {
+    if (typeof questions[destination.index]?.id === 'number') {
       return;
     }
 
@@ -113,6 +114,7 @@ const QuestionRepeater = ({
                         untranslatable={untranslatable}
                         onClone={handleCloneQuestion}
                         onRemove={() => remove(index)}
+                        isDraft={isDraft}
                       />
                     </div>
                   )}
@@ -141,6 +143,7 @@ QuestionRepeater.propTypes = {
   setValue: PropTypes.func,
   watch: PropTypes.func,
   untranslatable: PropTypes.bool,
+  isDraft: PropTypes.bool,
 };
 
 export default withLocalize(QuestionRepeater);

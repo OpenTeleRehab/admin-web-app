@@ -18,6 +18,7 @@ import {
 } from '../../../store/screeningQuestionnaire/actions';
 import _ from 'lodash';
 import { USER_GROUPS } from 'variables/user';
+import { SCREENING_QUESTIONNAIRE_STATUSES } from '../../../variables/screeningQuestionnaire';
 
 const defaultValues = DEFAULT_SCREENING_QUESTIONNAIRE_VALUES;
 const defaultQuestionOptionValues = defaultValues.sections[0].questions[0].options;
@@ -31,7 +32,7 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
   const { languages } = useSelector(state => state.language);
   const [language, setLanguage] = useState(languages.length ? languages[0].id : null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showConfirmUpdate, setShowConfirmUpdate] = useState(false);
+  const [showUnChangeSave, setShowUnChangeSave] = useState(false);
 
   const languageObj = languages.find(item => item.id === parseInt(language, 10));
   const untranslatable = languageObj && (languageObj.code !== languageObj.fallback || profile.type === USER_GROUPS.TRANSLATOR);
@@ -60,12 +61,11 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
 
       // Reset question logic when question removed
       if (name?.endsWith('.questions')) {
-        const questionIds = value.sections.flatMap(section => section.questions.map(question => question.id));
+        const questionIds = value?.sections?.flatMap(section => section?.questions?.map(question => question?.id));
 
-        value.sections.forEach((section, sectionIndex) => {
-          section.questions?.forEach((question, questionIndex) => {
-            const logics = question.logics.filter(logic => questionIds.includes(logic.target_question_id));
-
+        value?.sections?.forEach((section, sectionIndex) => {
+          section?.questions?.forEach((question, questionIndex) => {
+            const logics = question?.logics?.filter(logic => questionIds.includes(logic.target_question_id));
             setValue(`sections.${sectionIndex}.questions.${questionIndex}.logics`, logics ?? []);
           });
         });
@@ -98,13 +98,20 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
         if ([SCREENING_QUESTION_TYPE.OPEN_TEXT, SCREENING_QUESTION_TYPE.OPEN_NUMBER, SCREENING_QUESTION_TYPE.RATING].includes(question.question_type)) {
           value.sections.forEach((sectionItem, sectionIndex) => {
             sectionItem.questions?.forEach((questionItem, questionIndex) => {
-              questionItem.logics.forEach((logicItem, logicIndex) => {
-                setValue(`sections.${sectionIndex}.questions.${questionIndex}.logics.${logicIndex}`, {
-                  ...logicItem,
-                  condition_rule: null,
-                  target_option_id: null,
-                });
+              const updatedLogics = questionItem.logics?.map((logicItem) => {
+                if (logicItem.target_question_id === question.id) {
+                  return {
+                    ...logicItem,
+                    condition_rule: null,
+                    target_option_id: null,
+                  };
+                }
+                return logicItem;
               });
+              setValue(
+                `sections.${sectionIndex}.questions.${questionIndex}.logics`,
+                updatedLogics ?? []
+              );
             });
           });
         }
@@ -147,6 +154,19 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
     }
   }, [editId, screeningQuestionnaire]);
 
+  const onCancel = () => {
+    if (isDirty) {
+      setShowUnChangeSave(true);
+    } else {
+      handleClose();
+    }
+  };
+
+  const onConfirmUnChangeSave = () => {
+    setShowUnChangeSave(false);
+    handleClose();
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
 
@@ -175,8 +195,9 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
         title={translate(editId ? 'questionnaire.edit' : 'questionnaire.new')}
         confirmLabel={editId ? translate('common.save') : translate('common.create')}
         size="xl"
+        scrollable
         onConfirm={handleSubmit(onSubmit)}
-        onCancel={handleClose}
+        onCancel={onCancel}
         disabled={!isDirty || isLoading}
       >
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -219,19 +240,20 @@ const CreateScreeningQuestionnaire = ({ show, editId, handleClose }) => {
             setValue={setValue}
             watch={watch}
             untranslatable={untranslatable}
+            isDraft={screeningQuestionnaire.status === SCREENING_QUESTIONNAIRE_STATUSES.DRAFT}
           />
         </Form>
       </Dialog>
 
       <Dialog
-        show={showConfirmUpdate}
-        title={translate('screening_questionnaire.used_update_confirmation_title')}
+        show={showUnChangeSave}
+        title={translate('screening_questionnaire.unsave_change')}
         cancelLabel={translate('common.no')}
-        onCancel={handleClose}
+        onCancel={() => setShowUnChangeSave(false)}
         confirmLabel={translate('common.yes')}
-        onConfirm={handleSubmit(onSubmit)}
+        onConfirm={onConfirmUnChangeSave}
       >
-        <p>{translate('screening_questionnaire.used_update_confirmation_message')}</p>
+        <p>{translate('screening_questionnaire.unsave_change_confirmation_message')}</p>
       </Dialog>
     </>
   );

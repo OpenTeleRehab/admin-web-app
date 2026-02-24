@@ -45,18 +45,26 @@ const ActionRepeater = ({
 
     if (section) {
       section.questions.forEach((question) => {
-        question.options.forEach((option) => {
-          if (option.option_point) {
-            total += parseInt(option.option_point);
-          } else if (option.min && option.max) {
-            total += parseInt(option.max);
-          } else {
-            total += 0;
-          }
-        });
+        if (question.question_type === 'radio') {
+          const maxPoint = Math.max(
+            ...question?.options?.map((option) =>
+              parseInt(option.option_point || 0),
+            ),
+          );
+          total += maxPoint;
+        } else {
+          question.options.forEach((option) => {
+            if (option.option_point) {
+              total += parseInt(option.option_point);
+            } else if (option.min && option.max) {
+              total += parseInt(option.max);
+            } else {
+              total += 0;
+            }
+          });
+        }
       });
     }
-
     return total;
   };
 
