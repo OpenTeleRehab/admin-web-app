@@ -35,6 +35,7 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
   const provinceId = watch('province_id');
   const { data: provinceLimitation } = useOne<ILimitation>(END_POINTS.PROVINCE_LIMITATION, provinceId, { enabled: !!provinceId });
   const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE_BY_REGION);
+  const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: !!phcService?.id, params: { phc_service_id: phcService?.id } });
 
   const regionId = watch('region_id');
 
@@ -151,7 +152,7 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
               name='region_id'
               options={regionOptions}
               label={t('common.region')}
-              placeholder={t('common.region.placeholder')}
+              placeholder={t('placeholder.region')}
             />
           </Col>
         </Row>
@@ -213,6 +214,10 @@ const CreateEditPhcService = ({ phcService }: { phcService: IPHCService }) => {
 
                   if (value <= 0) {
                     return t('error.phc_service.phc_worker_limit.equal_to.zero');
+                  }
+
+                  if (value < totalPhcWorkers) {
+                    return t('error.phc_service.phc_worker_limit.less_than.total.healthcare_worker', { total_healthcare_worker: totalPhcWorkers });
                   }
 
                   if (exceedremainingPhcWorkerLimit) {

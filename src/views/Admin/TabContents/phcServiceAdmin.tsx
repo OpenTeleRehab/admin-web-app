@@ -23,6 +23,7 @@ import { END_POINTS } from 'variables/endPoint';
 import { IUser } from 'interfaces/IUser';
 import BasicTable from 'components/Table/basic';
 import { USER_GROUPS } from 'variables/user';
+import { checkFederatedUser } from 'utils/user';
 
 const PhcServiceAdmin = () => {
   const dispatch = useDispatch();
@@ -56,7 +57,7 @@ const PhcServiceAdmin = () => {
       { name: 'first_name', title: t('common.first_name') },
       { name: 'email', title: t('common.email') },
       { name: 'phc_service', title: t('common.phc_service') },
-      { name: 'region_name', title: t('common.region') },
+      { name: 'region', title: t('common.region') },
       { name: 'status', title: t('common.status') },
       { name: 'last_login', title: t('common.last_login') },
       { name: 'action', title: t('common.action') },
@@ -158,6 +159,7 @@ const PhcServiceAdmin = () => {
   const rows = useMemo(
     () =>
       (phcServiceAdmins?.data || []).map((phcServiceAdmin) => {
+        const isFederatedUser = checkFederatedUser(phcServiceAdmin.email);
         const action = (
           <>
             {phcServiceAdmin.enabled ? (
@@ -175,10 +177,12 @@ const PhcServiceAdmin = () => {
               onClick={() => handleDelete(phcServiceAdmin.id)}
               disabled={phcServiceAdmin.enabled}
             />
-            <MailSendAction
-              onClick={() => handleSendMail(phcServiceAdmin.id)}
-              disabled={phcServiceAdmin.last_login}
-            />
+            {!isFederatedUser && (
+              <MailSendAction
+                onClick={() => handleSendMail(phcServiceAdmin.id)}
+                disabled={phcServiceAdmin.last_login}
+              />
+            )}
           </>
         );
 
@@ -189,7 +193,7 @@ const PhcServiceAdmin = () => {
           phc_service: phcServiceAdmin.phc_service
             ? phcServiceAdmin.phc_service.name
             : '',
-          region_name: phcServiceAdmin.region_name,
+          region: phcServiceAdmin.region_name,
           status: <EnabledStatus enabled={!!phcServiceAdmin.enabled} />,
           last_login: phcServiceAdmin.last_login
             ? moment

@@ -249,6 +249,7 @@ const Setting = ({ translate }) => {
       VIEW_TRANSLATION,
       VIEW_SYSTEM_LIMIT,
       VIEW_HEALTH_CONDITION,
+      VIEW_EMAIL_TEMPLATE,
     ];
 
     if (excludedViews.includes(view)) return false;

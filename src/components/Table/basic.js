@@ -32,6 +32,7 @@ const BasicTable = ({ rows, columns, pageSize, setPageSize, currentPage, setCurr
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const tableColumnVisibilityColumnExtensions = [{ columnName: 'action', togglingEnabled: false }];
+  const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
   const handlePageSizeChange = value => {
     setCurrentPage(0);
@@ -61,7 +62,7 @@ const BasicTable = ({ rows, columns, pageSize, setPageSize, currentPage, setCurr
       <TableHeaderRow />
       {showToggleFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} />
-      <TableFixedColumns rightColumns={['action']} />
+      <TableFixedColumns rightColumns={['action']} cellComponent={FixedColumnCell} />
       {showSearch && <Toolbar /> }
       {showSearch && <SearchPanel inputComponent={SearchInput} /> }
       {showFilter && <FilterToggle onToggle={toggleFilter} showFilter={showToggleFilter} /> }

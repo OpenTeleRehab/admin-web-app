@@ -22,7 +22,7 @@ import { getCountryNames, getLocations } from 'utils/country';
 import { getClinicNames } from 'utils/clinic';
 import { SURVEY_LOCATION } from 'variables/survey';
 import keycloak from '../../../utils/keycloak';
-import { USER_ROLES } from '../../../variables/user';
+import { USER_ROLES, USER_GROUPS } from '../../../variables/user';
 import { STATUS_VARIANTS } from 'variables/privacyPolicy';
 import settings from 'settings';
 import _ from 'lodash';
@@ -84,7 +84,7 @@ const Survey = ({ translate, handleRowEdit }) => {
     setShowViewDialog(false);
   };
 
-  const columns = useMemo(() => [
+  const allColumns = [
     { name: 'id', title: translate('common.id') },
     { name: 'role', title: translate('survey.role') },
     { name: 'country', title: translate('common.country') },
@@ -97,7 +97,19 @@ const Survey = ({ translate, handleRowEdit }) => {
     { name: 'status', title: translate('common.status') },
     { name: 'published_date', title: translate('survey.published_date') },
     { name: 'action', title: translate('common.action') }
-  ], [translate]);
+  ];
+
+  const hiddenColumnsByRole = {
+    [USER_GROUPS.COUNTRY_ADMIN]: ['country'],
+    [USER_GROUPS.REGIONAL_ADMIN]: ['country'],
+    [USER_GROUPS.CLINIC_ADMIN]: ['country', 'region', 'province', 'phc_service', 'clinic'],
+    [USER_GROUPS.PHC_SERVICE_ADMIN]: ['country', 'region', 'province', 'phc_service', 'clinic'],
+  };
+
+  const columns = useMemo(() => {
+    const hiddenColumns = hiddenColumnsByRole[profile.type] || [];
+    return allColumns.filter(col => !hiddenColumns.includes(col.name));
+  }, [profile.type, translate]);
 
   return (
     <div className="card">

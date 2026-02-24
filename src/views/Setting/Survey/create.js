@@ -138,7 +138,7 @@ const CreateSurvey = ({ show, editId, handleClose }) => {
         region: survey.region || [],
         province: survey.province || [],
         phc_service: survey.phc_service || [],
-        service_type: survey.role === USER_GROUPS.PATIENT ? !_.isEmpty(survey.clinic) ? SURVEY_SERVICE_TYPES.CLINIC : SURVEY_SERVICE_TYPES.PHC_SERVICE : '',
+        service_type: survey.role === USER_GROUPS.PATIENT ? !_.isEmpty(survey.clinic) ? SURVEY_SERVICE_TYPES.REHAB_SERVICE : SURVEY_SERVICE_TYPES.PHC_SERVICE : '',
         gender: survey.gender,
         location: survey.location,
         clinic: survey.clinic,
