@@ -16,6 +16,7 @@ import ProvinceFilterCell from './ProvinceFilterCell';
 import ProfessionTypeFilterCell from './ProfessionTypeFilterCell';
 import PhcServiceFilterCell from './PhcServiceFilterCell';
 import RegionFilterCell from './RegionFilterCell';
+import ReferralStatusFilterCell from './ReferralStatusFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -30,7 +31,7 @@ const FilterCell = (props) => {
     column.name === 'treatment_status' ||
     column.name === 'storage_used' || column.name === 'on_going_treatment' ||
     column.name === 'total_patient' || column.name === 'assigned_patient' ||
-    column.name === 'identity' ||
+    column.name === 'identity' || column.name === 'interview_history' || column.name === 'phc_workers' ||
     column.name === 'profession_name' || column.name === 'country_name') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'therapist_country') {
@@ -61,6 +62,8 @@ const FilterCell = (props) => {
     return <PhcServiceFilterCell {...props} />;
   } else if (column.name === 'region') {
     return <RegionFilterCell {...props} />;
+  } else if (column.name === 'referral_status') {
+    return <ReferralStatusFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

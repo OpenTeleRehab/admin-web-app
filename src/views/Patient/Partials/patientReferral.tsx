@@ -1,5 +1,5 @@
 import { useList } from 'hooks/useList';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { END_POINTS } from 'variables/endPoint';
 import moment from 'moment';
 import { Badge, Button } from 'react-bootstrap';
@@ -23,10 +23,27 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [filters, setFilters] = useState([]);
-  const { data: patientReferrals } = useList<IReferralResource>(END_POINTS.PATIENT_REFERRAL);
+  const [searchValue, setSearchValue] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const { data: patientReferrals } = useList<IReferralResource>(END_POINTS.PATIENT_REFERRAL, {
+    page: currentPage + 1,
+    page_size: pageSize,
+    search_value: searchValue,
+    filters
+  });
   const { openDialog } = useDialog();
   const [showInterviewHistory, setShowInterviewHistory] = useState(false);
   const [interviewPatientId, setInterviewPatientId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (patientReferrals) {
+      setTotalCount(patientReferrals.info.total_count);
+    }
+  }, [patientReferrals]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [pageSize, searchValue, filters]);
 
   const handleViewHistory = (patientId: number) => {
     setInterviewPatientId(patientId);
@@ -40,7 +57,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
     { name: 'date_of_birth', title: translate('common.date_of_birth') },
     { name: 'phc_workers', title: translate('referral.lead.and.supplementary') },
     { name: 'referred_by', title: translate('referral.referred_by') },
-    { name: 'status', title: translate('common.status') },
+    { name: 'referral_status', title: translate('common.status') },
     { name: 'request_reason', title: translate('referral.phc_request_reason') },
     { name: 'therapist_reason', title: translate('referral.therapist_reject_reason') },
     { name: 'interview_history', title: translate('common.interview_history') },
@@ -54,6 +71,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
   const columnExtensions = [
     { columnName: 'request_reason', wordWrapEnabled: true },
     { columnName: 'therapist_reason', wordWrapEnabled: true },
+    { columnName: 'phc_workers', wordWrapEnabled: true },
     { columnName: 'action', align: 'right' }
   ];
 
@@ -115,7 +133,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         date_of_birth: pr.date_of_birth ? moment(pr.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(pr.lead_and_supplementary_phc) }}></span>,
         referred_by: pr.referred_by,
-        status: <Badge pill variant='light'>{pr.status}</Badge>,
+        referral_status: <Badge pill variant='light'>{translate(`common.${pr.status}`)}</Badge>,
         request_reason: pr.request_reason,
         therapist_reason: pr.therapist_reason,
         interview_history: <p className="text-primary" style={{ cursor: 'pointer' }} onClick={() => handleViewHistory(pr.patient_id)}>{translate('common.view_history')}</p>,
@@ -132,8 +150,10 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         setFilters={setFilters}
+        setSearchValue={setSearchValue}
         filters={filters}
         columns={columns}
+        totalCount={totalCount}
         defaultHiddenColumnNames={defaultHiddenColumnNames}
         columnExtensions={columnExtensions}
         hover="hover-primary"
