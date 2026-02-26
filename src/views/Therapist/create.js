@@ -239,7 +239,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         </Form.Group>
         <Form.Group controlId="formPhone">
           <label htmlFor="phone">{translate('common.phone')}</label>
-          <span className="text-dark ml-1">*</span>
           <PhoneInput
             inputProps={{
               id: 'phone'
@@ -347,7 +346,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         <Form.Row>
           <Form.Group as={Col} controlId="formProfession">
             <Form.Label>{translate('common.profession')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
             <Select
               placeholder={translate('placeholder.profession')}
               classNamePrefix="filter"
@@ -364,9 +362,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               styles={customSelectStyles}
               aria-label="Profession"
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.profession')}
-            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} controlId="clinic">
             <Form.Label>{translate('common.clinic')}</Form.Label>
@@ -381,7 +376,6 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
         <Form.Row>
           <Form.Group as={Col} controlId="formLanguage">
             <Form.Label>{translate('common.language')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
             <Select
               placeholder={translate('placeholder.language')}
               classNamePrefix="filter"
