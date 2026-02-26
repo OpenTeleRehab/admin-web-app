@@ -7,6 +7,7 @@ import Dialog from '../../../../components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteHealthConditionGroup } from '../../../../store/healthConditionGroup/actions';
 import { useKeycloak } from '@react-keycloak/web';
+import { USER_ROLES } from 'variables/user';
 
 const HealthConditionGroupList = ({ resultHealthConditionGroups, healthConditionGroups, active, setActive, handleEdit, ...rest }) => {
   const localize = useSelector((state) => state.localize);
@@ -56,7 +57,9 @@ const HealthConditionGroupList = ({ resultHealthConditionGroups, healthCondition
                 )}
               </div>
               <div>
-                <DeleteAction onClick={() => handleDelete(healthConditionGroup.id)} disabled={!!healthConditionGroup.children} />
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
+                  <DeleteAction onClick={() => handleDelete(healthConditionGroup.id)} disabled={!!healthConditionGroup.children} />
+                )}
                 <EditAction onClick={() => handleEdit(healthConditionGroup.id)} />
               </div>
             </ListGroup.Item>

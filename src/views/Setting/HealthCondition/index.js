@@ -68,15 +68,16 @@ const HealthCondition = ({ translate }) => {
         <Card>
           <Card.Header className="px-2 d-flex justify-content-between align-items-start">
             <h5 className="m-0 text-truncate">{translate('setting.health_conditions')}</h5>
-            <Button
-              aria-label={translate('setting.health_condition_group.new')}
-              variant="outline-primary"
-              className="btn-circle float-right"
-              onClick={() => handleCreate()}
-              disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION)}
-            >
-              <BsPlus size={20} />
-            </Button>
+            {keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
+              <Button
+                aria-label={translate('setting.health_condition_group.new')}
+                variant="outline-primary"
+                className="btn-circle float-right"
+                onClick={() => handleCreate()}
+              >
+                <BsPlus size={20} />
+              </Button>
+            )}
           </Card.Header>
           <Card.Body className="px-2">
             {healthConditionGroups.length > 0 && (

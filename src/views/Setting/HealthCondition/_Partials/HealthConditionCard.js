@@ -71,15 +71,16 @@ const HealthConditionCard = ({ activeHealthConditionGroup, active, setActive }) 
       <Card>
         <Card.Header className="pl-4 d-flex justify-content-between align-items-start">
           <h5 className="m-0 text-truncate">{activeHealthConditionGroup.title}</h5>
-          <Button
-            aria-label={translate('setting.health_condition.new')}
-            variant="outline-primary"
-            className="btn-circle"
-            disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION)}
-            onClick={() => handleCreate(activeHealthConditionGroup.id, false)}
-          >
-            <BsPlus size={20} />
-          </Button>
+          {keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
+            <Button
+              aria-label={translate('setting.health_condition.new')}
+              variant="outline-primary"
+              className="btn-circle"
+              onClick={() => handleCreate(activeHealthConditionGroup.id, false)}
+            >
+              <BsPlus size={20} />
+            </Button>
+          )}
         </Card.Header>
         {healthConditions.length > 0 && (
           <Card.Body className="px-2">
