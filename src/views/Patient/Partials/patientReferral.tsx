@@ -133,7 +133,7 @@ const PatientReferral = ({ translate }: PatientReferralProps) => {
         date_of_birth: pr.date_of_birth ? moment(pr.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(pr.lead_and_supplementary_phc) }}></span>,
         referred_by: pr.referred_by,
-        referral_status: <Badge pill variant='light'>{translate(`common.${pr.status}`)}</Badge>,
+        referral_status: <Badge pill variant='light'>{pr.status ? translate(`common.${pr.status}`) : ''}</Badge>,
         request_reason: pr.request_reason,
         therapist_reason: pr.therapist_reason,
         interview_history: <p className="text-primary" style={{ cursor: 'pointer' }} onClick={() => handleViewHistory(pr.patient_id)}>{translate('common.view_history')}</p>,

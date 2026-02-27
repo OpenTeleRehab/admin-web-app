@@ -12,6 +12,8 @@ import { createUser, updateUser } from 'store/user/actions';
 import { useKeycloak } from '@react-keycloak/web';
 import Select from 'react-select';
 import scssColors from '../../scss/custom.scss';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
 
 const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   const dispatch = useDispatch();
@@ -19,7 +21,7 @@ const CreateAdmin = ({ show, handleClose, editId, setType, type }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const users = useSelector(state => state.user.users);
-  const countries = useSelector(state => state.country.countries);
+  const { data: { data: countries = [] } = {} } = useList(END_POINTS.COUNTRY);
   const clinics = useSelector(state => state.clinic.clinics);
   const [hintMessage, setHintMessage] = useState('');
   const { profile } = useSelector((state) => state.auth);
