@@ -89,7 +89,7 @@ const PhcWorker = () => {
     { name: 'last_name', title: t('common.last_name') },
     { name: 'first_name', title: t('common.first_name') },
     { name: 'email', title: t('common.email') },
-    { name: 'profession', title: t('common.profession') },
+    { name: 'phc_worker_profession', title: t('common.profession') },
     { name: 'total_patient', title: t('common.total_patient') },
     { name: 'assigned_patient', title: t('common.assigned_patient') },
     { name: 'limit_patient', title: t('common.on_going.treatment_let') },
@@ -101,7 +101,7 @@ const PhcWorker = () => {
   if (profile?.type === USER_GROUPS.ORGANIZATION_ADMIN || profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) {
     columns = useMemo(() => [
       { name: 'id', title: t('common.id') },
-      { name: 'profession', title: t('common.profession') },
+      { name: 'phc_worker_profession', title: t('common.profession') },
       { name: (profile?.type === USER_GROUPS.COUNTRY_ADMIN || profile?.type === USER_GROUPS.REGIONAL_ADMIN) ? 'country_name' : 'country', title: t('common.country') },
       { name: 'region', title: t('common.region') },
       { name: 'phc_service', title: t('common.phc_service') },
@@ -215,7 +215,7 @@ const PhcWorker = () => {
         first_name: phcWorker.first_name,
         last_name: phcWorker.last_name,
         email: phcWorker.email,
-        profession: getProfessionName(phcWorker.profession_id, professions?.data || []),
+        phc_worker_profession: getProfessionName(phcWorker.profession_id, professions?.data || []),
         country: getCountryName(phcWorker.country_id, countries),
         country_name: getCountryName(phcWorker.country_id, countries),
         region: getRegionName(phcWorker.region_id, regions),

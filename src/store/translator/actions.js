@@ -84,8 +84,6 @@ export const deleteTranslator = (id) => async (dispatch, getState) => {
   const data = await Translator.deleteTranslator(id);
   if (data.success) {
     dispatch(mutation.deleteTranslatorSuccess());
-    const filters = getState().translator.filters;
-    dispatch(getTranslators({ ...filters }));
     dispatch(showSuccessNotification('toast_title.delete_translator_account', data.message));
     return true;
   } else {

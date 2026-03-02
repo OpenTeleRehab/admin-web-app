@@ -17,6 +17,8 @@ import ProfessionTypeFilterCell from './ProfessionTypeFilterCell';
 import PhcServiceFilterCell from './PhcServiceFilterCell';
 import RegionFilterCell from './RegionFilterCell';
 import ReferralStatusFilterCell from './ReferralStatusFilterCell';
+import TherapistProfessionFilterCell from './TherapistProfessionFilterCell';
+import PhcWorkerProfessionFilterCell from './PhcWorkerProfessionFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -44,8 +46,10 @@ const FilterCell = (props) => {
     return <CountryFilterCell {...props} />;
   } else if (column.name === 'clinic') {
     return <ClinicFilterCell {...props} />;
-  } else if (column.name === 'profession') {
-    return <ProfessionFilterCell {...props} />;
+  } else if (column.name === 'therapist_profession') {
+    return <TherapistProfessionFilterCell {...props} />;
+  } else if (column.name === 'phc_worker_profession') {
+    return <PhcWorkerProfessionFilterCell {...props} />;
   } else if (column.name === 'age' || column.name === 'limit_patient' || column.name === 'phc_worker_limit') {
     return <NumberFilterCell {...props} />;
   } else if (column.name === 'gender') {

@@ -101,6 +101,7 @@ const Translator = () => {
   const handleDeleteDialogConfirm = () => {
     dispatch(deleteTranslator(id)).then(result => {
       if (result) {
+        invalidate(END_POINTS.TRANSLATOR);
         handleDeleteDialogClose();
       }
     });

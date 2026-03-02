@@ -150,6 +150,7 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
       canSave = false;
       setErrorLimitPatient(true);
       setErrorLimitPatientMessage(translate('error.limit_patient'));
+      setErrorOverDefaultLimit(false);
     } else {
       if (onGoingPatients > 0 && formFields.limit_patient < onGoingPatients) {
         canSave = false;
@@ -302,8 +303,8 @@ const CreateTherapist = ({ show, handleClose, editId, defaultOnGoingLimitPatient
               onKeyDown={(e) => preventInvalidNumberInput(e)}
             />
             <Form.Control.Feedback type="invalid">
-              {errorLimitPatientMessage}
-              {errorOverLimitMessage}
+              {errorLimitPatient && errorLimitPatientMessage}
+              {errorOverDefaultLimit && errorOverLimitMessage}
             </Form.Control.Feedback>
             <p className="mt-1">
               <Translate
