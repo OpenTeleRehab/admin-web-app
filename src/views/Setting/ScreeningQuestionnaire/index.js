@@ -15,7 +15,7 @@ import {
   publishScreeningQuestionnaire
 } from '../../../store/screeningQuestionnaire/actions';
 import { USER_ROLES } from '../../../variables/user';
-import { STATUS_VARIANTS } from '../../../variables/privacyPolicy';
+import { STATUS_VARIANTS, STATUSES } from '../../../variables/privacyPolicy';
 import keycloak from '../../../utils/keycloak';
 import settings from '../../../settings';
 import _ from 'lodash';
@@ -103,7 +103,7 @@ const ScreeningQuestionnaire = ({ translate, handleRowEdit }) => {
                       onClick={() => handlePublish(item.id)}
                     />
                     <DeleteAction
-                      disabled={item.isUsed}
+                      disabled={item.status === STATUSES.PUBLISHED}
                       onClick={() => handleDelete(item.id)}
                     />
                   </>

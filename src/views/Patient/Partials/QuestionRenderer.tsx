@@ -119,7 +119,7 @@ const RadioRender = ({ question, disabled, translate }: { question: any, disable
       />
 
       <Row noGutters>
-        {question.options.map((opt:any) => {
+        {question?.options?.map((opt:any) => {
           const optImageUrl = getFileUrl(opt.file);
           return (
             <Col key={opt.id} md={6} className="mb-3">
@@ -180,7 +180,7 @@ const CheckBoxRender = ({ question, disabled, translate }: { question: any, disa
         required={question.mandatory}
       />
       <Row noGutters>
-        {question.options.map((opt:any) => {
+        {question?.options?.map((opt:any) => {
           const isChecked = field.value?.includes(opt.id);
           const optImageUrl = getFileUrl(opt.file);
 
