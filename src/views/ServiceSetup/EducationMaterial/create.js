@@ -448,6 +448,7 @@ const CreateEducationMaterial = ({ translate }) => {
                   </>
                 }
                 <Button
+                  className="ml-2"
                   onClick={handleSave}
                   disabled={isLoading || !(isEditableLanguage && !enableRejectApprove())}
                 >

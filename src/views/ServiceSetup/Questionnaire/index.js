@@ -270,17 +270,15 @@ const Questionnaire = ({ translate }) => {
             rows={questionnaires.map(questionnaire => {
               const action = (
                 <>
-                  { isTranslating && questionnaire.children && questionnaire.children.length &&
+                  { isTranslating && !!questionnaire.children &&
                     <TranslateAction className="mr-1" onClick={() => {}} tooltip={'common.translation_suggested'} />
                   }
                   <ViewAction onClick={() => handleView(questionnaire)} />
-                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || isTranslating) &&
+                  { (keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE) || isTranslating) &&
                     <EditAction className="ml-1" onClick={() => handleEdit(questionnaire.id)} />
                   }
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&
-                    <>
-                      <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
-                    </>
+                  { keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE) && !isTranslating &&
+                    <DeleteAction className="ml-1" onClick={() => handleDelete(questionnaire.id)} />
                   }
                 </>
               );

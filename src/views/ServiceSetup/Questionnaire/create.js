@@ -625,6 +625,7 @@ const CreateQuestionnaire = ({ translate }) => {
                     </>
                   }
                   <Button
+                    className="ml-2"
                     aria-label="Save"
                     onClick={handleSave}
                     disabled={isLoading || !(isEditableLanguage && !enableRejectApprove())}

@@ -291,12 +291,12 @@ const Exercise = ({ translate }) => {
                         <TranslateAction onClick={() => {}} tooltip={'common.translation_suggested'} />
                       </div>
                     }
-                    { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&
+                    { keycloak.hasRealmRole(USER_ROLES.SETUP_EXERCISE) && !isTranslating &&
                       <div className="position-absolute delete-btn">
                         <DeleteAction onClick={() => handleDelete(exercise.id)} />
                       </div>
                     }
-                    { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || isTranslating) &&
+                    { (keycloak.hasRealmRole(USER_ROLES.SETUP_EXERCISE) || isTranslating) &&
                       <div className="position-absolute edit-btn">
                         <EditAction onClick={() => handleEdit(exercise.id)} />
                       </div>
