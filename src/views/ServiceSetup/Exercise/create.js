@@ -790,6 +790,7 @@ const CreateExercise = ({ translate }) => {
                       }
                       <Button
                         id="formSave"
+                        className="ml-2"
                         onClick={handleSave}
                         disabled={isLoading || !(isEditableLanguage && !enableRejectApprove())}
                       >

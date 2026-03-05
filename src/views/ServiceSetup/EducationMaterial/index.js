@@ -271,14 +271,14 @@ const EducationMaterial = ({ translate }) => {
             rows={educationMaterials && educationMaterials.map(educationMaterial => {
               const action = (
                 <>
-                  { isTranslating && educationMaterial.children && educationMaterial.children.length > 0 &&
+                  { isTranslating && !!educationMaterial.children &&
                       <TranslateAction className="mr-1" onClick={() => {}} tooltip={'common.translation_suggested'} />
                   }
                   <ViewAction className="mr-1" onClick={() => handleView(educationMaterial.id)} />
-                  { (profile.type !== USER_GROUPS.ORGANIZATION_ADMIN || isTranslating) &&
+                  { (keycloak.hasRealmRole(USER_ROLES.SETUP_EDUCATIONAL_MATERIAL) || isTranslating) &&
                     <EditAction onClick={() => handleEdit(educationMaterial.id)} className="mr-1" />
                   }
-                  { profile.type !== USER_GROUPS.ORGANIZATION_ADMIN && !isTranslating &&
+                  { keycloak.hasRealmRole(USER_ROLES.SETUP_EDUCATIONAL_MATERIAL) && !isTranslating &&
                     <DeleteAction onClick={() => handleDelete(educationMaterial.id)} />
                   }
                 </>
