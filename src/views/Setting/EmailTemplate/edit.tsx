@@ -111,8 +111,11 @@ const EditReferralEmailTemplate = ({ id }: { id: string | number }) => {
           name="content"
           disabled={!isEditableLanguage}
         />
+        <Form.Text id="contentHelpBlock" className="text-bold">
+          <strong>{t('email_template.content_variable_help_text')}</strong>
+        </Form.Text>
         <Form.Text id="contentHelpBlock" muted>
-          #healthcare_worker_name# <br /> #rehab_service_admin_name# <br /> #therapist_name#
+          #user_name# <br /> #healthcare_worker_name# <br /> #rehab_service_admin_name# <br /> #therapist_name#
         </Form.Text>
       </DialogBody>
       <DialogFooter>
