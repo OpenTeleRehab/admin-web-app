@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { Modal, ModalProps } from 'react-bootstrap';
 
 interface IDialogConfig {
-  title: string;
+  title?: string;
   content: React.ReactNode;
   props?: ModalProps;
 }
@@ -41,9 +41,11 @@ export const DialogProvider = ({ children }: DialogProviderProps) => {
           backdrop="static"
           {...dialog.props}
         >
-          <Modal.Header closeButton>
-            <Modal.Title className="text-break">{dialog.title}</Modal.Title>
-          </Modal.Header>
+          {dialog.title && (
+            <Modal.Header closeButton>
+              <Modal.Title className="text-break">{dialog.title}</Modal.Title>
+            </Modal.Header>
+          )}
           {dialog.content}
         </Modal>
       ))}

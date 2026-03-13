@@ -182,7 +182,6 @@ const PhcWorker = () => {
 
   const handleDelete = (phcWorker: IPhcWorker) => {
     openDialog({
-      title: t('phc_worker.delete'),
       content: <DeletePhcWorker phcWorker={phcWorker} />,
     });
   };

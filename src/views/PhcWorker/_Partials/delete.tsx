@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Col, Badge } from 'react-bootstrap';
+import { Button, Form, Col, Badge, Modal } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { Therapist as therapistService } from 'services/therapist';
@@ -18,6 +18,7 @@ import { useMutationAction } from 'hooks/useMutationAction';
 import useToast from 'components/V2/Toast';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import { getCountryISO } from 'utils/country';
+import DialogHeader from 'components/V2/Dialog/DialogHeader';
 
 const DeletePhcWorker = ({ phcWorker }: {phcWorker: IPhcWorker}) => {
   const { closeDialog } = useDialog();
@@ -193,6 +194,9 @@ const DeletePhcWorker = ({ phcWorker }: {phcWorker: IPhcWorker}) => {
 
   return (
     <>
+      <DialogHeader>
+        <Modal.Title>{phcWorkerPatients.length > 0 && !isLastPatient && isTransfer ? <Translate id="phc_worker.transfer_patient_to_phc_worker" data={{ patient_last_name: phcWorkerPatients[currentIndex].last_name, patient_first_name: phcWorkerPatients[currentIndex].first_name }} /> : confirmTransfer ? t('phc_worker.transfer_patient_title') : t('phc_worker.delete')}</Modal.Title>
+      </DialogHeader>
       <DialogBody>
         {isTransfer && !isLastPatient &&
           <Form.Row>
