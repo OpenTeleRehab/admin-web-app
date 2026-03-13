@@ -5,6 +5,7 @@ import Input from 'components/V2/Form/Input';
 import Select from 'components/V2/Form/Select';
 import useToast from 'components/V2/Toast';
 import { useCreate } from 'hooks/useCreate';
+import { useInvalidate } from 'hooks/useInvalidate';
 import { useList } from 'hooks/useList';
 import { useTranslate } from 'hooks/useTranslate';
 import { useUpdate } from 'hooks/useUpdate';
@@ -25,6 +26,7 @@ type CreateOrEditProps = {
 const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
   const t = useTranslate();
   const dispatch = useDispatch();
+  const invalidate = useInvalidate();
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
   const profile = useSelector((state: any) => state.auth.profile);
@@ -78,6 +80,7 @@ const CreateOrEdit = ({ regionalAdmin }: CreateOrEditProps) => {
         { id: regionalAdmin.id, payload: data },
         {
           onSuccess: async (res) => {
+            invalidate(END_POINTS.REGION);
             dispatch(showSpinner(false));
             showToast({
               title: t('toast_title.edit_admin_account'),
