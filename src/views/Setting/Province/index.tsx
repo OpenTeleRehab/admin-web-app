@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import BasicTable from 'components/Table/basic';
 import DeleteProvinceConfirmation from './_Partials/deleteConfirmation';
 import customColorScheme from 'utils/customColorScheme';
+import { getClinics } from 'store/clinic/actions';
 import _ from 'lodash';
 
 const Province = () => {
@@ -64,6 +65,8 @@ const Province = () => {
           onSuccess: async (res) => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.REGION_LIMITATION);
+            invalidate(END_POINTS.PHC_SERVICES);
+            dispatch(getClinics());
             closeDialog();
             closeDialog();
             showToast({
