@@ -2,15 +2,20 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Translate } from 'react-localize-redux';
-import { useJobStatuses } from 'hook/useJobStatus';
+import { useJobStatuses } from 'hooks/useJobStatus';
 import { Badge, Spinner } from 'react-bootstrap';
 import BasicTable from 'components/Table/basic';
 import { JOB_STATUS } from 'variables/jobStatus';
 import CreateMfaPolicy from './create';
-import { EditAction } from 'components/ActionIcons';
+import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getMfaSettings } from 'store/mfaSetting/actions';
 import { USER_GROUPS } from 'variables/user';
 import customColorScheme from 'utils/customColorScheme';
+import { useDelete } from 'hooks/useDelete';
+import { useAlertDialog } from 'components/V2/AlertDialog';
+import { showSpinner } from 'store/spinnerOverlay/actions';
+import useToast from 'components/V2/Toast';
+import useDialog from 'components/V2/Dialog';
 import _ from 'lodash';
 
 const MfaPolicy = ({ translate }) => {
@@ -21,6 +26,10 @@ const MfaPolicy = ({ translate }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editingMfa, setEditingMfa] = useState(null);
   const [rows, setRows] = useState([]);
+  const { mutate: deleteMfa } = useDelete('mfa-settings');
+  const { showAlert } = useAlertDialog();
+  const { showToast } = useToast();
+  const { closeDialog } = useDialog();
 
   const jobIds = useMemo(
     () => mfaSettings ? mfaSettings.map(mfa => mfa.job_status && mfa.job_status.job_id) : [],
@@ -34,16 +43,14 @@ const MfaPolicy = ({ translate }) => {
   }, []);
 
   useEffect(() => {
-    if (mfaSettings && mfaSettings.length) {
-      setRows(
-        mfaSettings.map((mfaSetting) => ({
-          ...mfaSetting,
-          progress_status: !mfaSetting.job_status
-            ? JOB_STATUS.COMPLETED
-            : jobStatuses[mfaSetting.job_status.job_id] || JOB_STATUS.RUNNING
-        }))
-      );
-    }
+    if (!mfaSettings) return;
+
+    setRows(
+      mfaSettings.map((mfaSetting) => ({
+        ...mfaSetting,
+        progress_status: jobStatuses[mfaSetting.job_status.job_id] || JOB_STATUS.RUNNING
+      }))
+    );
   }, [mfaSettings, jobStatuses]);
 
   const columns = useMemo(() => [
@@ -78,6 +85,32 @@ const MfaPolicy = ({ translate }) => {
     setShowEdit(true);
   };
 
+  const handleDelete = (id) => {
+    showAlert({
+      title: translate('mfa.delete_confirmation.title'),
+      message: translate('mfa.delete_confirmation.message'),
+      closeOnConfirm: false,
+      onConfirm: () => {
+        dispatch(showSpinner(true));
+        deleteMfa(id, {
+          onSuccess: (res) => {
+            dispatch(showSpinner(false));
+            dispatch(getMfaSettings());
+            closeDialog();
+            showToast({
+              title: translate('mfa.toast_title.delete'),
+              message: translate(res?.message),
+              color: 'success'
+            });
+          },
+          onError: () => {
+            dispatch(showSpinner(false));
+          }
+        });
+      }
+    });
+  };
+
   return (
     <>
       <div className='no-gutters bg-white p-md-3'>
@@ -85,7 +118,8 @@ const MfaPolicy = ({ translate }) => {
           rows={rows.map(mfaSetting => {
             const action = (
               <div className='d-flex justify-content-center'>
-                <EditAction onClick={() => handleEdit(mfaSetting)} />
+                <EditAction onClick={() => handleEdit(mfaSetting)} disabled={mfaSetting.progress_status === JOB_STATUS.RUNNING || !!mfaSetting.deleted_at} />
+                <DeleteAction onClick={() => handleDelete(mfaSetting.id)} disabled={mfaSetting.progress_status === JOB_STATUS.RUNNING || !!mfaSetting.deleted_at} />
               </div>
             );
 
@@ -116,7 +150,7 @@ const MfaPolicy = ({ translate }) => {
               ),
               progress_status: mfaSetting.progress_status === JOB_STATUS.COMPLETED ? (
                 <Badge pill variant="success">
-                  {translate('mfa.progress.status.completed')}
+                  {mfaSetting.deleted_at ? translate('mfa.progress.status.deleted') : translate('mfa.progress.status.completed')}
                 </Badge>
               ) : mfaSetting.progress_status === JOB_STATUS.FAILED ? (
                 <Badge pill variant="danger">
