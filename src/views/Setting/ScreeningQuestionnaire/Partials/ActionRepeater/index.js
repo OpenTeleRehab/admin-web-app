@@ -56,7 +56,7 @@ const ActionRepeater = ({
           question.options.forEach((option) => {
             if (option.option_point) {
               total += parseInt(option.option_point);
-            } else if (option.min && option.max) {
+            } else if (option.max) {
               total += parseInt(option.max);
             } else {
               total += 0;
