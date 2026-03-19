@@ -55,12 +55,17 @@ const CreateExercise = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
+  const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
   const { categoryTreeData } = useSelector((state) => state.category);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(() =>
+    filters?.lang ??
+    profile?.language_id ??
+    languages?.[0]?.id
+  );
   const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     title: '',
@@ -89,18 +94,11 @@ const CreateExercise = ({ translate }) => {
   const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
-    if (languages.length) {
-      if (id && filters && filters.lang) {
-        setLanguage(filters.lang);
-      } else {
-        setLanguage(languages[0].id);
-      }
+    if (id && language) {
+      dispatch(getExercise(id, language));
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
     }
-  }, [languages, filters, id]);
-
-  useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
-  }, [language, dispatch]);
+  }, [id, language, dispatch]);
 
   useEffect(() => {
     if (categoryTreeData.length) {
@@ -111,12 +109,6 @@ const CreateExercise = ({ translate }) => {
       setSelectedCategories(rootCategoryStructure);
     }
   }, [categoryTreeData]);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(getExercise(id, language));
-    }
-  }, [id, language, dispatch]);
 
   useEffect(() => {
     if (id && exercise.id) {
