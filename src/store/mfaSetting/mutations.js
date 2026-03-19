@@ -3,6 +3,11 @@ const getMfaSettingsSuccess = (data) => ({
   data
 });
 
+const setMfaSettings = (data) => ({
+  type: 'SET_MFA_SETTINGS',
+  data
+});
+
 const getMfaEnforcementValidationSuccess = (data) => ({
   type: 'GET_MFA_ENFORCEMENT_VALIDATION_SUCCESS',
   data
@@ -15,5 +20,6 @@ const clearMfaEnforcementValidation = () => ({
 export const mutation = {
   getMfaSettingsSuccess,
   getMfaEnforcementValidationSuccess,
-  clearMfaEnforcementValidation
+  clearMfaEnforcementValidation,
+  setMfaSettings,
 };

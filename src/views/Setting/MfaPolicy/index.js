@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Translate } from 'react-localize-redux';
-import { useJobStatuses } from 'hooks/useJobStatus';
 import { Badge, Spinner } from 'react-bootstrap';
 import BasicTable from 'components/Table/basic';
 import { JOB_STATUS } from 'variables/jobStatus';
+import { mutation } from 'store/mfaSetting/mutations';
 import CreateMfaPolicy from './create';
 import { EditAction, DeleteAction } from 'components/ActionIcons';
 import { getMfaSettings } from 'store/mfaSetting/actions';
@@ -16,6 +16,8 @@ import { useAlertDialog } from 'components/V2/AlertDialog';
 import { showSpinner } from 'store/spinnerOverlay/actions';
 import useToast from 'components/V2/Toast';
 import useDialog from 'components/V2/Dialog';
+import { END_POINTS } from 'variables/endPoint';
+import pusher from 'utils/pusher';
 import _ from 'lodash';
 
 const MfaPolicy = ({ translate }) => {
@@ -25,33 +27,27 @@ const MfaPolicy = ({ translate }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [showEdit, setShowEdit] = useState(false);
   const [editingMfa, setEditingMfa] = useState(null);
-  const [rows, setRows] = useState([]);
-  const { mutate: deleteMfa } = useDelete('mfa-settings');
+  const { mutate: deleteMfa } = useDelete(END_POINTS.MFA_SETTING);
   const { showAlert } = useAlertDialog();
   const { showToast } = useToast();
   const { closeDialog } = useDialog();
-
-  const jobIds = useMemo(
-    () => mfaSettings ? mfaSettings.map(mfa => mfa.job_status && mfa.job_status.job_id) : [],
-    [mfaSettings]
-  );
-
-  const jobStatuses = useJobStatuses(jobIds);
 
   useEffect(() => {
     dispatch(getMfaSettings());
   }, []);
 
   useEffect(() => {
-    if (!mfaSettings) return;
+    const channel = pusher.subscribe(`user.${profile.id}.mfa`);
 
-    setRows(
-      mfaSettings.map((mfaSetting) => ({
-        ...mfaSetting,
-        progress_status: jobStatuses[mfaSetting.job_status.job_id] || JOB_STATUS.RUNNING
-      }))
-    );
-  }, [mfaSettings, jobStatuses]);
+    channel.bind('progress', (data) => {
+      dispatch(mutation.setMfaSettings(data));
+    });
+
+    return () => {
+      channel.unbind('progress');
+      channel.unsubscribe(`user.${profile.id}.mfa`);
+    };
+  }, [profile]);
 
   const columns = useMemo(() => [
     { name: 'role', title: translate('mfa.user_type') },
@@ -115,11 +111,11 @@ const MfaPolicy = ({ translate }) => {
     <>
       <div className='no-gutters bg-white p-md-3'>
         <BasicTable
-          rows={rows.map(mfaSetting => {
+          rows={mfaSettings.map((mfaSetting) => {
             const action = (
               <div className='d-flex justify-content-center'>
-                <EditAction onClick={() => handleEdit(mfaSetting)} disabled={mfaSetting.progress_status === JOB_STATUS.RUNNING || !!mfaSetting.deleted_at} />
-                <DeleteAction onClick={() => handleDelete(mfaSetting.id)} disabled={mfaSetting.progress_status === JOB_STATUS.RUNNING || !!mfaSetting.deleted_at} />
+                <EditAction onClick={() => handleEdit(mfaSetting)} disabled={[JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(mfaSetting.progress_status)} />
+                <DeleteAction onClick={() => handleDelete(mfaSetting.id)} disabled={[JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(mfaSetting.progress_status)} />
               </div>
             );
 
@@ -150,7 +146,7 @@ const MfaPolicy = ({ translate }) => {
               ),
               progress_status: mfaSetting.progress_status === JOB_STATUS.COMPLETED ? (
                 <Badge pill variant="success">
-                  {mfaSetting.deleted_at ? translate('mfa.progress.status.deleted') : translate('mfa.progress.status.completed')}
+                  {translate('mfa.progress.status.completed')}
                 </Badge>
               ) : mfaSetting.progress_status === JOB_STATUS.FAILED ? (
                 <Badge pill variant="danger">
