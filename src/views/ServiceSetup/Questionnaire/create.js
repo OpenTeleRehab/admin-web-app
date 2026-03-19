@@ -41,11 +41,16 @@ const CreateQuestionnaire = ({ translate }) => {
   const { id } = useParams();
   const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
 
+  const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(() =>
+    filters?.lang ??
+    profile?.language_id ??
+    languages?.[0]?.id
+  );
   const isEditableLanguage = useEditableLanguage(language);
   const [formFields, setFormFields] = useState({
     title: '',
@@ -69,22 +74,9 @@ const CreateQuestionnaire = ({ translate }) => {
   const [showFallbackText, setShowFallbackText] = useState(false);
 
   useEffect(() => {
-    if (languages.length) {
-      if (id && filters && filters.lang) {
-        setLanguage(filters.lang);
-      } else {
-        setLanguage(languages[0].id);
-      }
-    }
-  }, [languages, filters, id]);
-
-  useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
-  }, [language, dispatch]);
-
-  useEffect(() => {
     if (id && language) {
       dispatch(getQuestionnaire(id, language));
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
     }
   }, [id, language, dispatch]);
 

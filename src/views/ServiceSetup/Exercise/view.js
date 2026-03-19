@@ -16,25 +16,17 @@ const ViewExercise = ({ showView, handleViewClose, id }) => {
   const [index, setIndex] = useState(0);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
-  const [language, setLanguage] = useState(languages[0].id);
+  const language = filters?.lang ?? profile?.language_id ?? languages?.[0]?.id;
+
+  useEffect(() => {
+    if (id && language) {
+      dispatch(getExercise(id, language));
+    }
+  }, [id, language, dispatch]);
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
   };
-
-  useEffect(() => {
-    if (filters && filters.lang) {
-      setLanguage(filters.lang);
-    } else if (profile && profile.language_id) {
-      setLanguage(profile.language_id);
-    }
-  }, [filters, profile]);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(getExercise(id, language));
-    }
-  }, [id, language, dispatch]);
 
   return (
     <Dialog

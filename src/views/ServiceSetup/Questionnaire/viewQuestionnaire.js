@@ -12,15 +12,10 @@ const ViewQuestionnaire = ({ show, handleClose, id }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
-  const [language, setLanguage] = useState(languages[0].id);
-
-  useEffect(() => {
-    if (filters && filters.lang) {
-      setLanguage(filters.lang);
-    }
-  }, [languages, filters]);
+  const language = filters?.lang ?? profile?.language_id ?? languages?.[0]?.id;
 
   useEffect(() => {
     if (id && language) {
