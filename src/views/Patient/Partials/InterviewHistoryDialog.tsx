@@ -227,7 +227,7 @@ const InterviewHistoryDialog = ({ show, onClose, patientId, translate }: Props) 
         show={show && showDetail}
         title={currentQuestionnaire?.title}
         onCancel={() => setShowDetail(false)}
-        cancelLabel={translate('common.back')}
+        cancelLabel={translate('common.close')}
       >
         <div style={{ maxHeight: '70vh', overflowY: 'auto', padding: '10px' }}>
           {currentSection && (
