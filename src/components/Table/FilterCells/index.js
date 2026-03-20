@@ -19,6 +19,7 @@ import RegionFilterCell from './RegionFilterCell';
 import ReferralStatusFilterCell from './ReferralStatusFilterCell';
 import TherapistProfessionFilterCell from './TherapistProfessionFilterCell';
 import PhcWorkerProfessionFilterCell from './PhcWorkerProfessionFilterCell';
+import AuditLogChangeTypeFilterCell from './AuditLogChangeTypeFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -68,6 +69,8 @@ const FilterCell = (props) => {
     return <RegionFilterCell {...props} />;
   } else if (column.name === 'referral_status') {
     return <ReferralStatusFilterCell {...props} />;
+  } else if (column.name === 'type_of_changes') {
+    return <AuditLogChangeTypeFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
