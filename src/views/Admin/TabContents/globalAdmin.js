@@ -5,16 +5,19 @@ import { getUsers, resendEmail } from 'store/user/actions';
 import { USER_GROUPS } from 'variables/user';
 import settings from 'settings';
 import * as moment from 'moment';
-
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import { getTranslate } from 'react-localize-redux';
 import { checkFederatedUser } from 'utils/user';
+import { ResetUserOTPAction } from 'components/V2/ActionIcons';
+import { useAlertDialog } from 'components/V2/AlertDialog';
+import { resetUserOTP } from '../../../store/mfaSetting/actions';
 
 let timer = null;
 const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => {
   const dispatch = useDispatch();
+  const { showAlert } = useAlertDialog();
   const users = useSelector(state => state.user.users);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -60,11 +63,28 @@ const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
-    { columnName: 'last_login', wordWrapEnabled: true, width: 250 }
+    { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
+    { columnName: 'action', wordWrapEnabled: true, width: 160 }
   ];
 
   const handleSendMail = (id) => {
     dispatch(resendEmail(id, type));
+  };
+
+  const handleResetUserOTP = (id) => {
+    showAlert({
+      title: translate('common.reset_user_otp'),
+      message: translate('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id) => {
+    if (id) {
+      dispatch(resetUserOTP(id, { type: USER_GROUPS.ORGANIZATION_ADMIN }));
+    }
   };
 
   return (
@@ -93,6 +113,9 @@ const GlobalAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={parseInt(user.id) === parseInt(profile.id) || user.enabled} />
+              {!isFederatedUser &&
+                <ResetUserOTPAction onClick={() => handleResetUserOTP(user.id)} />
+              }
               {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
             </div>
           );

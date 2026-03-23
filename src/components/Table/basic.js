@@ -58,7 +58,7 @@ const BasicTable = ({ rows, columns, pageSize, setPageSize, currentPage, setCurr
         pageSize={pageSize}
         onPageSizeChange={handlePageSizeChange}
       />
-      <Table columnExtensions={[{ columnName: 'action', align: 'center', width: 120 }]} />
+      <Table columnExtensions={[{ columnName: 'action', align: 'center', width: 160 }]} />
       <TableHeaderRow />
       {showToggleFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} />

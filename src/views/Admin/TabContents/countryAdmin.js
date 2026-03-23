@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { USER_GROUPS } from 'variables/user';
@@ -13,11 +12,15 @@ import settings from 'settings';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
 import { getTranslate } from 'react-localize-redux';
 import { checkFederatedUser } from 'utils/user';
+import { useAlertDialog } from 'components/V2/AlertDialog';
+import { resetUserOTP } from '../../../store/mfaSetting/actions';
+import { ResetUserOTPAction } from 'components/V2/ActionIcons';
 
 let timer = null;
 
 const CountryAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => {
   const dispatch = useDispatch();
+  const { showAlert } = useAlertDialog();
   const users = useSelector(state => state.user.users);
   const countries = useSelector(state => state.country.countries);
   const localize = useSelector((state) => state.localize);
@@ -68,8 +71,25 @@ const CountryAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) =>
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
-    { columnName: 'last_login', wordWrapEnabled: true, width: 250 }
+    { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
+    { columnName: 'action', wordWrapEnabled: true, width: 160 }
   ];
+
+  const handleResetUserOTP = (id) => {
+    showAlert({
+      title: translate('common.reset_user_otp'),
+      message: translate('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id) => {
+    if (id) {
+      dispatch(resetUserOTP(id, { type: USER_GROUPS.COUNTRY_ADMIN }));
+    }
+  };
 
   return (
     <div className="mt-3">
@@ -97,6 +117,9 @@ const CountryAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) =>
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={user.enabled} />
+              {!isFederatedUser &&
+                <ResetUserOTPAction onClick={() => handleResetUserOTP(user.id)} />
+              }
               {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
             </div>
           );
