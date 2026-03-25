@@ -32,7 +32,7 @@ import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
-import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
+import { USER_ROLES } from '../../../variables/user';
 import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;

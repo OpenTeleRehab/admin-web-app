@@ -110,7 +110,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const handleCloneQuestion = (index) => {
     const { title, type } = questions[index];
-    const answers = _.cloneDeep(questions[index].answers);
+    const answers = questions[index].answers.map(answer => { const { id, ...rest } = answer; return rest; });
     setQuestions([...questions, { title, type, answers }]);
     setTimeout(() => {
       window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' });
