@@ -27,8 +27,8 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const organizations = useSelector((state) => state.organization.organizations);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
-  const { data: regions } = useList(END_POINTS.REGION_BY_AUTH_COUNTRY);
-  const { data: phcServices } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST);
+  const { data: regions } = useList(END_POINTS.REGION_BY_AUTH_COUNTRY, null, { enabled: profile.type === USER_GROUPS.COUNTRY_ADMIN });
+  const { data: phcServices } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, null, { enabled: profile.type === USER_GROUPS.REGIONAL_ADMIN });
   const dispatch = useDispatch();
   const { control, watch, handleSubmit, reset } = useForm();
   const role = watch('role');
