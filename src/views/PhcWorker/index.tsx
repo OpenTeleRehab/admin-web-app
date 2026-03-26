@@ -32,6 +32,7 @@ import { getCountryName } from 'utils/country';
 import DeletePhcWorker from './_Partials/delete';
 import { getRegionName } from 'utils/region';
 import { getPhcServiceName } from 'utils/phcService';
+import { useRole } from 'hooks/useRole';
 
 const PhcWorker = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const PhcWorker = () => {
   const { showToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
   const { showAlert } = useAlertDialog();
+  const { hasAnyRole } = useRole();
   const { keycloak } = useKeycloak();
   const countries = useSelector((state: any) => state.country.countries);
   const { profile } = useSelector((state: any) => state.auth);
@@ -67,7 +69,7 @@ const PhcWorker = () => {
   );
   const { data: professions } = useList<any>(END_POINTS.PROFESSIONS);
   const { data: { data: regions = [] } = {} } = useList(END_POINTS.REGION, {}, { enabled: keycloak.hasRealmRole(USER_ROLES.VIEW_REGION_LIST) });
-  const { data: { data: phcServices = [] } = {} } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, {}, { enabled: keycloak.hasRealmRole(USER_ROLES.VIEW_PHC_SERVICE_LIST) });
+  const { data: { data: phcServices = [] } = {} } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, {}, { enabled: hasAnyRole([USER_ROLES.VIEW_PHC_SERVICE_LIST, USER_ROLES.MANAGE_PHC_SERVICE]) });
   const { data: totalPhcWorkers } = useOne<any>(END_POINTS.COUNT_PHC_WORKER_BY_PHC_SERVICE, null, { enabled: keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_WORKER) });
   const { mutate: updatePhcWorkerStatus } = useMutationAction(END_POINTS.PHC_WORKERS_UPDATE_STATUS);
   const { mutate: resendEmail } = useMutationAction(END_POINTS.PHC_WORKERS_RESEND_EMAIL);

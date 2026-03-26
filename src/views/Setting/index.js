@@ -86,8 +86,8 @@ import CreateEditPhcService from './PhcService/_Partials/createEdit';
 import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { useRole } from 'hooks/useRole';
-import { EMAIL_TEMPLATE } from '../../variables/routes';
 import _ from 'lodash';
+import customColorScheme from 'utils/customColorScheme';
 
 const Setting = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -95,6 +95,7 @@ const Setting = ({ translate }) => {
   const { hasAnyRole } = useRole();
   const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const mfaSettings = useSelector(state => state.mfaSetting.mfaSettings);
   const [view, setView] = useState(undefined);
   const [show, setShow] = useState(false);
@@ -513,6 +514,7 @@ const Setting = ({ translate }) => {
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROVINCE) && view === VIEW_PROVINCE && <Province /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_API_CLIENT) && view === VIEW_API_CLIENT && <ApiClient /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_EMAIL_TEMPLATE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EMAIL_TEMPLATE)) && view === VIEW_EMAIL_TEMPLATE && <EmailTemplate /> }
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };
