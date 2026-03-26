@@ -39,4 +39,7 @@ export const END_POINTS = {
   PATIENT_LIST_FOR_PHC_WORKER_REMOVE: 'patient/list/for-phc-worker-remove',
   EMAIL_TEMPLATE: 'email-templates',
   MFA_SETTING: 'mfa-settings',
+  AUDIT_LOG: 'audit-logs',
+  THERAPIST_AUDIT_LOG: 'therapist-audit-logs',
+  PATIENT_AUDIT_LOG: 'patient-audit-logs',
 };
