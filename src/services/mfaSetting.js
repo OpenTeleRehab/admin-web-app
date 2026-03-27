@@ -53,9 +53,22 @@ const getMfaEnforcementValidation = (role) => {
     });
 };
 
+const resetUserOTP = (id, payload) => {
+  return axios.post(`user/${id}/reset-mfa-otp`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const MfaSetting = {
   getMfaSettings,
   createMfaSetting,
   updateMfaSetting,
-  getMfaEnforcementValidation
+  getMfaEnforcementValidation,
+  resetUserOTP
 };

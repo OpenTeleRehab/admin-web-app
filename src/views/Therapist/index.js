@@ -3,10 +3,11 @@ import { Button } from 'react-bootstrap';
 import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
+import { ResetUserOTPAction } from 'components/V2/ActionIcons';
+import { useAlertDialog } from 'components/V2/AlertDialog';
 import CreateTherapist from 'views/Therapist/create';
 import { getTherapists, updateTherapistStatus, resendEmail } from 'store/therapist/actions';
 import { getCountryName, getCountryIsoCode } from 'utils/country';
@@ -30,6 +31,7 @@ import { getProfessionName } from 'utils/profession';
 import { getChatRooms } from 'utils/therapist';
 import customColorScheme from '../../utils/customColorScheme';
 import { checkFederatedUser } from 'utils/user';
+import { resetUserOTP } from '../../store/mfaSetting/actions';
 
 let timer = null;
 
@@ -43,6 +45,7 @@ const Therapist = ({ translate }) => {
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const { orgOngoingTreatmentLimit } = useSelector(state => state.organization);
+  const { showAlert } = useAlertDialog();
 
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
@@ -89,7 +92,8 @@ const Therapist = ({ translate }) => {
     { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
     { columnName: 'total_patient', wordWrapEnabled: true },
     { columnName: 'assigned_patient', wordWrapEnabled: true },
-    { columnName: 'on_going_treatment', wordWrapEnabled: true }
+    { columnName: 'on_going_treatment', wordWrapEnabled: true },
+    { columnName: 'action', wordWrapEnabled: true, width: 160 }
   ];
 
   const [pageSize, setPageSize] = useState(60);
@@ -216,6 +220,22 @@ const Therapist = ({ translate }) => {
     dispatch(resendEmail(id));
   };
 
+  const handleResetUserOTP = (id) => {
+    showAlert({
+      title: translate('common.reset_user_otp'),
+      message: translate('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id) => {
+    if (id) {
+      dispatch(resetUserOTP(id, { type: USER_GROUPS.THERAPIST }));
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -254,6 +274,9 @@ const Therapist = ({ translate }) => {
                   }
                   <EditAction onClick={() => handleEdit(user.id)} />
                   <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} />
+                  {!isFederatedUser && (
+                    <ResetUserOTPAction onClick={() => handleResetUserOTP(user.id)} />
+                  )}
                   {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(user.id)} disabled={user.last_login} />}
                 </>
               )}

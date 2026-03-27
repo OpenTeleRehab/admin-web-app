@@ -4,7 +4,7 @@ import { BsPlus } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
-import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/V2/ActionIcons';
+import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction, ResetUserOTPAction } from 'components/V2/ActionIcons';
 import CreateEditPhcWorker from './_Partials/createEdit';
 import * as moment from 'moment';
 import settings from 'settings';
@@ -33,6 +33,7 @@ import DeletePhcWorker from './_Partials/delete';
 import { getRegionName } from 'utils/region';
 import { getPhcServiceName } from 'utils/phcService';
 import { useRole } from 'hooks/useRole';
+import { resetUserOTP } from 'store/mfaSetting/actions';
 
 const PhcWorker = () => {
   const dispatch = useDispatch();
@@ -122,7 +123,8 @@ const PhcWorker = () => {
     { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
     { columnName: 'total_patient', wordWrapEnabled: true },
     { columnName: 'assigned_patient', wordWrapEnabled: true },
-    { columnName: 'on_going_treatment', wordWrapEnabled: true }
+    { columnName: 'on_going_treatment', wordWrapEnabled: true },
+    { columnName: 'action', wordWrapEnabled: true, width: 160 }
   ];
 
   const handleCreate = () => {
@@ -182,6 +184,20 @@ const PhcWorker = () => {
     );
   };
 
+  const handleResetUserOTP = (id: number) => {
+    showAlert({
+      title: t('common.reset_user_otp'),
+      message: t('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id: number) => {
+    dispatch(resetUserOTP(id, { type: USER_GROUPS.PHC_WORKER }));
+  };
+
   const handleDelete = (phcWorker: IPhcWorker) => {
     openDialog({
       content: <DeletePhcWorker phcWorker={phcWorker} />,
@@ -202,6 +218,9 @@ const PhcWorker = () => {
               }
               <EditAction onClick={() => handleEdit(phcWorker)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker)} />
+              {!isFederatedUser && (
+                <ResetUserOTPAction onClick={() => handleResetUserOTP(phcWorker.id)} />
+              )}
               {!isFederatedUser && <MailSendAction onClick={() => handleSendMail(phcWorker.id)} disabled={phcWorker.last_login} />}
             </>
           )}
@@ -230,7 +249,7 @@ const PhcWorker = () => {
         action
       };
     }),
-    [phcWorkers, handleEdit, handleSendMail, handleSwitchStatus, countries, regions, phcServices, professions, patients]
+    [phcWorkers, handleEdit, handleSendMail, handleSwitchStatus, handleResetUserOTP, countries, regions, phcServices, professions, patients]
   );
 
   return (

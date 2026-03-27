@@ -7,6 +7,7 @@ import {
   EnabledAction,
   DisabledAction,
   MailSendAction,
+  ResetUserOTPAction,
 } from 'components/V2/ActionIcons';
 import * as moment from 'moment';
 import settings from 'settings';
@@ -24,6 +25,7 @@ import { IUser } from 'interfaces/IUser';
 import BasicTable from 'components/Table/basic';
 import { USER_GROUPS } from 'variables/user';
 import { checkFederatedUser } from 'utils/user';
+import { resetUserOTP } from 'store/mfaSetting/actions';
 
 const PhcServiceAdmin = () => {
   const dispatch = useDispatch();
@@ -156,6 +158,20 @@ const PhcServiceAdmin = () => {
     }
   };
 
+  const handleResetUserOTP = (id: number) => {
+    showAlert({
+      title: t('common.reset_user_otp'),
+      message: t('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id: number) => {
+    dispatch(resetUserOTP(id, { type: USER_GROUPS.PHC_SERVICE_ADMIN }));
+  };
+
   const rows = useMemo(
     () =>
       (phcServiceAdmins?.data || []).map((phcServiceAdmin) => {
@@ -177,6 +193,11 @@ const PhcServiceAdmin = () => {
               onClick={() => handleDelete(phcServiceAdmin.id)}
               disabled={phcServiceAdmin.enabled}
             />
+            {!isFederatedUser && (
+              <ResetUserOTPAction
+                onClick={() => handleResetUserOTP(phcServiceAdmin.id)}
+              />
+            )}
             {!isFederatedUser && (
               <MailSendAction
                 onClick={() => handleSendMail(phcServiceAdmin.id)}
@@ -204,7 +225,7 @@ const PhcServiceAdmin = () => {
           action,
         };
       }),
-    [phcServiceAdmins, handleEdit, handleDelete]
+    [phcServiceAdmins, handleEdit, handleDelete, handleResetUserOTP]
   );
 
   return (

@@ -6,6 +6,7 @@ import {
   EditAction,
   EnabledAction,
   MailSendAction,
+  ResetUserOTPAction,
 } from 'components/V2/ActionIcons';
 import { useAlertDialog } from 'components/V2/AlertDialog';
 import useDialog from 'components/V2/Dialog';
@@ -25,6 +26,7 @@ import { USER_GROUPS } from 'variables/user';
 import EditRegionalAdmin from '../_Partials/RegionalAdminForm';
 import { IRegion } from 'interfaces/IRegion';
 import { checkFederatedUser } from 'utils/user';
+import { resetUserOTP } from 'store/mfaSetting/actions';
 
 const RegionalAdmin = () => {
   const dispatch = useDispatch();
@@ -92,6 +94,9 @@ const RegionalAdmin = () => {
               onClick={() => handleDelete(regionalAdmin.id)}
               disabled={regionalAdmin.enabled}
             />
+            {!isFederatedUser && (
+              <ResetUserOTPAction onClick={() => handleResetUserOTP(regionalAdmin.id)} />
+            )}
             {!isFederatedUser && (
               <MailSendAction
                 onClick={() => handleSendMail(regionalAdmin.id)}
@@ -169,6 +174,20 @@ const RegionalAdmin = () => {
         handleDeleteConfirm(id);
       }
     });
+  };
+
+  const handleResetUserOTP = (id: number) => {
+    showAlert({
+      title: t('common.reset_user_otp'),
+      message: t('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id: number) => {
+    dispatch(resetUserOTP(id, { type: USER_GROUPS.REGIONAL_ADMIN }));
   };
 
   const handleDeleteConfirm = async (id: number) => {
