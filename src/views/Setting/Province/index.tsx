@@ -66,6 +66,7 @@ const Province = () => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.REGION_LIMITATION);
             invalidate(END_POINTS.PHC_SERVICES);
+            invalidate(END_POINTS.ADMIN);
             dispatch(getClinics());
             closeDialog();
             closeDialog();
