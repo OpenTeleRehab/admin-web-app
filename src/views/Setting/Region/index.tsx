@@ -63,12 +63,12 @@ const Region = () => {
           onSuccess: async (res) => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.COUNTRY_LIMITATION);
+            invalidate(END_POINTS.ADMIN);
             showToast({
               title: t('region.toast_title.delete'),
               message: t(res?.message),
               color: 'success'
             });
-            closeDialog();
             closeDialog();
           },
           onError: () => {
@@ -85,6 +85,7 @@ const Region = () => {
       message: t('region.delete_confirmation.message'),
       closeOnConfirm: false,
       onConfirm: () => {
+        closeDialog();
         openDialog({
           title: t('region.delete_confirmation.title'),
           content: (

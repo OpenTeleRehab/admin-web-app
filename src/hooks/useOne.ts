@@ -23,7 +23,7 @@ export const useOne = <T = any>(
   }
 
   return useQuery<T>({
-    queryKey: [resource, id, params],
+    queryKey: [`${resource}-${id}`],
     queryFn: async () => {
       const res = await axiosInstance.get<{ data: T }>(endPoint, { params });
       return res.data.data;
