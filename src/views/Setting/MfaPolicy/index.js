@@ -115,7 +115,6 @@ const MfaPolicy = ({ translate }) => {
             const action = (
               <div className='d-flex justify-content-center'>
                 <EditAction onClick={() => handleEdit(mfaSetting)} disabled={[JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(mfaSetting.progress_status)} />
-                <DeleteAction onClick={() => handleDelete(mfaSetting.id)} disabled={[JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(mfaSetting.progress_status)} />
               </div>
             );
 
