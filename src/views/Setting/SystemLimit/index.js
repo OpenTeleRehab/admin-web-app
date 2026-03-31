@@ -33,15 +33,9 @@ const SystemLimit = ({ translate }) => {
         content_type: translate(systemLimit.content_type),
         value: systemLimit.value
       }));
-      if (profile.type === USER_GROUPS.ORGANIZATION_ADMIN) {
-        data.push({
-          content_type: translate('number_of_ongoing_treatment_per_therapist'),
-          value: orgOngoingTreatmentLimit
-        });
-      }
       setRows(data);
     }
-  }, [systemLimits, orgOngoingTreatmentLimit, profile.type, translate]);
+  }, [systemLimits, translate]);
 
   const commitChanges = ({ changed }) => {
     if (changed && editingRowIds) {
