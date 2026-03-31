@@ -98,8 +98,8 @@ const CreateQuestionnaire = ({ translate }) => {
           description: questionnaire.description,
           include_at_the_start: questionnaire.include_at_the_start,
           include_at_the_end: questionnaire.include_at_the_end,
-          share_with_phc_worker: questionnaire.share_with_phc_worker
-          // share_to_hi_library: questionnaire.share_to_hi_library
+          share_with_phc_worker: questionnaire.share_with_phc_worker,
+          share_to_hi_library: questionnaire.share_to_hi_library
         });
         setQuestions(questionnaire.questions);
         setShowFallbackText(false);
@@ -108,8 +108,8 @@ const CreateQuestionnaire = ({ translate }) => {
           title: editTranslation.title,
           description: editTranslation.description,
           include_at_the_start: editTranslation.include_at_the_start,
-          include_at_the_end: editTranslation.include_at_the_end
-          // share_to_hi_library: editTranslation.share_to_hi_library
+          include_at_the_end: editTranslation.include_at_the_end,
+          share_to_hi_library: editTranslation.share_to_hi_library
         });
         setQuestions(editTranslation.questions);
         setShowFallbackText(true);
