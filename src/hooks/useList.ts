@@ -4,7 +4,7 @@ import axiosInstance from 'utils/axios';
 
 export const useList = <T = any>(resource: string, params: any = {}, options: Partial<UseQueryOptions<IApiResponse<T>>> = {}, headers?: Record<string, string>): UseQueryResult<IApiResponse<T>, unknown> => {
   return useQuery<IApiResponse<T>>({
-    queryKey: [resource, params, headers],
+    queryKey: [resource, 'list', params, headers],
     queryFn: async ({ signal }) => {
       const response = await axiosInstance.get<IApiResponse<T>>(`/${resource}`, { params, signal, headers });
       return {

@@ -14,7 +14,7 @@ export const useDelete = (resource: string) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [resource] });
+      queryClient.invalidateQueries({ queryKey: [resource, 'list'] });
     }
   });
 };

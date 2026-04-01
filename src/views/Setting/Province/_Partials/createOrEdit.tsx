@@ -90,6 +90,7 @@ const CreateOrEditProvince = ({ provinceData }: CreateOrEditProvinceProps) => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.REGION_LIMITATION);
             invalidate(END_POINTS.COUNT_THERAPIST_BY_CLINIC);
+            invalidate(END_POINTS.PROVINCE_LIMITATION);
             showToast({
               title: t('province.toast_title.edit'),
               message: t(res.message),

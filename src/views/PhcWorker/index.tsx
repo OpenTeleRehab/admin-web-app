@@ -155,10 +155,11 @@ const PhcWorker = () => {
       {
         onSuccess: async (res) => {
           dispatch(showSpinner(false));
+          const isError = res?.message?.includes('error_message');
           showToast({
             title: t('user.switchStatus_confirmation_title'),
             message: t(res?.message),
-            color: 'success'
+            color: isError ? 'danger' : 'success'
           });
           closeDialog();
         },

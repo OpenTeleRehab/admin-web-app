@@ -17,9 +17,9 @@ export const useMutationAction = <T = any>(resource: string) => {
       const { data } = await axiosInstance.request<T>({ url, method, data: payload });
       return data;
     },
-    onSuccess: (_, { id, invalidateKeys }) => {
+    onSuccess: (_, { invalidateKeys }) => {
       queryClient.invalidateQueries({ queryKey: [resource] });
-      queryClient.invalidateQueries({ queryKey: [resource, id] });
+
       if (invalidateKeys) {
         invalidateKeys.forEach(key => queryClient.invalidateQueries({ queryKey: [key] }));
       }

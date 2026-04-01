@@ -33,7 +33,6 @@ const CreateClinic = ({ show, editId, handleClose }) => {
   const profile = useSelector(state => state.auth.profile);
   const { data: regions } = useList(END_POINTS.REGION);
   const { data: provinces } = useList(END_POINTS.PROVINCE);
-  const { data: provincesLimitation } = useList(END_POINTS.PROVINCES_LIMITATION);
   const definedCountries = useSelector(state => state.country.definedCountries);
   const { data: totalTherapist } = useOne(END_POINTS.COUNT_THERAPIST_BY_CLINIC, null, {
     enabled: !!editId,
@@ -54,10 +53,13 @@ const CreateClinic = ({ show, editId, handleClose }) => {
 
   const provinceOptions = useMemo(() => provinces?.data?.filter((province) => province.region_id === formFields.region_id) || [], [provinces, formFields.region_id]);
 
-  const provinceLimitation = useMemo(() => {
-    const provinceLimitation = provincesLimitation?.data?.find(province => province.id === formFields.province_id);
-    return provinceLimitation;
-  }, [provincesLimitation, formFields.province_id]);
+  const { data: provinceLimitation } = useOne(
+    END_POINTS.PROVINCE_LIMITATION,
+    formFields.province_id || null,
+    {
+      enabled: !!formFields.province_id,
+    }
+  );
 
   const regionOptions = useMemo(() => {
     if (profile?.regions?.length) {
@@ -189,14 +191,14 @@ const CreateClinic = ({ show, editId, handleClose }) => {
       if (editId) {
         dispatch(updateClinic(editId, data)).then(result => {
           if (result) {
-            invalidate(END_POINTS.PROVINCES_LIMITATION);
+            invalidate(END_POINTS.PROVINCE_LIMITATION);
             handleClose();
           }
         });
       } else {
         dispatch(createClinic(data)).then(result => {
           if (result) {
-            invalidate(END_POINTS.PROVINCES_LIMITATION);
+            invalidate(END_POINTS.PROVINCE_LIMITATION);
             handleClose();
           }
         });

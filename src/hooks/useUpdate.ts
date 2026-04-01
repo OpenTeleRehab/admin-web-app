@@ -14,9 +14,8 @@ export const useUpdate = <T>(resource: string) => {
       const { data } = await axiosInstance.put<T>(`/${resource}/${id}`, payload);
       return data;
     },
-    onSuccess: (_, { id }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [resource] });
-      queryClient.invalidateQueries({ queryKey: [resource, id] });
     }
   });
 };
