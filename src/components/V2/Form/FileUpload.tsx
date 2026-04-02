@@ -55,6 +55,7 @@ const FileUpload = <T extends FieldValues>({
                       }
                       field.onChange(null);
                     }}
+                    disabled={disabled}
                   >
                     <BsX size={16} />
                   </Button>

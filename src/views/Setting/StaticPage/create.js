@@ -261,6 +261,7 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             value={true}
             checked={formFields.private}
             label={translate('static_page.private')}
+            disabled={!hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE])}
           />
         </Form.Group>
         <Form.Group controlId="formPlateForm">
@@ -316,18 +317,22 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             {materialFile && (
               <div className="exercise-media">
                 <div className="mb-2 position-relative">
-                  <div className="position-absolute remove-btn-wrapper">
-                    <BsXCircle size={20} onClick={handleFileRemove}/>
-                  </div>
+                  {hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE]) && (
+                    <div className="position-absolute remove-btn-wrapper">
+                      <BsXCircle size={20} onClick={handleFileRemove}/>
+                    </div>
+                  )}
                   <img src={materialFile.url || `${process.env.REACT_APP_API_BASE_URL}/file/${materialFile.id}`} alt="..." className="w-100 img-thumbnail"/>
                   <div>{materialFile.fileName} {materialFile.fileSize ? ('(' + materialFile.fileSize + 'kB )') : ''}</div>
                 </div>
               </div>
             )}
-            <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
-              <BsUpload size={15}/> {translate('static_page.media_upload')}
-              <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" aria-label="Upload" />
-            </div>
+            {hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE]) && (
+              <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
+                <BsUpload size={15}/> {translate('static_page.media_upload')}
+                <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} accept="image/*" aria-label="Upload" />
+              </div>
+            )}
           </div>
         </Form.Group>
         <Form.Group controlId="title">
@@ -347,22 +352,24 @@ const CreateStaticPage = ({ show, editId, handleClose }) => {
             {translate('error.static_page.title')}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Row>
-          <Form.Group controlId="background-color" className="col-md-6">
-            <Form.Label>{translate('static_page.background_color')}</Form.Label>
-            <SketchPicker
-              onChange={handleBackgroundColorChange}
-              color={formFields.background_color}
-            />
-          </Form.Group>
-          <Form.Group controlId="text-color" className="col-md-6">
-            <Form.Label>{translate('static_page.text_color')}</Form.Label>
-            <SketchPicker
-              onChange={handleTextColorChange}
-              color={formFields.text_color}
-            />
-          </Form.Group>
-        </Form.Row>
+        {hasAnyRole([USER_ROLES.MANAGE_FAQ_STATIC_PAGE, USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE]) && (
+          <Form.Row>
+            <Form.Group controlId="background-color" className="col-md-6">
+              <Form.Label>{translate('static_page.background_color')}</Form.Label>
+              <SketchPicker
+                onChange={handleBackgroundColorChange}
+                color={formFields.background_color}
+              />
+            </Form.Group>
+            <Form.Group controlId="text-color" className="col-md-6">
+              <Form.Label>{translate('static_page.text_color')}</Form.Label>
+              <SketchPicker
+                onChange={handleTextColorChange}
+                color={formFields.text_color}
+              />
+            </Form.Group>
+          </Form.Row>
+        )}
         <Form.Group controlId="content">
           <Form.Label>{translate('term_and_condition.content')}</Form.Label>
           <span className="text-dark ml-1">*</span>

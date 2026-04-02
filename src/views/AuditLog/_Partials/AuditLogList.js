@@ -9,6 +9,7 @@ import { PLATFORMS } from '../../../variables/platform';
 import { useSelector } from 'react-redux';
 import { getCountryISO } from 'utils/country';
 import { USER_GROUPS } from '../../../variables/user';
+import Spinner from 'react-bootstrap/Spinner';
 
 const AuditLogList = ({ translate, platform, countryId }) => {
   const { countries } = useSelector(state => state.country);
@@ -19,7 +20,7 @@ const AuditLogList = ({ translate, platform, countryId }) => {
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
 
-  const { data: { data: auditLogs = [], info } = {} } = useList(platform === PLATFORMS.ADMIN_PORTAL ? END_POINTS.AUDIT_LOG : platform === PLATFORMS.THERAPIST_PORTAL ? END_POINTS.THERAPIST_AUDIT_LOG : END_POINTS.PATIENT_AUDIT_LOG, {
+  const { data: { data: auditLogs = [], info } = {}, isFetching } = useList(platform === PLATFORMS.ADMIN_PORTAL ? END_POINTS.AUDIT_LOG : platform === PLATFORMS.THERAPIST_PORTAL ? END_POINTS.THERAPIST_AUDIT_LOG : END_POINTS.PATIENT_AUDIT_LOG, {
     page_size: pageSize,
     page: currentPage + 1,
     search_value: searchValue,
@@ -85,19 +86,19 @@ const AuditLogList = ({ translate, platform, countryId }) => {
   );
 
   return (
-    <CustomTable
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
-      totalCount={totalCount}
-      setSearchValue={setSearchValue}
-      setFilters={setFilters}
-      filters={filters}
-      columns={columns}
-      columnExtensions={columnExtensions}
-      rows={auditLogs.map(auditLog => {
-        return {
+    <div className="position-relative min-height-200">
+      <CustomTable
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalCount={totalCount}
+        setSearchValue={setSearchValue}
+        setFilters={setFilters}
+        filters={filters}
+        columns={columns}
+        columnExtensions={columnExtensions}
+        rows={auditLogs.map(auditLog => ({
           type_of_changes: translate(`common.${auditLog.type_of_changes}`),
           user_group: translate(`common.${auditLog.user_group}`),
           who: auditLog.who,
@@ -110,9 +111,14 @@ const AuditLogList = ({ translate, platform, countryId }) => {
           date_time: auditLog.date_time ? moment.utc(auditLog.date_time).local().format(settings.datetime_format) : '',
           before_changed: auditLog.before_changed ? renderChangedItems(auditLog.before_changed) : '',
           after_changed: renderChangedItems(auditLog.after_changed)
-        };
-      })}
-    />
+        }))}
+      />
+      {isFetching && (
+        <div className="loading-shading d-flex justify-content-center align-items-center">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
+    </div>
   );
 };
 

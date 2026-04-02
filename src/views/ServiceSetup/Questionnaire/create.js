@@ -39,7 +39,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const history = useHistory();
   const { keycloak } = useKeycloak();
   const { id } = useParams();
-  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE);
 
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
@@ -505,7 +505,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 value={true}
                 checked={formFields.include_at_the_start}
                 label={translate('questionnaire.include_at_the_start')}
-                disabled={!isEditableLanguage}
+                disabled={!keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE)}
               />
             </Form.Group>
           </Col>
@@ -519,7 +519,7 @@ const CreateQuestionnaire = ({ translate }) => {
                 value={true}
                 checked={formFields.include_at_the_end}
                 label={translate('questionnaire.include_at_the_end')}
-                disabled={!isEditableLanguage}
+                disabled={!keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE)}
               />
             </Form.Group>
           </Col>

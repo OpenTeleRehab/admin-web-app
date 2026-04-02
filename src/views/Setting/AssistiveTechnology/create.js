@@ -12,6 +12,8 @@ import {
 import { formatFileSize } from '../../../utils/file';
 import settings from 'settings';
 import { useEditableLanguage } from 'hooks/useEditableLanguage';
+import { USER_ROLES } from 'variables/user';
+import keycloak from '../../../utils/keycloak';
 
 const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
   const localize = useSelector((state) => state.localize);
@@ -169,7 +171,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
               isInvalid={errorCode}
               value={formFields.code}
               maxLength={settings.textMaxLength}
-              disabled={!isEditableLanguage}
+              disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY)}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.assistive_technology.code')}
@@ -204,7 +206,7 @@ const CreateAssistiveTechnology = ({ show, editId, handleClose }) => {
                 aria-label="Upload File"
                 id="file"
                 onKeyPress={(event) => handleFileUpload(event)}
-                disabled={!isEditableLanguage}
+                disabled={!keycloak.hasRealmRole(USER_ROLES.MANAGE_ASSISTIVE_TECHNOLOGY)}
               />
               <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
               {formFields.file === undefined &&

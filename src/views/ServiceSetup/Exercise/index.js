@@ -52,7 +52,7 @@ const Exercise = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { keycloak } = useKeycloak();
-  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EDUCATIONAL_MATERIAL);
 
   const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
@@ -85,10 +85,7 @@ const Exercise = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
-    if (language !== undefined) {
-      dispatch(
-        getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
-    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
   }, [language, dispatch]);
 
   useEffect(() => {

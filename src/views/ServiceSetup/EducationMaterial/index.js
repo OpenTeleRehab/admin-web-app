@@ -72,10 +72,7 @@ const EducationMaterial = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
-    if (language !== undefined) {
-      dispatch(
-        getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
-    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
   }, [language, dispatch]);
 
   useEffect(() => {

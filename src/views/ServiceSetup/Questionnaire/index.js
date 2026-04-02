@@ -72,10 +72,7 @@ const Questionnaire = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
-    if (language !== undefined) {
-      dispatch(getCategoryTreeData(
-        { type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
-    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
   }, [language, dispatch]);
 
   useEffect(() => {
