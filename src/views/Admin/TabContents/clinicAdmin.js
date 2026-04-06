@@ -112,7 +112,7 @@ const ClinicAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) => 
             <div className='d-flex justify-content-start'>
               {user.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0)} />
-                : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} />
+                : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1)} disabled={!user.last_login} />
               }
               {!isFederatedUser && (
                 <ResetUserOTPAction onClick={() => handleResetUserOTP(user.id)} />
