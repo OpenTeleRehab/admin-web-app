@@ -41,16 +41,14 @@ const updateMfaSetting = (id, payload) => {
     });
 };
 
-const getMfaEnforcementValidation = (role) => {
-  return axios.get(`${endPoint}-validation?role=${role}`)
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
+const getMfaEnforcementValidation = async (role, regionId = null) => {
+  try {
+    const url = regionId ? `${endPoint}/validation?role=${role}&region_id=${regionId}` : `${endPoint}/validation?role=${role}`;
+    const res = await axios.get(url);
+    return res.data;
+  } catch (e) {
+    return e.response.data;
+  }
 };
 
 const resetUserOTP = (id, payload) => {
