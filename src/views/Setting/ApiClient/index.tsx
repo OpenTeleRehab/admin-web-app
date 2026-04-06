@@ -98,7 +98,7 @@ const ApiClient = () => {
     { name: 'action', title: t('common.action') }
   ], [t]);
 
-   const columnExtensions = [
+  const columnExtensions = [
     { columnName: 'api_key', wordWrapEnabled: false, width: 400 }
   ];
 
@@ -117,7 +117,7 @@ const ApiClient = () => {
 
       const allowIps = ac.allow_ips?.length ? ac.allow_ips.join(' / ') : null;
       const status = (
-        <Badge pill variant={ac.active ? 'success' : 'danger'}>
+        <Badge pill variant={ac.active ? 'success' : 'light'}>
           {ac.active ? t('common.active') : t('common.inactive')}
         </Badge>
       );
