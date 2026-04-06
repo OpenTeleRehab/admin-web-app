@@ -132,18 +132,20 @@ const CreateHealthCondition = ({ show, handleClose, editId, activeHealthConditio
             aria-label={translate('common.show_language.version')}
           />
         </Form.Group>
-        <Form.Group>
-          <Form.Label>{translate('setting.health_condition_group.title')}</Form.Label>
-          <span className="text-dark ml-1">*</span>
-          <Form.Control
-            disabled
-            type="text"
-            name="health_condition_group"
-            placeholder={translate('placeholder.enter_health_condition_group_name')}
-            value={activeHealthConditionGroup.title}
-            aria-label={translate('placeholder.enter_health_condition_group_name')}
-          />
-        </Form.Group>
+        {!editId && (
+          <Form.Group>
+            <Form.Label>{translate('setting.health_condition_group.title')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Form.Control
+              disabled
+              type="text"
+              name="health_condition_group"
+              placeholder={translate('placeholder.enter_health_condition_group_name')}
+              value={activeHealthConditionGroup.title}
+              aria-label={translate('placeholder.enter_health_condition_group_name')}
+            />
+          </Form.Group>
+        )}
         <Form.Group>
           {editId ? (
             <>

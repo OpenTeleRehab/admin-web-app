@@ -17,6 +17,7 @@ import _ from 'lodash';
 import keycloak from '../../../../utils/keycloak';
 import { USER_ROLES } from '../../../../variables/user';
 import FallbackText from '../../../../components/Form/FallbackText';
+import { useEditableLanguage } from '../../../../hooks/useEditableLanguage';
 
 const reorderQuestion = (questions, startIndex, endIndex) => {
   const result = Array.from(questions);
@@ -27,7 +28,8 @@ const reorderQuestion = (questions, startIndex, endIndex) => {
 
 const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, answerValueError, answerThresholdError, questionnaire, showFallbackText, modifiable }) => {
   const { languages } = useSelector(state => state.language);
-  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EXERCISE);
+  const isTranslating = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_QUESTIONNAIRE);
+  const isEditableLanguage = useEditableLanguage(language);
 
   const handleFileChange = (e, index) => {
     const { name, files } = e.target;
@@ -134,7 +136,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const disabledEditAnswerValueThreshold = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code !== languageObj.fallback;
+    return (languageObj && languageObj.code !== languageObj.fallback) || isTranslating;
   };
 
   const handleCloneQuestion = (index) => {
@@ -259,6 +261,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   isInvalid={questionTitleError[index]}
                                   maxLength={settings.textMaxLength}
                                   aria-label="Title"
+                                  disabled={!isEditableLanguage}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                   {translate('question.title.required')}
@@ -320,6 +323,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     value={true}
                                     checked={question.mark_as_countable}
                                     label={translate('question.mark_as_countable')}
+                                    disabled={!keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE)}
                                   />
                                 </Form.Group>
                               </Col>
@@ -345,6 +349,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
                                               aria-label="Value"
+                                              disabled={!isEditableLanguage}
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}
@@ -413,6 +418,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
                                               aria-label="Value"
+                                              disabled={!isEditableLanguage}
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}

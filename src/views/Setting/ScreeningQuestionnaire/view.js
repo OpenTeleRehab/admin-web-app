@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,18 +8,34 @@ import { getScreeningQuestionnaire } from '../../../store/screeningQuestionnaire
 import { SCREENING_QUESTION_TYPE } from '../../../variables/questionnaire';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 import Dialog from '../../../components/Dialog';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 const ViewScreeningQuestionnaire = ({ id, show, handleClose }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { languages } = useSelector(state => state.language);
+  const { profile } = useSelector(state => state.auth);
   const { screeningQuestionnaire } = useSelector(state => state.screeningQuestionnaire);
+  const [language, setLanguage] = useState(profile?.language_id ?? languages?.[0]?.id);
 
   useEffect(() => {
     if (id) {
-      dispatch(getScreeningQuestionnaire(id));
+      dispatch(getScreeningQuestionnaire(id, language));
     }
-  }, [id, dispatch]);
+  }, [id, language, dispatch]);
+
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
 
   return (
     <Dialog
@@ -30,6 +46,19 @@ const ViewScreeningQuestionnaire = ({ id, show, handleClose }) => {
       onCancel={handleClose}
       cancelLabel={translate('common.close')}
     >
+      <Form.Group controlId="formLanguage">
+        <Form.Label>{translate('common.language')}</Form.Label>
+        <Select
+          placeholder={translate('placeholder.language')}
+          classNamePrefix="filter"
+          value={languages.filter(option => option.id === language)}
+          getOptionLabel={option => option.name}
+          options={languages}
+          onChange={(e) => setLanguage(e.id)}
+          styles={customSelectStyles}
+          aria-label="Language"
+        />
+      </Form.Group>
       <div className="d-flex flex-column mb-2">
         <span className="font-weight-bold">
           {translate('screening_questionnaire.description')}

@@ -16,6 +16,9 @@ import RichEditor from '../../../components/V2/Form/RichEditor';
 import Select from '../../../components/V2/Form/Select';
 import { ILanguageResource } from '../../../interfaces/ILanguage';
 import { useEditableLanguage } from '../../../hooks/useEditableLanguage';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import keycloak from 'utils/keycloak';
+import { USER_ROLES } from 'variables/user';
 
 const EditReferralEmailTemplate = ({ id }: { id: string | number }) => {
   const t = useTranslate();
@@ -78,6 +81,8 @@ const EditReferralEmailTemplate = ({ id }: { id: string | number }) => {
     });
   });
 
+  const canSubmit = keycloak.hasRealmRole(USER_ROLES.TRANSLATE_EMAIL_TEMPLATE) ? (isDirty && isEditableLanguage) : isDirty;
+
   return (
     <Form onSubmit={onSubmit}>
       <DialogBody>
@@ -117,9 +122,12 @@ const EditReferralEmailTemplate = ({ id }: { id: string | number }) => {
         <Form.Text id="contentHelpBlock" muted>
           #user_name# <br /> #healthcare_worker_name# <br /> #rehab_service_admin_name# <br /> #therapist_name#
         </Form.Text>
+        {data?.auto_translated === true && (
+          <GoogleTranslationAttribute />
+        )}
       </DialogBody>
       <DialogFooter>
-        <Button variant="primary" type='submit' disabled={!isDirty}>
+        <Button variant="primary" type='submit' disabled={!canSubmit}>
           {t('common.save')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
