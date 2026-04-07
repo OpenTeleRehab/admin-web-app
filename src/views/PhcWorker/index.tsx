@@ -215,7 +215,7 @@ const PhcWorker = () => {
             <>
               {phcWorker.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(phcWorker)} disabled={!!getTotalPatientByPhcWorker(phcWorker.id, patients?.data)} />
-                : <DisabledAction onClick={() => handleSwitchStatus(phcWorker)} disabled={!!getTotalPatientByPhcWorker(phcWorker.id, patients?.data)} />
+                : <DisabledAction onClick={() => handleSwitchStatus(phcWorker)} disabled={!!getTotalPatientByPhcWorker(phcWorker.id, patients?.data) || !phcWorker.last_login} />
               }
               <EditAction onClick={() => handleEdit(phcWorker)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(phcWorker)} />

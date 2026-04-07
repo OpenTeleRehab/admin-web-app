@@ -185,6 +185,7 @@ const PhcServiceAdmin = () => {
             ) : (
               <DisabledAction
                 onClick={() => handleSwitchStatus(phcServiceAdmin)}
+                disabled={!phcServiceAdmin.last_login}
               />
             )}
             <EditAction onClick={() => handleEdit(phcServiceAdmin)} />

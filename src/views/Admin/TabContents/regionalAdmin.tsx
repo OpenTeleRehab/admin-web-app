@@ -86,6 +86,7 @@ const RegionalAdmin = () => {
             ) : (
               <DisabledAction
                 onClick={() => handleSwitchStatus(regionalAdmin)}
+                disabled={!regionalAdmin.last_login}
               />
             )}
             <EditAction onClick={() => handleEdit(regionalAdmin)} />

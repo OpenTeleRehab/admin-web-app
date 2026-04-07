@@ -113,7 +113,7 @@ const CountryAdmin = ({ handleEdit, handleDelete, handleSwitchStatus, type }) =>
             <div className='d-flex justify-content-start'>
               {user.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(user.id, 0, user.country_id)} />
-                : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1, user.country_id)} />
+                : <DisabledAction onClick={() => handleSwitchStatus(user.id, 1, user.country_id)} disabled={!user.last_login} />
               }
               <EditAction onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(user.id)} disabled={user.enabled} />
