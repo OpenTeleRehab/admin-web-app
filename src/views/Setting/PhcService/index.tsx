@@ -15,6 +15,7 @@ import { END_POINTS } from 'variables/endPoint';
 import BasicTable from 'components/Table/basic';
 import _ from 'lodash';
 import DeletePhcServiceConfirmation from './_Partials/deleteConfirmation';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 const PhcService = () => {
   const t = useTranslate();
@@ -23,6 +24,7 @@ const PhcService = () => {
   const { showToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
   const { showAlert } = useAlertDialog();
+  const invalidate = useInvalidate();
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -69,6 +71,7 @@ const PhcService = () => {
                 deletePhcService(id, {
                   onSuccess: async (res: any) => {
                     dispatch(showSpinner(false));
+                    invalidate(END_POINTS.PHC_WORKERS);
                     closeDialog();
                     closeDialog();
                     showToast({
