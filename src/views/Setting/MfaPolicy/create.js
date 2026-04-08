@@ -29,9 +29,11 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const { data: regions } = useList(END_POINTS.REGION_BY_AUTH_COUNTRY, null, { enabled: profile.type === USER_GROUPS.COUNTRY_ADMIN });
   const { data: phcServices } = useList(END_POINTS.PHC_SERVICES_OPTION_LIST, null, { enabled: profile.type === USER_GROUPS.REGIONAL_ADMIN });
+  const { data: regionalAdminRegions } = useList(END_POINTS.REGION_BY_REGIONAL_ADMIN, null, { enabled: profile.type === USER_GROUPS.REGIONAL_ADMIN });
   const dispatch = useDispatch();
-  const { control, watch, handleSubmit, reset } = useForm();
+  const { control, watch, handleSubmit, reset, setValue } = useForm();
   const role = watch('role');
+  const regionId = watch('region_id');
 
   const durationUnits = [
     { label: 'Seconds', value: 'seconds' },
@@ -93,6 +95,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
       organizations: initialData ? initialData.organizations : [],
       country_ids: initialData ? initialData.country_ids : [],
       region_ids: initialData ? initialData.region_ids : [],
+      region_id: profile.type === USER_GROUPS.REGIONAL_ADMIN ? initialData?.region_ids?.[0] : undefined,
       clinic_ids: initialData ? initialData.clinic_ids : [],
       phc_service_ids: initialData ? initialData.phc_service_ids : [],
       mfa_enforcement: initialData ? initialData.mfa_enforcement : null,
@@ -104,12 +107,14 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
   }, [initialData, reset]);
 
   useEffect(() => {
-    if (role) {
+    if (profile.type === USER_GROUPS.REGIONAL_ADMIN && role && regionId) {
+      dispatch(getMfaEnforcementValidation(role, regionId));
+    } else if (profile.type !== USER_GROUPS.REGIONAL_ADMIN && role) {
       dispatch(getMfaEnforcementValidation(role));
     }
 
     return () => dispatch(mutation.clearMfaEnforcementValidation());
-  }, [dispatch, role]);
+  }, [dispatch, role, regionId]);
 
   const organizationOptions = useMemo(() => {
     const usedOrganizationIds = new Set(
@@ -148,8 +153,8 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         .flatMap(setting => setting.phc_service_ids)
     );
 
-    return phcServices?.data?.filter(phcService => !usedPhcServiceIds.has(phcService.id) || initialData?.phc_service_ids?.includes(phcService.id));
-  }, [mfaSettings, phcServices, role, initialData]);
+    return phcServices?.data?.filter(phcService => phcService.province.region_id === regionId).filter(phcService => !usedPhcServiceIds.has(phcService.id) || initialData?.phc_service_ids?.includes(phcService.id));
+  }, [mfaSettings, phcServices, role, initialData, regionId]);
 
   const clinicOptions = useMemo(() => {
     const usedClinicIds = new Set(
@@ -158,8 +163,8 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
         .flatMap(setting => setting.clinic_ids)
     );
 
-    return clinics?.filter(clinic => !usedClinicIds.has(clinic.id) || initialData?.clinic_ids?.includes(clinic.id));
-  }, [mfaSettings, clinics, role, initialData]);
+    return clinics?.filter(clinic => clinic?.region?.id === regionId).filter(clinic => !usedClinicIds.has(clinic.id) || initialData?.clinic_ids?.includes(clinic.id));
+  }, [mfaSettings, clinics, role, initialData, regionId]);
 
   const onConfirm = handleSubmit(async (data) => {
     if (data.role) {
@@ -174,6 +179,10 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
     data = Object.fromEntries(
       Object.entries(data).filter(([_, value]) => value != null)
     );
+
+    if (profile.type === USER_GROUPS.REGIONAL_ADMIN) {
+      data.region_ids = [data.region_id];
+    }
 
     if (initialData && initialData.id) {
       dispatch(updateMfaSetting(initialData.id, data));
@@ -211,6 +220,21 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
           placeholder={translate('survey.placeholder.role')}
           isClearable
         />
+        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (
+          <CustomSelect
+            aria-label="region"
+            control={control}
+            name="region_id"
+            label={translate('common.region')}
+            options={(regionalAdminRegions?.data ?? []).map(region => ({
+              value: region.id,
+              label: region.name
+            }))}
+            rules={{ required: translate('error.region') }}
+            placeholder={translate('placeholder.region')}
+            isClearable
+          />
+        )}
         {profile.type === USER_GROUPS.SUPER_ADMIN && (
           <CustomSelect
             control={control}
@@ -259,7 +283,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             placeholder={translate('placeholder.region')}
           />
         )}
-        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.CLINIC_ADMIN || role === USER_GROUPS.THERAPIST) && (
+        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.CLINIC_ADMIN || role === USER_GROUPS.THERAPIST) && regionId && (
           <CustomSelect
             control={control}
             name="clinic_ids"
@@ -275,7 +299,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
             placeholder={translate('placeholder.clinic')}
           />
         )}
-        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.PHC_SERVICE_ADMIN || role === USER_GROUPS.PHC_WORKER) && (
+        {profile.type === USER_GROUPS.REGIONAL_ADMIN && (role === USER_GROUPS.PHC_SERVICE_ADMIN || role === USER_GROUPS.PHC_WORKER) && regionId && (
           <CustomSelect
             control={control}
             name="phc_service_ids"
@@ -295,6 +319,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
           control={control}
           label={translate('mfa.mfa_enforcement.label')}
           name="mfa_enforcement"
+          rules={{ required: true }}
           options={[
             {
               label: translate('mfa.enforcement.disable'),
@@ -331,7 +356,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                   {translate('mfa.expiration.duration.description')}
                 </Form.Text>
                 <Row>
-                  <Col md={8} className="pr-0">
+                  <Col md={6} className="pr-0">
                     <Input
                       control={control}
                       type="number"
@@ -340,7 +365,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                       placeholder={translate('mfa.expiration.duration.placeholder')}
                     />
                   </Col>
-                  <Col md={4} className="pl-0">
+                  <Col md={6} className="pl-0">
                     <CustomSelect
                       control={control}
                       rules={{ required: translate('error.mfa_expiration_unit') }}
@@ -360,7 +385,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                     {translate('mfa.skip.setup.duration.description')}
                   </Form.Text>
                   <Row>
-                    <Col md={8} className="pr-0">
+                    <Col md={6} className="pr-0">
                       <Input
                         control={control}
                         type="number"
@@ -369,7 +394,7 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                         placeholder={translate('mfa.skip.setup.duration.placeholder')}
                       />
                     </Col>
-                    <Col md={4} className="pl-0">
+                    <Col md={6} className="pl-0">
                       <CustomSelect
                         control={control}
                         rules={{ required: translate('error.skip_mfa_setup_unit') }}

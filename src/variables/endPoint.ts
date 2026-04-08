@@ -8,6 +8,7 @@ export const END_POINTS = {
   PROVINCE_LIMITATION: 'province-limitation',
   REGION: 'regions',
   REGION_BY_AUTH_COUNTRY: 'regions/by-auth-country',
+  REGION_BY_REGIONAL_ADMIN: 'regions/by-regional-admin',
   PROVINCE: 'provinces',
   PROVINCE_BY_REGION: 'provinces-by-user-region',
   PHC_SERVICES: 'phc-services',

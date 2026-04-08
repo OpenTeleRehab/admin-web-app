@@ -10,7 +10,7 @@ export const mfaSetting = (state = initialState, action) => {
           mfa.id === action.data.rowId
             ? { ...mfa, progress_status: action.data.status }
             : mfa
-        ).filter((mfa) => !action.data.isDeleted || mfa.id !== action.data.rowId)
+        ).filter((mfa) => !action.data.isDeleting || mfa.id !== action.data.rowId)
       });
     case 'GET_MFA_SETTINGS_SUCCESS':
       return Object.assign({}, state, {
@@ -21,6 +21,11 @@ export const mfaSetting = (state = initialState, action) => {
         loading: false
       });
     case 'GET_MFA_ENFORCEMENT_VALIDATION_SUCCESS':
+      return Object.assign({}, state, {
+        mfaEnforcementValidation: action.data,
+        loading: false
+      });
+    case 'GET_REGIONAL_ADMIN_MFA_VALIDATION_SUCCESS':
       return Object.assign({}, state, {
         mfaEnforcementValidation: action.data,
         loading: false

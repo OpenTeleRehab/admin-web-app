@@ -56,8 +56,8 @@ export const updateMfaSetting = (id, payload) => async (dispatch) => {
   }
 };
 
-export const getMfaEnforcementValidation = (role) => async (dispatch) => {
-  const res = await MfaSetting.getMfaEnforcementValidation(role);
+export const getMfaEnforcementValidation = (role, regionId) => async (dispatch) => {
+  const res = await MfaSetting.getMfaEnforcementValidation(role, regionId);
   if (res.success) {
     dispatch(mutation.getMfaEnforcementValidationSuccess(res.data));
     return res.data;

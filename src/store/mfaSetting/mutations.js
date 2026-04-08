@@ -13,6 +13,11 @@ const getMfaEnforcementValidationSuccess = (data) => ({
   data
 });
 
+const getRegionalAdminMfaValidationSuccess = (data) => ({
+  type: 'GET_REGIONAL_ADMIN_MFA_VALIDATION_SUCCESS',
+  data
+});
+
 const clearMfaEnforcementValidation = () => ({
   type: 'CLEAR_MFA_ENFORCEMENT_VALIDATION'
 });
@@ -22,4 +27,5 @@ export const mutation = {
   getMfaEnforcementValidationSuccess,
   clearMfaEnforcementValidation,
   setMfaSettings,
+  getRegionalAdminMfaValidationSuccess,
 };
