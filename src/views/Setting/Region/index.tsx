@@ -64,6 +64,7 @@ const Region = () => {
             dispatch(showSpinner(false));
             invalidate(END_POINTS.COUNTRY_LIMITATION);
             invalidate(END_POINTS.ADMIN);
+            invalidate(END_POINTS.PHC_WORKERS);
             showToast({
               title: t('region.toast_title.delete'),
               message: t(res?.message),
