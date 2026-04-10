@@ -7,7 +7,7 @@ import {
 import settings from 'settings';
 import * as moment from 'moment';
 import useDialog from 'components/V2/Dialog';
-
+import { useAlertDialog } from 'components/V2/AlertDialog';
 import CustomTable from 'components/Table';
 import EnabledStatus from 'components/EnabledStatus';
 import { DeleteAction, EditAction, EnabledAction, DisabledAction, MailSendAction } from 'components/ActionIcons';
@@ -21,6 +21,10 @@ import { useInvalidate } from 'hooks/useInvalidate';
 import { END_POINTS } from 'variables/endPoint';
 import customColorScheme from 'utils/customColorScheme';
 import _ from 'lodash';
+import { checkFederatedUser } from 'utils/user';
+import { ResetUserOTPAction } from 'components/V2/ActionIcons';
+import { resetUserOTP } from '../../store/mfaSetting/actions';
+import { USER_GROUPS } from 'variables/user';
 
 const Translator = () => {
   const dispatch = useDispatch();
@@ -29,6 +33,7 @@ const Translator = () => {
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const { openDialog } = useDialog();
+  const { showAlert } = useAlertDialog();
 
   const columns = [
     { name: 'last_name', title: translate('common.last_name') },
@@ -67,7 +72,8 @@ const Translator = () => {
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
-    { columnName: 'last_login', wordWrapEnabled: true, width: 250 }
+    { columnName: 'last_login', wordWrapEnabled: true, width: 250 },
+    { columnName: 'action', wordWrapEnabled: true, width: 160 }
   ];
 
   const handleSendMail = (id) => {
@@ -127,6 +133,22 @@ const Translator = () => {
     });
   };
 
+  const handleResetUserOTP = (id) => {
+    showAlert({
+      title: translate('common.reset_user_otp'),
+      message: translate('common.reset_user_otp_confirmation_message'),
+      onConfirm: () => {
+        handleResetUserOTPConfirm(id);
+      }
+    });
+  };
+
+  const handleResetUserOTPConfirm = async (id) => {
+    if (id) {
+      dispatch(resetUserOTP(id, { type: USER_GROUPS.TRANSLATOR }));
+    }
+  };
+
   return (
     <div className="mt-3">
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
@@ -150,12 +172,16 @@ const Translator = () => {
         columns={columns}
         columnExtensions={columnExtensions}
         rows={(translators?.data ?? []).map(translator => {
+          const isFederatedUser = checkFederatedUser(translator.email);
           const action = (
             <>
               {translator.enabled
                 ? <EnabledAction onClick={() => handleSwitchStatus(translator.id, 0)} disabled={parseInt(translator.id) === parseInt(profile.id)}/>
-                : <DisabledAction onClick={() => handleSwitchStatus(translator.id, 1)} disabled={parseInt(translator.id) === parseInt(profile.id)} />
+                : <DisabledAction onClick={() => handleSwitchStatus(translator.id, 1)} disabled={parseInt(translator.id) === parseInt(profile.id) || !translator.last_login} />
               }
+              {!isFederatedUser && (
+                <ResetUserOTPAction onClick={() => handleResetUserOTP(translator.id)} />
+              )}
               <EditAction onClick={() => handleEdit(translator)} />
               <DeleteAction className="ml-1" onClick={() => handleDelete(translator.id)} disabled={parseInt(translator.id) === parseInt(profile.id) || translator.enabled} />
               <MailSendAction onClick={() => handleSendMail(translator.id)} disabled={translator.last_login} />
