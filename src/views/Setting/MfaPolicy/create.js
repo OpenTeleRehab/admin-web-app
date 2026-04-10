@@ -361,8 +361,14 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                       control={control}
                       type="number"
                       name="mfa_expiration_duration"
-                      rules={{ required: 'This field is required' }}
+                      rules={{ required: translate('error.field.required') }}
+                      onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'e') {
+                          e.preventDefault();
+                        }
+                      }}
                       placeholder={translate('mfa.expiration.duration.placeholder')}
+                      min={0}
                     />
                   </Col>
                   <Col md={6} className="pl-0">
@@ -390,8 +396,14 @@ const CreateMfaPolicy = ({ show, handleClose, initialData }) => {
                         control={control}
                         type="number"
                         name="skip_mfa_setup_duration"
-                        rules={{ required: 'This field is required' }}
+                        rules={{ required: translate('error.field.required') }}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e') {
+                            e.preventDefault();
+                          }
+                        }}
                         placeholder={translate('mfa.skip.setup.duration.placeholder')}
+                        min={0}
                       />
                     </Col>
                     <Col md={6} className="pl-0">
