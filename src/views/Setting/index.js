@@ -59,7 +59,6 @@ import {
   VIEW_EMAIL_TEMPLATE,
 } from '../../variables/setting';
 import CreateCountry from 'views/Setting/Country/create';
-import CreateClinic from 'views/Setting/Clinic/create';
 import CreateLanguage from 'views/Setting/Language/create';
 import CreateTermAndCondition from 'views/Setting/TermAndCondition/create';
 import CreateStaticPage from 'views/Setting/StaticPage/create';
@@ -83,6 +82,7 @@ import Region from './Region';
 import Province from './Province';
 import ApiClient from './ApiClient';
 import CreateEditPhcService from './PhcService/_Partials/createEdit';
+import CreateEditClinic from './Clinic/Partial/createEdit';
 import ScreeningQuestionnaire from './ScreeningQuestionnaire';
 import CreateScreeningQuestionnaire from './ScreeningQuestionnaire/create';
 import { useRole } from 'hooks/useRole';
@@ -164,13 +164,20 @@ const Setting = ({ translate }) => {
   }, [hash, keycloak, history]);
 
   const handleShow = () => {
-    if (![VIEW_REGION, VIEW_PROVINCE, VIEW_PHC_SERVICE, VIEW_PHC_WORKER_GUIDANCE, VIEW_API_CLIENT].includes(view)) {
+    if (![VIEW_REGION, VIEW_PROVINCE, VIEW_PHC_SERVICE, VIEW_PHC_WORKER_GUIDANCE, VIEW_API_CLIENT, VIEW_CLINIC].includes(view)) {
       setShow(true);
 
       return;
     }
 
     switch (view) {
+      case VIEW_CLINIC:
+        openDialog({
+          title: translate('clinic.new'),
+          content: <CreateEditClinic/>,
+          props: { size: 'lg' }
+        });
+        break;
       case VIEW_REGION:
         openDialog({
           title: translate('region.new.title'),
@@ -307,7 +314,6 @@ const Setting = ({ translate }) => {
       {show && view === VIEW_LANGUAGE && <CreateLanguage show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_TERM_AND_CONDITION && <CreateTermAndCondition show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_PRIVACY_POLICY && <CreatePrivacyPolicy show={show} editId={editId} handleClose={handleClose} />}
-      {show && view === VIEW_CLINIC && <CreateClinic show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_STATIC_PAGE && <CreateStaticPage show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_GUIDANCE_PAGE && <CreateGuidancePage show={show} editId={editId} handleClose={handleClose} />}
       {show && view === VIEW_PROFESSION && <CreateProfession show={show} editId={editId} handleClose={handleClose} />}
@@ -495,7 +501,7 @@ const Setting = ({ translate }) => {
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TRANSLATION) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TRANSLATION)) && view === VIEW_TRANSLATION && <Translation /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.VIEW_TERM_CONDITION) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_TERM_CONDITION)) && view === VIEW_TERM_AND_CONDITION && <TermAndCondition handleRowEdit={handleEdit} /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_SYSTEM_LIMIT) && view === VIEW_SYSTEM_LIMIT && <SystemLimit /> }
-      { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && view === VIEW_CLINIC && <Clinic handleRowEdit={handleEdit} /> }
+      { keycloak.hasRealmRole(USER_ROLES.MANAGE_CLINIC) && view === VIEW_CLINIC && <Clinic /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PHC_SERVICE) && view === VIEW_PHC_SERVICE && <PhcService /> }
       { keycloak.hasRealmRole(USER_ROLES.MANAGE_PROFESSION) && view === VIEW_PROFESSION && <Profession handleRowEdit={handleEdit} /> }
       { (keycloak.hasRealmRole(USER_ROLES.MANAGE_FAQ_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.MANAGE_ABOUT_US_STATIC_PAGE) || keycloak.hasRealmRole(USER_ROLES.TRANSLATE_STATIC_PAGE)) && view === VIEW_STATIC_PAGE && <StaticPage handleRowEdit={handleEdit} /> }
