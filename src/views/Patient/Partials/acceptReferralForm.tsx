@@ -17,6 +17,13 @@ type ReferralFormProps = {
   referralId: number;
 }
 
+type Therapist = {
+  first_name: string;
+  last_name: string;
+  id: number;
+  profession_id: number
+}
+
 const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
   const t = useTranslate();
   const invalidate = useInvalidate();
@@ -28,9 +35,9 @@ const AcceptReferralForm = ({ referralId }: ReferralFormProps) => {
   const { mutate: createReferral } = useCreate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
 
   const therapistOptions = useMemo(() => {
-    return (therapists?.data ?? []).map((t: any) => ({
-      label: `${t.first_name} ${t.last_name}`,
-      value: t.id,
+    return (therapists?.data ?? []).map((therapist: Therapist) => ({
+      label: t('common.user.full_name', { lastName: therapist.last_name, firstName: therapist.first_name }),
+      value: therapist.id,
     }));
   }, [therapists]);
 
