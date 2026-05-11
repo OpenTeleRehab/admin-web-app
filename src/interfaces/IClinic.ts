@@ -5,11 +5,13 @@ export interface IClinic {
   country_id: number;
   country_name?: string;
   region_id?: number;
+  region_name?: string;
   region?: {
     id: number;
     name: string;
   };
   province_id?: number;
+  province_name?: string;
   province?: {
     id: number;
     name: string;
