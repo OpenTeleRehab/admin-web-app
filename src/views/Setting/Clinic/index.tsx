@@ -110,8 +110,8 @@ const Clinic = () => {
         identity: clinic.identity,
         name: clinic.name,
         country_iso: getCountryISO(clinic.country_id, countries),
-        region: clinic.region?.name,
-        province: clinic.province?.name,
+        region: clinic.region_name,
+        province: clinic.province_name,
         therapist_limit: clinic.therapist_limit,
         action
       };
