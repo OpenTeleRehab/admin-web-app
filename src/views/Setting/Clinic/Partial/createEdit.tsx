@@ -73,7 +73,8 @@ const CreateEditClinic = ({ clinic }: { clinic: any }) => {
     if (clinic) {
       reset({
         ...clinic,
-        region_id: clinic.region_id || clinic.province?.region_id,
+        region_id: clinic?.region?.id,
+        province_id: clinic?.province?.id,
       });
     }
   }, [reset, clinic, setValue]);
@@ -86,7 +87,7 @@ const CreateEditClinic = ({ clinic }: { clinic: any }) => {
 
   useEffect(() => {
     if (regionId) {
-        const isSameRegion = clinic?.region_id === regionId || clinic?.province?.region_id === regionId;
+        const isSameRegion = clinic?.region?.id === regionId;
         if (!isSameRegion) {
             setValue('province_id', null);
         }
@@ -211,7 +212,7 @@ const CreateEditClinic = ({ clinic }: { clinic: any }) => {
                 required: t('error.clinic.therapist_limit'),
                 validate: (value) => {
                   const numValue = Number(value);
-                  const isSameProvince = clinic && (clinic.province_id === provinceId || clinic.province?.id === provinceId);
+                  const isSameProvince = clinic && (clinic.province_id === provinceId);
                   const currentLimitCredit = isSameProvince ? (clinic?.therapist_limit ?? 0) : 0;
                   const remainingTherapistLimit = provinceLimitation ? provinceLimitation.remaining_therapist_limit : 0;
                   const usedTherapistLimit = provinceLimitation ? provinceLimitation.therapist_limit_used : 0;

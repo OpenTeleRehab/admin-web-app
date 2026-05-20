@@ -213,7 +213,7 @@ const EdiInformation = ({ editId }) => {
                 isDisabled={true}
                 placeholder={translate('placeholder.clinic')}
                 classNamePrefix="filter"
-                value={countries.filter(option => option.id === parseInt(formFields.clinic_id))}
+                value={clinics.filter(option => option.id === parseInt(formFields.clinic_id))}
                 getOptionLabel={option => option.name}
                 options={clinics}
                 styles={customSelectStyles}
