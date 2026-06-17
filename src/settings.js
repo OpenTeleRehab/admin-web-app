@@ -37,7 +37,6 @@ const settings = {
     acceptImageTypes: acceptImageTypes
   },
   tinymce: {
-    apiKey: 'hp4m52i3gyuf4edxwxu9jyt91br22arfth7bg6ckya5a83k0',
     height: 500,
     plugins: [
       'advlist autolink lists link image code charmap print preview anchor',

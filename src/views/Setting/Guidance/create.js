@@ -160,7 +160,7 @@ const CreateGuidancePage = ({ show, editId, handleClose }) => {
           <span className="text-dark ml-1">*</span>
           <Editor
             key={language}
-            apiKey={settings.tinymce.apiKey}
+            apiKey={process.env.REACT_APP_TYNIMCE_API_KEY}
             name="content"
             isInvalid={errorContent}
             value={content}
