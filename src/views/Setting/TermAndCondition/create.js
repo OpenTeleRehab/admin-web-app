@@ -183,7 +183,7 @@ const CreateTermAndCondition = ({ show, editId = null, handleClose }) => {
           <span className="text-dark ml-1">*</span>
           <Editor
             key={language}
-            apiKey={settings.tinymce.apiKey}
+            apiKey={process.env.REACT_APP_TYNIMCE_API_KEY}
             name="content"
             value={content}
             isInvalid={errorContent}

@@ -39,7 +39,7 @@ const RichEditor = <T extends FieldValues>({
             </Form.Label>
           )}
           <Editor
-            apiKey={settings.tinymce.apiKey}
+            apiKey={process.env.REACT_APP_TYNIMCE_API_KEY}
             init={{
               height: settings.tinymce.height,
               plugins: settings.tinymce.plugins,

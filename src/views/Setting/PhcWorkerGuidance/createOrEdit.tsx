@@ -119,7 +119,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
             render={({ field, fieldState }) => (
               <>
                 <Editor
-                  apiKey={settings.tinymce.apiKey}
+                  apiKey={process.env.REACT_APP_TYNIMCE_API_KEY}
                   value={field.value}
                   init={{
                     image_title: true,
