@@ -82,7 +82,7 @@ const ListQuestionnaireCard = ({ questionnaireObjs, lang }) => {
           </Card>
         </div>
       ))}
-      { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} id={questionnaire.id} handleClose={handleViewQuestionnaireClose}/> }
+      { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} id={questionnaire.activity_id} handleClose={handleViewQuestionnaireClose}/> }
     </>
   );
 };
