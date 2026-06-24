@@ -33,7 +33,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
   const { languages } = useSelector((state: any) => state.language);
   const { mutate: createPhcWorkerGuidance } = useCreate(END_POINTS.GUIDANCE_PAGE);
   const { mutate: updatePhcWorkerGuidance } = useUpdate(END_POINTS.GUIDANCE_PAGE);
-  const { control, handleSubmit, reset, watch } = useForm<IGuidanceRequest>({
+  const { control, handleSubmit, reset, watch, formState: { isDirty } } = useForm<IGuidanceRequest>({
     defaultValues: {
       lang: profile.language_id,
       target_role: 'phc_worker',
@@ -172,7 +172,7 @@ const CreateEditPhcWorkerGuidance = ({ editId }: CreateEditPhcWorkerGuidanceProp
         </Form.Group>
       </DialogBody>
       <DialogFooter>
-        <Button variant="primary" type='submit' disabled={!isEditableLanguage}>
+        <Button variant="primary" type='submit' disabled={!isEditableLanguage || !isDirty}>
           {editId ? t('common.save') : t('common.create')}
         </Button>
         <Button variant="outline-dark" onClick={closeDialog}>
