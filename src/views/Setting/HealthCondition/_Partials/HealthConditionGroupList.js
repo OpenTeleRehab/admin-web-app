@@ -50,7 +50,7 @@ const HealthConditionGroupList = ({ resultHealthConditionGroups, healthCondition
             >
               <div>
                 {healthConditionGroup.title}{setActive ? ` (${healthConditionGroup.children})` : ''}
-                {!healthConditionGroup.children && (
+                {!healthConditionGroup.is_used && (
                   <Badge pill variant="light" className="ml-2">
                     {translate('setting.health_condition_group.not_inused')}
                   </Badge>
@@ -58,7 +58,7 @@ const HealthConditionGroupList = ({ resultHealthConditionGroups, healthCondition
               </div>
               <div>
                 {keycloak.hasRealmRole(USER_ROLES.MANAGE_HEALTH_CONDITION) && (
-                  <DeleteAction onClick={() => handleDelete(healthConditionGroup.id)} disabled={!!healthConditionGroup.children} />
+                  <DeleteAction onClick={() => handleDelete(healthConditionGroup.id)} disabled={healthConditionGroup.is_used} />
                 )}
                 <EditAction onClick={() => handleEdit(healthConditionGroup.id)} />
               </div>
