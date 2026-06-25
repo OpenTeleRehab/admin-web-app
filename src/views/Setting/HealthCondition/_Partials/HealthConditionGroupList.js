@@ -32,6 +32,7 @@ const HealthConditionGroupList = ({ resultHealthConditionGroups, healthCondition
     dispatch(deleteHealthConditionGroup(deleteId)).then(result => {
       if (result) {
         handleDeleteDialogClose();
+        setActive(undefined);
       }
     });
   };
