@@ -212,7 +212,7 @@ const CreateEditClinic = ({ clinic }: { clinic: any }) => {
                 required: t('error.clinic.therapist_limit'),
                 validate: (value) => {
                   const numValue = Number(value);
-                  const isSameProvince = clinic && (clinic.province_id === provinceId);
+                  const isSameProvince = clinic && (clinic.province?.id === provinceId);
                   const currentLimitCredit = isSameProvince ? (clinic?.therapist_limit ?? 0) : 0;
                   const remainingTherapistLimit = provinceLimitation ? provinceLimitation.remaining_therapist_limit : 0;
                   const usedTherapistLimit = provinceLimitation ? provinceLimitation.therapist_limit_used : 0;
